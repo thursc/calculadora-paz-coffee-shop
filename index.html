@@ -202,11 +202,18 @@
 
     <template id="employee-template">
         <details class="employee-card-details bg-gray-50 rounded-xl border border-gray-200 shadow-sm" open>
-            <summary class="employee-summary flex justify-between items-center p-4 cursor-pointer gap-4 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors duration-150">
+            <!-- SUMMARY NO LONGER TOGGLES THE CARD -->
+            <summary class="employee-summary flex justify-between items-center p-4 gap-4 rounded-xl hover:bg-gray-100 transition-colors duration-150">
                 <input type="text" class="employee-name text-xl font-semibold bg-transparent focus:bg-white focus:ring-2 focus:ring-orange-500 rounded-md p-2 w-full min-w-0" placeholder="Nome do Funcionário">
+                <!-- BUTTONS REORDERED AND MINIMIZE BUTTON ADDED -->
                 <div class="flex items-center gap-2 flex-shrink-0">
+                    <button class="minimize-btn p-2 rounded-full hover:bg-gray-200" title="Minimizar/Expandir">
+                        <!-- Minimize Icon -->
+                        <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                        </svg>
+                    </button>
                     <button class="reset-btn p-2 rounded-full hover:bg-gray-200" title="Resetar Turnos e Eventos">
-                        <!-- ICON REPLACED HERE -->
                         <svg class="w-5 h-5 text-gray-600" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                             <g transform="translate(2 2)">
                                 <path d="m4.5 1.5c-2.4138473 1.37729434-4 4.02194088-4 7 0 4.418278 3.581722 8 8 8s8-3.581722 8-8-3.581722-8-8-8"/>
@@ -214,7 +221,6 @@
                             </g>
                         </svg>
                     </button>
-                    <!-- PADDING ADJUSTED FOR CONSISTENCY -->
                     <button class="remove-employee p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 font-bold text-xl flex items-center justify-center" title="Excluir Funcionário">&times;</button>
                 </div>
             </summary>
@@ -672,7 +678,6 @@
 
                     const checkbox = shiftEl.querySelector('.shift-checkbox');
                     const hoursInput = shiftEl.querySelector('.shift-hours');
-                    const labelText = shiftEl.querySelector('.shift-label-text');
                     
                     hoursInput.dataset.lastValue = savedShift.hours || shift.hours; 
                     checkbox.checked = savedShift.checked || false;
@@ -708,8 +713,34 @@
                 if (data.events && data.events.length) {
                     data.events.forEach(eventData => addEvent(eventList, eventData));
                 }
+                
+                // --- NEW MINIMIZE BUTTON LOGIC ---
+                const summary = justAddedCard.querySelector('.employee-summary');
+                const minimizeBtn = justAddedCard.querySelector('.minimize-btn');
+                
+                const iconMinimize = `<svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>`;
+                const iconExpand = `<svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>`;
 
-                justAddedCard.querySelectorAll('input, select, details, summary').forEach(input => {
+                const updateMinimizeIcon = () => {
+                    minimizeBtn.innerHTML = justAddedCard.open ? iconMinimize : iconExpand;
+                };
+
+                summary.addEventListener('click', (e) => {
+                    if (!e.target.closest('button, input')) {
+                        e.preventDefault();
+                    }
+                });
+                
+                minimizeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    justAddedCard.open = !justAddedCard.open;
+                    updateMinimizeIcon();
+                });
+
+                updateMinimizeIcon();
+                // --- END OF NEW MINIMIZE LOGIC ---
+
+                justAddedCard.querySelectorAll('input, select, details').forEach(input => {
                     input.addEventListener('input', calculateAll);
                     input.addEventListener('change', calculateAll);
                     input.addEventListener('toggle', saveData); 

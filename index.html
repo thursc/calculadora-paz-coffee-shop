@@ -82,6 +82,14 @@
         .lock-event-btn.locked {
             color: #f97316; /* Laranja */
         }
+
+        /* MODIFICADO: Remove o contorno de foco padrão para toque/mouse, mas mantém para teclado */
+        button:focus {
+            outline: none;
+        }
+        button:focus-visible {
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.4); /* Sutil brilho laranja */
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
@@ -725,13 +733,11 @@
                 });
                 typeSelector.dispatchEvent(new Event('change'));
 
-                // CORREÇÃO: Aplicar listeners genéricos apenas em inputs não-monetários
                 eventItem.querySelectorAll('input:not([data-type="currency"]), select').forEach(input => {
                     input.addEventListener('input', calculateAll);
                     input.addEventListener('change', calculateAll);
                 });
                 
-                // Aplicar handlers de moeda separadamente
                 eventItem.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
 
                 eventItem.querySelector('.remove-event-btn').addEventListener('click', () => {
@@ -848,7 +854,6 @@
                     saveData();
                 });
                 
-                // CORREÇÃO: Aplicar listeners genéricos apenas em inputs não-monetários
                 justAddedCard.querySelectorAll('input:not([data-type="currency"]), select, details').forEach(el => {
                     el.addEventListener('input', calculateAll);
                     el.addEventListener('change', calculateAll);
@@ -857,7 +862,6 @@
                     }
                 });
 
-                // Aplicar handlers de moeda separadamente
                 justAddedCard.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
                 
                 const removeBtn = justAddedCard.querySelector('.remove-employee');

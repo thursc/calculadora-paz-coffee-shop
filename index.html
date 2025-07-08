@@ -69,7 +69,6 @@
             border-bottom-right-radius: 0;
         }
         
-        /* MODIFICADO: Direção da animação de rotação invertida */
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -77,6 +76,11 @@
 
         .is-resetting {
             animation: spin 0.5s ease-in-out;
+        }
+
+        /* Estilo para o ícone de cadeado travado */
+        .lock-event-btn.locked {
+            color: #f97316; /* Laranja */
         }
     </style>
 </head>
@@ -397,7 +401,8 @@
                             hours: eventItem.querySelector('.event-hours').value,
                             fixedValue: eventItem.querySelector('.event-fixed-value').value,
                             specificRate: eventItem.querySelector('.event-specific-rate').value,
-                            checked: eventItem.querySelector('.event-checkbox').checked
+                            checked: eventItem.querySelector('.event-checkbox').checked,
+                            locked: eventItem.dataset.locked === 'true'
                         });
                     });
 
@@ -588,17 +593,31 @@
             const addEvent = (eventList, data = {}) => {
                 const eventItem = document.createElement('div');
                 eventItem.className = 'event-item flex flex-col gap-2 p-3 border rounded-lg bg-gray-50';
+                // MODIFICADO: Adicionado o botão de cadeado com os novos SVGs
                 eventItem.innerHTML = `
                     <div class="flex items-center gap-2 w-full">
                         <input type="checkbox" class="event-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0 mt-1 self-start">
                         <div class="flex-grow">
                             <input type="text" placeholder="Nome do Evento/Adicional" class="event-name w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                         </div>
-                        <button class="remove-event-btn p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 flex items-center justify-center self-start" title="Excluir Evento">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
+                        <div class="flex items-center self-start">
+                            <button class="lock-event-btn p-2 rounded-full hover:bg-gray-200 text-gray-400 hover:text-orange-500" title="Manter ao resetar">
+                                <svg class="lock-icon-unlocked w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
+                                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,9c0,0,0-1.6,0-2c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,2,0,2"/>
+                                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M18,21H6c-0.552,0-1-0.448-1-1V10c0-0.552,0.448-1,1-1h12c0.552,0,1,0.448,1,1v10C19,20.552,18.552,21,18,21z"/>
+                                </svg>
+                                <svg class="lock-icon-locked w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M20,20V10c0-1.1-0.9-2-2-2H6c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12C19.1,22,20,21.1,20,20z M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
+                                    <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,12c0-0.4,0-4.6,0-5c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,4.6,0,5"/>
+                                </svg>
+                            </button>
+                            <button class="remove-event-btn p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 flex items-center justify-center" title="Excluir Evento">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="flex items-center flex-wrap gap-y-2 w-full">
                         <div class="flex items-center flex-wrap gap-x-4 gap-y-2 flex-grow">
@@ -644,6 +663,24 @@
                 const fixedWrapper = eventItem.querySelector('.event-fixed-value-input-wrapper');
                 const specificWrapper = eventItem.querySelector('.event-specific-rate-wrapper');
 
+                const lockBtn = eventItem.querySelector('.lock-event-btn');
+                const unlockedIcon = lockBtn.querySelector('.lock-icon-unlocked');
+                const lockedIcon = lockBtn.querySelector('.lock-icon-locked');
+
+                const setLockState = (isLocked) => {
+                    if (isLocked) {
+                        eventItem.dataset.locked = 'true';
+                        lockBtn.classList.add('locked');
+                        unlockedIcon.classList.add('hidden');
+                        lockedIcon.classList.remove('hidden');
+                    } else {
+                        delete eventItem.dataset.locked;
+                        lockBtn.classList.remove('locked');
+                        unlockedIcon.classList.remove('hidden');
+                        lockedIcon.classList.add('hidden');
+                    }
+                }
+
                 if (data && Object.keys(data).length > 0) {
                     eventNameInput.value = data.name || '';
                     typeSelector.value = data.type || 'hours';
@@ -651,10 +688,17 @@
                     fixedValueInput.value = data.fixedValue || 'R$ 0,00';
                     specificRateInput.value = data.specificRate || 'R$ 0,00';
                     eventCheckbox.checked = data.checked !== false;
+                    setLockState(data.locked === true);
                 } else {
                      eventCheckbox.checked = true;
                 }
                 
+                lockBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setLockState(eventItem.dataset.locked !== 'true');
+                    saveData();
+                });
+
                 const inputs = eventItem.querySelectorAll('input:not(.event-checkbox), select');
 
                 const setEventState = (isChecked) => {
@@ -830,7 +874,13 @@
                         cb.checked = false;
                         cb.dispatchEvent(new Event('change'));
                     });
-                    eventList.innerHTML = '';
+
+                    justAddedCard.querySelectorAll('.event-item').forEach(eventItem => {
+                        if (eventItem.dataset.locked !== 'true') {
+                            eventItem.remove();
+                        }
+                    });
+                    
                     calculateAll();
 
                     icon.addEventListener('animationend', () => {

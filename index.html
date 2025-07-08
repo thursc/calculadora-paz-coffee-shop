@@ -34,14 +34,12 @@
             transition: opacity 0.25s ease;
         }
 
-        /* --- ANIMAÇÕES ATUALIZADAS COM VELOCIDADES DIFERENTES --- */
+        /* --- ANIMAÇÕES --- */
         .employee-content {
             overflow: hidden;
-            /* MODIFICADO: A velocidade de fechamento (padrão) agora é de 0.15s (mais rápida) */
             transition: max-height 0.15s ease-in, padding-top 0.15s ease-in, padding-bottom 0.15s ease-in, border-width 0.15s ease-in;
         }
 
-        /* Classe temporária para definir a velocidade de ABERTURA (0.25s) */
         .is-opening .employee-content {
             transition-duration: 0.25s;
             transition-timing-function: ease-out;
@@ -55,10 +53,9 @@
         }
 
         .employee-card-details.is-open > .employee-content {
-            max-height: 2000px; /* Valor alto para garantir que o conteúdo não seja cortado */
+            max-height: 2000px;
         }
 
-        /* Animação de rotação para o ícone de minimizar */
         .employee-card-details .minimize-btn svg {
             transition: transform 0.25s ease-in-out;
         }
@@ -70,6 +67,16 @@
         .employee-card-details.is-open > .employee-summary {
              border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
+        }
+        
+        /* MODIFICADO: Adicionada animação de rotação para o botão de reset */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        .is-resetting {
+            animation: spin 0.5s ease-in-out;
         }
     </style>
 </head>
@@ -768,7 +775,6 @@
                     data.events.forEach(eventData => addEvent(eventList, eventData));
                 }
                 
-                // --- LÓGICA DE MINIMIZAR COM VELOCIDADES DIFERENTES ---
                 const minimizeBtn = justAddedCard.querySelector('.minimize-btn');
                 minimizeBtn.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -779,23 +785,16 @@
                     const currentlyOpen = details.classList.contains('is-open');
                     
                     if (currentlyOpen) {
-                        // Fechando (rápido): A transição padrão (0.15s) do CSS será usada.
                         details.classList.remove('is-open');
                         summary.setAttribute('aria-expanded', 'false');
                     } else {
-                        // Abrindo (suave):
-                        // 1. Adiciona a classe que define a transição mais lenta (0.25s).
                         details.classList.add('is-opening');
-                        
-                        // 2. Adiciona a classe que expande o conteúdo para disparar a animação.
                         details.classList.add('is-open');
                         summary.setAttribute('aria-expanded', 'true');
                         
-                        // 3. Remove a classe de transição após a animação terminar para que o próximo fechamento seja rápido.
-                        // Usar 'transitionend' é mais confiável que setTimeout.
                         content.addEventListener('transitionend', () => {
                             details.classList.remove('is-opening');
-                        }, { once: true }); // O listener é removido automaticamente após ser disparado uma vez.
+                        }, { once: true });
                     }
                     
                     saveData();
@@ -817,14 +816,29 @@
                     openModal(deleteConfirmModal);
                 });
 
-                justAddedCard.querySelector('.reset-btn').addEventListener('click', (e) => {
+                // MODIFICADO: Lógica de animação do botão de reset
+                const resetBtn = justAddedCard.querySelector('.reset-btn');
+                resetBtn.addEventListener('click', (e) => {
                     e.preventDefault();
+                    
+                    const icon = resetBtn.querySelector('svg');
+                    
+                    // Previne múltiplos cliques enquanto a animação está rodando
+                    if (icon.classList.contains('is-resetting')) return;
+                    
+                    icon.classList.add('is-resetting');
+                    
                     justAddedCard.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {
                         cb.checked = false;
                         cb.dispatchEvent(new Event('change'));
                     });
                     eventList.innerHTML = '';
                     calculateAll();
+
+                    // Remove a classe após a animação terminar
+                    icon.addEventListener('animationend', () => {
+                        icon.classList.remove('is-resetting');
+                    }, { once: true });
                 });
                 
                 justAddedCard.querySelector('.add-event-btn').addEventListener('click', (e) => {

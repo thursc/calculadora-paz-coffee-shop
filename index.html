@@ -30,45 +30,46 @@
             -moz-appearance: textfield;
         }
 
-        details > summary {
-            list-style: none;
-        }
-        details > summary::-webkit-details-marker {
-            display: none;
-        }
         .modal {
             transition: opacity 0.25s ease;
         }
-        details[open] > summary {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
 
-        /* --- NOVAS ANIMAÇÕES --- */
-        /* Animação suave para expandir/minimizar o card do funcionário */
+        /* --- ANIMAÇÕES ATUALIZADAS COM VELOCIDADES DIFERENTES --- */
         .employee-content {
             overflow: hidden;
-            transition: max-height 0.4s ease-in-out, padding-top 0.4s ease-in-out, padding-bottom 0.4s ease-in-out, border-width 0.4s ease-in-out;
+            /* MODIFICADO: A velocidade de fechamento (padrão) agora é de 0.15s (mais rápida) */
+            transition: max-height 0.15s ease-in, padding-top 0.15s ease-in, padding-bottom 0.15s ease-in, border-width 0.15s ease-in;
         }
 
-        details:not([open]) > .employee-content {
+        /* Classe temporária para definir a velocidade de ABERTURA (0.25s) */
+        .is-opening .employee-content {
+            transition-duration: 0.25s;
+            transition-timing-function: ease-out;
+        }
+
+        .employee-card-details:not(.is-open) > .employee-content {
             max-height: 0;
             padding-top: 0;
             padding-bottom: 0;
             border-top-width: 0;
         }
 
-        details[open] > .employee-content {
+        .employee-card-details.is-open > .employee-content {
             max-height: 2000px; /* Valor alto para garantir que o conteúdo não seja cortado */
         }
 
         /* Animação de rotação para o ícone de minimizar */
-        details > summary .minimize-btn svg {
-            transition: transform 0.3s ease-in-out;
+        .employee-card-details .minimize-btn svg {
+            transition: transform 0.25s ease-in-out;
         }
 
-        details[open] > summary .minimize-btn svg {
+        .employee-card-details.is-open .employee-summary .minimize-btn svg {
             transform: rotate(-180deg);
+        }
+        
+        .employee-card-details.is-open > .employee-summary {
+             border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
     </style>
 </head>
@@ -76,7 +77,7 @@
 
     <div class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-8">
-            <!-- LOGO SVG UPDATED -->
+            <!-- LOGO SVG -->
             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                  viewBox="0 0 2434 2434"
                  preserveAspectRatio="xMidYMid meet"
@@ -161,14 +162,12 @@
                 0 0 -306z"/>
                 </g>
             </svg>
-            <!-- SUBTITLE UPDATED -->
             <p class="text-xl text-gray-600 mt-2">Calculadora Interativa de<br>Custos de Mão de Obra</p>
         </header>
 
         <main class="bg-white p-6 rounded-2xl shadow-lg">
             <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
                 <h2 class="text-2xl font-semibold">Quadro de Funcionários</h2>
-                <!-- BOTÃO "ADICIONAR FUNCIONÁRIO" ATUALIZADO: removida a animação de escala -->
                 <button id="add-employee" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                     Adicionar Funcionário
                 </button>
@@ -232,12 +231,11 @@
 
 
     <template id="employee-template">
-        <details class="employee-card-details bg-gray-50 rounded-xl border border-gray-200 shadow-sm" open>
-            <summary class="employee-summary flex justify-between items-center p-4 gap-4 rounded-xl hover:bg-gray-100 transition-colors duration-150 cursor-pointer">
+        <div class="employee-card-details bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
+            <div class="employee-summary flex justify-between items-center p-4 gap-4 rounded-xl hover:bg-gray-100 transition-colors duration-150">
                 <input type="text" class="employee-name text-xl font-semibold bg-transparent focus:bg-white focus:ring-2 focus:ring-orange-500 rounded-md p-2 w-full min-w-0" placeholder="Nome do Funcionário">
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <button class="minimize-btn p-2 rounded-full hover:bg-gray-200" title="Minimizar/Expandir">
-                        <!-- ÍCONE DE MINIMIZAR ATUALIZADO: Agora usa um único ícone que rotaciona com CSS -->
                         <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                         </svg>
@@ -256,8 +254,8 @@
                         </svg>
                     </button>
                 </div>
-            </summary>
-            <div class="employee-content p-5 border-t border-gray-200">
+            </div>
+            <div class="employee-content p-5 border-t border-gray-200" role="region">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-600 mb-1">Valor/Hora (R$)</label>
@@ -314,7 +312,7 @@
                     </div>
                 </details>
             </div>
-        </details>
+        </div>
     </template>
 
     <script>
@@ -403,7 +401,7 @@
                         shifts: shifts,
                         bonusDobradinha: card.querySelector('.bonus-dobradinha-checkbox').checked,
                         events: events,
-                        open: cardDetails.open,
+                        open: cardDetails.classList.contains('is-open'),
                     });
                 });
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(employeesData));
@@ -692,10 +690,20 @@
             const addEmployee = (data = {}) => {
                 const newEmployeeDetails = employeeTemplate.content.cloneNode(true);
                 const cardDetails = newEmployeeDetails.querySelector('.employee-card-details');
-                const cardContent = newEmployeeDetails.querySelector('.employee-content');
+                const cardContent = cardDetails.querySelector('.employee-content');
+                const summary = cardDetails.querySelector('.employee-summary');
                 
-                cardDetails.dataset.id = data.id || `employee-${Date.now()}`;
-                cardDetails.open = data.open !== false; 
+                const uniqueId = data.id || `employee-${Date.now()}`;
+                cardDetails.dataset.id = uniqueId;
+                
+                const contentId = `employee-content-${uniqueId}`;
+                summary.setAttribute('aria-controls', contentId);
+                cardContent.id = contentId;
+                
+                const isOpen = data.open !== false;
+                cardDetails.classList.toggle('is-open', isOpen);
+                summary.setAttribute('aria-expanded', isOpen);
+                
                 cardDetails.querySelector('.employee-name').value = data.name || '';
                 
                 const hourlyRateInput = cardContent.querySelector('.hourly-rate');
@@ -760,33 +768,39 @@
                     data.events.forEach(eventData => addEvent(eventList, eventData));
                 }
                 
-                // --- LÓGICA DE MINIMIZAR ATUALIZADA ---
-                const summary = justAddedCard.querySelector('.employee-summary');
+                // --- LÓGICA DE MINIMIZAR COM VELOCIDADES DIFERENTES ---
                 const minimizeBtn = justAddedCard.querySelector('.minimize-btn');
-                
-                // Impede que o 'summary' feche o 'details' se o clique não for no botão de minimizar
-                summary.addEventListener('click', (e) => {
-                    // Permite cliques em inputs e botões dentro do summary
-                    if (e.target.closest('input, button')) {
-                        return;
-                    }
-                    // Previne o comportamento padrão (toggle) para o resto do summary
-                    e.preventDefault();
-                    justAddedCard.open = !justAddedCard.open;
-                });
-                
-                // O botão de minimizar também controla o estado
                 minimizeBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); // Previne o duplo toggle
-                    e.stopPropagation(); // Impede que o clique se propague para o summary
-                    justAddedCard.open = !justAddedCard.open;
-                });
-                
-                justAddedCard.addEventListener('toggle', () => {
-                    // A animação é feita via CSS, mas salvamos o estado
+                    e.preventDefault();
+                    
+                    const details = e.currentTarget.closest('.employee-card-details');
+                    const summary = details.querySelector('.employee-summary');
+                    const content = details.querySelector('.employee-content');
+                    const currentlyOpen = details.classList.contains('is-open');
+                    
+                    if (currentlyOpen) {
+                        // Fechando (rápido): A transição padrão (0.15s) do CSS será usada.
+                        details.classList.remove('is-open');
+                        summary.setAttribute('aria-expanded', 'false');
+                    } else {
+                        // Abrindo (suave):
+                        // 1. Adiciona a classe que define a transição mais lenta (0.25s).
+                        details.classList.add('is-opening');
+                        
+                        // 2. Adiciona a classe que expande o conteúdo para disparar a animação.
+                        details.classList.add('is-open');
+                        summary.setAttribute('aria-expanded', 'true');
+                        
+                        // 3. Remove a classe de transição após a animação terminar para que o próximo fechamento seja rápido.
+                        // Usar 'transitionend' é mais confiável que setTimeout.
+                        content.addEventListener('transitionend', () => {
+                            details.classList.remove('is-opening');
+                        }, { once: true }); // O listener é removido automaticamente após ser disparado uma vez.
+                    }
+                    
                     saveData();
                 });
-
+                
                 justAddedCard.querySelectorAll('input, select').forEach(input => {
                     input.addEventListener('input', calculateAll);
                     input.addEventListener('change', calculateAll);

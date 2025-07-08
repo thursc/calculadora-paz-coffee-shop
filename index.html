@@ -726,8 +726,13 @@
                 });
                 typeSelector.dispatchEvent(new Event('change'));
 
-                eventItem.querySelectorAll('input, select').forEach(input => input.addEventListener('input', calculateAll));
+                // CORREÇÃO: Aplicar listeners genéricos apenas em inputs não-monetários
+                eventItem.querySelectorAll('input:not([data-type="currency"]), select').forEach(input => {
+                    input.addEventListener('input', calculateAll);
+                    input.addEventListener('change', calculateAll);
+                });
                 
+                // Aplicar handlers de moeda separadamente
                 eventItem.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
 
                 eventItem.querySelector('.remove-event-btn').addEventListener('click', () => {
@@ -844,11 +849,16 @@
                     saveData();
                 });
                 
-                justAddedCard.querySelectorAll('input, select').forEach(input => {
-                    input.addEventListener('input', calculateAll);
-                    input.addEventListener('change', calculateAll);
+                // CORREÇÃO: Aplicar listeners genéricos apenas em inputs não-monetários
+                justAddedCard.querySelectorAll('input:not([data-type="currency"]), select, details').forEach(el => {
+                    el.addEventListener('input', calculateAll);
+                    el.addEventListener('change', calculateAll);
+                    if (el.tagName === 'DETAILS') {
+                        el.addEventListener('toggle', saveData);
+                    }
                 });
-                
+
+                // Aplicar handlers de moeda separadamente
                 justAddedCard.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
                 
                 const removeBtn = justAddedCard.querySelector('.remove-employee');

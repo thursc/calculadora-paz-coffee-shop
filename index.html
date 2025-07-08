@@ -15,9 +15,11 @@
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #f97316; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #ea580c; }
+
         .bonus-highlight, .shift-item { transition: all 0.3s ease-in-out; }
         label:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
         .event-item.disabled { opacity: 0.6; background-color: #f9fafb; }
+
         /* Hide number input arrows */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
@@ -27,6 +29,7 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+
         details > summary {
             list-style: none;
         }
@@ -39,6 +42,33 @@
         details[open] > summary {
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
+        }
+
+        /* --- NOVAS ANIMAÇÕES --- */
+        /* Animação suave para expandir/minimizar o card do funcionário */
+        .employee-content {
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, padding-top 0.4s ease-in-out, padding-bottom 0.4s ease-in-out, border-width 0.4s ease-in-out;
+        }
+
+        details:not([open]) > .employee-content {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            border-top-width: 0;
+        }
+
+        details[open] > .employee-content {
+            max-height: 2000px; /* Valor alto para garantir que o conteúdo não seja cortado */
+        }
+
+        /* Animação de rotação para o ícone de minimizar */
+        details > summary .minimize-btn svg {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        details[open] > summary .minimize-btn svg {
+            transform: rotate(-180deg);
         }
     </style>
 </head>
@@ -53,81 +83,81 @@
                  class="w-full max-w-[120px] md:max-w-[132px] mx-auto h-auto" style="color: #373435;">
                 <g transform="translate(0.000000,2434.000000) scale(0.100000,-0.100000)"
                 fill="currentColor" stroke="none">
-                <path d="M11774 24329 c-2503 -80 -4898 -921 -6899 -2423 -477 -358 -865 -695
-                -1305 -1136 -441 -440 -778 -828 -1136 -1305 -2095 -2792 -2883 -6327 -2178
-                -9768 381 -1859 1220 -3641 2416 -5129 303 -377 539 -640 898 -998 440 -441
-                828 -778 1305 -1136 2719 -2040 6144 -2842 9510 -2228 1959 358 3828 1213
-                5387 2466 601 482 1191 1055 1670 1621 2339 2762 3322 6348 2722 9922 -340
-                2023 -1206 3952 -2496 5557 -482 601 -1055 1191 -1621 1670 -1735 1469 -3788
-                2408 -6017 2752 -491 76 -957 118 -1505 136 -326 11 -404 11 -751 -1z m956
-                -879 c1887 -98 3658 -637 5265 -1603 190 -114 627 -404 810 -537 1730 -1262
-                3058 -2967 3853 -4945 462 -1151 723 -2347 792 -3635 22 -408 11 -1046 -25
-                -1495 -256 -3142 -1821 -6031 -4325 -7982 -238 -186 -411 -310 -695 -498 -419
-                -278 -711 -448 -1160 -675 -1290 -651 -2687 -1045 -4135 -1164 -594 -49 -1286
-                -49 -1880 0 -1729 142 -3392 679 -4885 1577 -193 116 -630 406 -810 537 -882
-                644 -1663 1405 -2323 2262 -1323 1720 -2121 3784 -2297 5943 -49 604 -49 1266
-                0 1870 256 3142 1821 6031 4325 7982 235 183 409 308 695 498 417 276 710 447
+                <path d="M11774 24329 c-2503 -80 -4898 -921 -6899 -2423 -477 -358 -865 -695 
+                -1305 -1136 -441 -440 -778 -828 -1136 -1305 -2095 -2792 -2883 -6327 -2178 
+                -9768 381 -1859 1220 -3641 2416 -5129 303 -377 539 -640 898 -998 440 -441 
+                828 -778 1305 -1136 2719 -2040 6144 -2842 9510 -2228 1959 358 3828 1213 
+                5387 2466 601 482 1191 1055 1670 1621 2339 2762 3322 6348 2722 9922 -340 
+                2023 -1206 3952 -2496 5557 -482 601 -1055 1191 -1621 1670 -1735 1469 -3788 
+                2408 -6017 2752 -491 76 -957 118 -1505 136 -326 11 -404 11 -751 -1z m956 
+                -879 c1887 -98 3658 -637 5265 -1603 190 -114 627 -404 810 -537 1730 -1262 
+                3058 -2967 3853 -4945 462 -1151 723 -2347 792 -3635 22 -408 11 -1046 -25 
+                -1495 -256 -3142 -1821 -6031 -4325 -7982 -238 -186 -411 -310 -695 -498 -419 
+                -278 -711 -448 -1160 -675 -1290 -651 -2687 -1045 -4135 -1164 -594 -49 -1286 
+                -49 -1880 0 -1729 142 -3392 679 -4885 1577 -193 116 -630 406 -810 537 -882 
+                644 -1663 1405 -2323 2262 -1323 1720 -2121 3784 -2297 5943 -49 604 -49 1266 
+                0 1870 256 3142 1821 6031 4325 7982 235 183 409 308 695 498 417 276 710 447 
                 1160 675 1391 703 2912 1106 4485 1189 228 12 925 12 1150 1z"/>
-                <path d="M5980 15670 l0 -2950 755 0 755 0 0 754 0 755 668 4 c728 4 747 5
-                999 67 578 140 1035 513 1303 1064 148 303 223 615 237 976 29 803 -324 1547
-                -920 1943 -231 153 -478 250 -787 309 -115 22 -120 22 -1562 25 l-1448 4 0
-                -2951z m2750 1586 c211 -70 357 -228 433 -471 39 -123 50 -228 44 -394 -6
-                -158 -26 -256 -78 -383 -86 -210 -237 -357 -414 -403 -50 -13 -151 -15 -642
+                <path d="M5980 15670 l0 -2950 755 0 755 0 0 754 0 755 668 4 c728 4 747 5 
+                999 67 578 140 1035 513 1303 1064 148 303 223 615 237 976 29 803 -324 1547 
+                -920 1943 -231 153 -478 250 -787 309 -115 22 -120 22 -1562 25 l-1448 4 0 
+                -2951z m2750 1586 c211 -70 357 -228 433 -471 39 -123 50 -228 44 -394 -6 
+                -158 -26 -256 -78 -383 -86 -210 -237 -357 -414 -403 -50 -13 -151 -15 -642 
                 -15 l-583 0 0 846 0 845 593 -3 c540 -4 597 -5 647 -22z"/>
-                <path d="M10937 15300 l-1107 -2400 0 -90 0 -90 614 0 613 0 144 310 144 310
-                970 0 970 0 144 -310 144 -310 2513 0 2514 0 0 560 0 560 -1015 0 c-558 0
-                -1015 4 -1015 8 0 5 452 817 1005 1805 l1005 1796 0 91 0 90 -1860 0 -1860 0
-                0 -560 0 -560 911 0 c501 0 909 -4 907 -8 -1 -5 -437 -788 -968 -1740 -628
-                -1126 -968 -1727 -973 -1719 -5 6 -492 1056 -1082 2332 l-1073 2320 -269 3
-                -269 2 -1107 -2400z m1663 -256 l276 -629 -277 -3 c-153 -1 -405 -1 -561 0
+                <path d="M10937 15300 l-1107 -2400 0 -90 0 -90 614 0 613 0 144 310 144 310 
+                970 0 970 0 144 -310 144 -310 2513 0 2514 0 0 560 0 560 -1015 0 c-558 0 
+                -1015 4 -1015 8 0 5 452 817 1005 1805 l1005 1796 0 91 0 90 -1860 0 -1860 0 
+                0 -560 0 -560 911 0 c501 0 909 -4 907 -8 -1 -5 -437 -788 -968 -1740 -628 
+                -1126 -968 -1727 -973 -1719 -5 6 -492 1056 -1082 2332 l-1073 2320 -269 3 
+                -269 2 -1107 -2400z m1663 -256 l276 -629 -277 -3 c-153 -1 -405 -1 -561 0 
                 l-284 3 275 643 c192 447 279 639 285 629 5 -8 133 -297 286 -643z"/>
-                <path d="M9505 12054 c-522 -52 -903 -346 -1048 -810 -78 -249 -75 -591 8
-                -841 66 -196 146 -324 294 -465 391 -374 1028 -433 1514 -141 166 100 337 293
-                422 475 127 277 151 650 60 962 -120 414 -454 710 -895 796 -96 19 -281 31
-                -355 24z m249 -600 c208 -53 366 -214 421 -429 42 -165 25 -356 -45 -503 -172
-                -361 -654 -442 -937 -157 -123 125 -174 263 -174 471 0 173 32 282 117 401 75
+                <path d="M9505 12054 c-522 -52 -903 -346 -1048 -810 -78 -249 -75 -591 8 
+                -841 66 -196 146 -324 294 -465 391 -374 1028 -433 1514 -141 166 100 337 293 
+                422 475 127 277 151 650 60 962 -120 414 -454 710 -895 796 -96 19 -281 31 
+                -355 24z m249 -600 c208 -53 366 -214 421 -429 42 -165 25 -356 -45 -503 -172 
+                -361 -654 -442 -937 -157 -123 125 -174 263 -174 471 0 173 32 282 117 401 75 
                 104 197 187 322 217 78 20 221 19 296 0z"/>
-                <path d="M6775 12029 c-705 -109 -1117 -712 -990 -1444 98 -563 576 -945 1182
-                -945 558 0 963 293 1089 788 38 148 70 132 -269 132 l-293 0 -18 -50 c-56
-                -157 -183 -268 -356 -311 -85 -21 -232 -17 -315 9 -271 83 -445 369 -421 693
-                28 376 283 618 626 595 212 -14 363 -108 441 -274 l34 -72 294 0 293 0 -7 48
+                <path d="M6775 12029 c-705 -109 -1117 -712 -990 -1444 98 -563 576 -945 1182 
+                -945 558 0 963 293 1089 788 38 148 70 132 -269 132 l-293 0 -18 -50 c-56 
+                -157 -183 -268 -356 -311 -85 -21 -232 -17 -315 9 -271 83 -445 369 -421 693 
+                28 376 283 618 626 595 212 -14 363 -108 441 -274 l34 -72 294 0 293 0 -7 48 
                 c-11 71 -53 199 -93 277 -141 282 -386 462 -737 541 -83 19 -372 27 -460 13z"/>
-                <path d="M11267 12013 c-4 -3 -7 -534 -7 -1180 l0 -1173 305 0 305 0 0 385 0
-                385 380 0 380 0 0 265 0 265 -380 0 -380 0 0 260 0 260 430 0 430 0 -2 268 -3
+                <path d="M11267 12013 c-4 -3 -7 -534 -7 -1180 l0 -1173 305 0 305 0 0 385 0 
+                385 380 0 380 0 0 265 0 265 -380 0 -380 0 0 260 0 260 430 0 430 0 -2 268 -3 
                 267 -726 3 c-399 1 -729 -1 -732 -5z"/>
-                <path d="M13190 10840 l0 -1180 305 0 305 0 0 385 0 385 380 0 380 0 0 265 0
+                <path d="M13190 10840 l0 -1180 305 0 305 0 0 385 0 385 380 0 380 0 0 265 0 
                 265 -380 0 -380 0 0 260 0 260 425 0 425 0 0 270 0 270 -730 0 -730 0 0 -1180z"/>
-                <path d="M15120 10840 l0 -1180 750 0 750 0 0 265 0 265 -452 2 -453 3 -3 207
-                -2 208 402 2 403 3 3 262 2 263 -402 2 -403 3 -3 168 -2 167 440 0 440 0 -2
+                <path d="M15120 10840 l0 -1180 750 0 750 0 0 265 0 265 -452 2 -453 3 -3 207 
+                -2 208 402 2 403 3 3 262 2 263 -402 2 -403 3 -3 168 -2 167 440 0 440 0 -2 
                 268 -3 267 -732 3 -733 2 0 -1180z"/>
-                <path d="M17137 12013 c-4 -3 -7 -534 -7 -1180 l0 -1173 750 0 750 0 0 265 0
-                265 -450 0 -450 0 0 210 0 210 400 0 400 0 0 265 0 265 -400 0 -400 0 0 170 0
+                <path d="M17137 12013 c-4 -3 -7 -534 -7 -1180 l0 -1173 750 0 750 0 0 265 0 
+                265 -450 0 -450 0 0 210 0 210 400 0 400 0 0 265 0 265 -400 0 -400 0 0 170 0 
                 170 435 0 435 0 0 270 0 270 -728 0 c-401 0 -732 -3 -735 -7z"/>
-                <path d="M5720 7425 l0 -1705 6445 0 6445 0 0 1705 0 1705 -6445 0 -6445 0 0
-                -1705z m2049 1080 c106 -18 242 -66 327 -116 96 -56 195 -162 243 -260 39 -79
-                70 -196 71 -271 l0 -28 -259 0 -258 0 -7 40 c-9 58 -76 123 -147 144 -71 22
-                -200 20 -266 -3 -111 -38 -165 -98 -166 -184 -1 -67 23 -108 82 -140 64 -35
-                99 -42 321 -71 335 -43 484 -94 603 -206 35 -32 75 -81 90 -109 42 -77 67
-                -189 67 -302 0 -196 -45 -307 -180 -441 -75 -74 -102 -93 -191 -137 -184 -89
-                -388 -124 -594 -103 -256 27 -461 120 -595 269 -87 98 -150 253 -150 370 l0
-                53 260 0 259 0 10 -38 c14 -49 61 -94 136 -129 57 -26 68 -28 200 -28 139 0
-                141 0 208 33 80 39 107 75 107 140 0 121 -94 168 -380 192 -308 25 -478 86
-                -613 218 -115 112 -162 258 -154 472 5 150 26 216 99 326 162 243 516 367 877
-                309z m5886 0 c304 -49 560 -209 720 -449 65 -98 115 -213 147 -341 20 -79 23
-                -115 23 -295 0 -179 -3 -216 -23 -293 -102 -405 -368 -670 -781 -778 -99 -26
-                -336 -36 -452 -19 -255 37 -514 176 -664 357 -168 202 -245 433 -245 733 0
-                246 50 438 161 615 220 354 667 543 1114 470z m-3565 -400 l0 -385 325 0 325
-                0 2 383 3 382 278 3 277 2 0 -1065 0 -1065 -277 2 -278 3 -3 423 -2 422 -325
-                0 -325 0 0 -425 0 -425 -275 0 -275 0 0 1065 0 1065 275 0 275 0 0 -385z
-                m6650 362 c279 -65 469 -253 553 -545 29 -103 31 -343 4 -441 -43 -158 -102
-                -264 -202 -365 -82 -83 -169 -137 -277 -171 -109 -34 -213 -45 -445 -45 l-203
-                0 0 -270 0 -270 -272 2 -273 3 -3 1050 c-1 578 0 1056 3 1063 8 21 1023 11
+                <path d="M5720 7425 l0 -1705 6445 0 6445 0 0 1705 0 1705 -6445 0 -6445 0 0 
+                -1705z m2049 1080 c106 -18 242 -66 327 -116 96 -56 195 -162 243 -260 39 -79 
+                70 -196 71 -271 l0 -28 -259 0 -258 0 -7 40 c-9 58 -76 123 -147 144 -71 22 
+                -200 20 -266 -3 -111 -38 -165 -98 -166 -184 -1 -67 23 -108 82 -140 64 -35 
+                99 -42 321 -71 335 -43 484 -94 603 -206 35 -32 75 -81 90 -109 42 -77 67 
+                -189 67 -302 0 -196 -45 -307 -180 -441 -75 -74 -102 -93 -191 -137 -184 -89 
+                -388 -124 -594 -103 -256 27 -461 120 -595 269 -87 98 -150 253 -150 370 l0 
+                53 260 0 259 0 10 -38 c14 -49 61 -94 136 -129 57 -26 68 -28 200 -28 139 0 
+                141 0 208 33 80 39 107 75 107 140 0 121 -94 168 -380 192 -308 25 -478 86 
+                -613 218 -115 112 -162 258 -154 472 5 150 26 216 99 326 162 243 516 367 877 
+                309z m5886 0 c304 -49 560 -209 720 -449 65 -98 115 -213 147 -341 20 -79 23 
+                -115 23 -295 0 -179 -3 -216 -23 -293 -102 -405 -368 -670 -781 -778 -99 -26 
+                -336 -36 -452 -19 -255 37 -514 176 -664 357 -168 202 -245 433 -245 733 0 
+                246 50 438 161 615 220 354 667 543 1114 470z m-3565 -400 l0 -385 325 0 325 
+                0 2 383 3 382 278 3 277 2 0 -1065 0 -1065 -277 2 -278 3 -3 423 -2 422 -325 
+                0 -325 0 0 -425 0 -425 -275 0 -275 0 0 1065 0 1065 275 0 275 0 0 -385z 
+                m6650 362 c279 -65 469 -253 553 -545 29 -103 31 -343 4 -441 -43 -158 -102 
+                -264 -202 -365 -82 -83 -169 -137 -277 -171 -109 -34 -213 -45 -445 -45 l-203 
+                0 0 -270 0 -270 -272 2 -273 3 -3 1050 c-1 578 0 1056 3 1063 8 21 1023 11 
                 1115 -11z"/>
-                <path d="M13330 7974 c-142 -38 -265 -135 -325 -258 -49 -101 -65 -173 -65
-                -296 0 -127 19 -210 66 -301 209 -398 807 -351 954 75 103 301 -12 626 -263
+                <path d="M13330 7974 c-142 -38 -265 -135 -325 -258 -49 -101 -65 -173 -65 
+                -296 0 -127 19 -210 66 -301 209 -398 807 -351 954 75 103 301 -12 626 -263 
                 745 -111 52 -252 66 -367 35z"/>
-                <path d="M16170 7694 l0 -306 218 4 c202 3 220 5 259 25 84 45 133 148 133
-                281 0 111 -21 173 -78 232 -30 31 -61 52 -87 59 -23 6 -127 11 -242 11 l-203
+                <path d="M16170 7694 l0 -306 218 4 c202 3 220 5 259 25 84 45 133 148 133 
+                281 0 111 -21 173 -78 232 -30 31 -61 52 -87 59 -23 6 -127 11 -242 11 l-203 
                 0 0 -306z"/>
                 </g>
             </svg>
@@ -138,7 +168,8 @@
         <main class="bg-white p-6 rounded-2xl shadow-lg">
             <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
                 <h2 class="text-2xl font-semibold">Quadro de Funcionários</h2>
-                <button id="add-employee" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105">
+                <!-- BOTÃO "ADICIONAR FUNCIONÁRIO" ATUALIZADO: removida a animação de escala -->
+                <button id="add-employee" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg transition-colors">
                     Adicionar Funcionário
                 </button>
             </div>
@@ -202,15 +233,13 @@
 
     <template id="employee-template">
         <details class="employee-card-details bg-gray-50 rounded-xl border border-gray-200 shadow-sm" open>
-            <!-- SUMMARY NO LONGER TOGGLES THE CARD -->
-            <summary class="employee-summary flex justify-between items-center p-4 gap-4 rounded-xl hover:bg-gray-100 transition-colors duration-150">
+            <summary class="employee-summary flex justify-between items-center p-4 gap-4 rounded-xl hover:bg-gray-100 transition-colors duration-150 cursor-pointer">
                 <input type="text" class="employee-name text-xl font-semibold bg-transparent focus:bg-white focus:ring-2 focus:ring-orange-500 rounded-md p-2 w-full min-w-0" placeholder="Nome do Funcionário">
-                <!-- BUTTONS REORDERED AND MINIMIZE BUTTON ADDED -->
                 <div class="flex items-center gap-2 flex-shrink-0">
                     <button class="minimize-btn p-2 rounded-full hover:bg-gray-200" title="Minimizar/Expandir">
-                        <!-- Minimize Icon -->
+                        <!-- ÍCONE DE MINIMIZAR ATUALIZADO: Agora usa um único ícone que rotaciona com CSS -->
                         <svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                         </svg>
                     </button>
                     <button class="reset-btn p-2 rounded-full hover:bg-gray-200" title="Resetar Turnos e Eventos">
@@ -221,10 +250,9 @@
                             </g>
                         </svg>
                     </button>
-                    <!-- DELETE BUTTON UPDATED -->
                     <button class="remove-employee p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 flex items-center justify-center" title="Excluir Funcionário">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
@@ -317,22 +345,15 @@
 
             const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
-            // *** CORREÇÃO: A função 'formatCurrencyInput' foi removida e substituída por uma nova abordagem. ***
-
             const parseCurrency = (value) => {
                 if (!value) return 0;
-                // Esta função agora pode analisar tanto "R$ 1.234,56" quanto "1234,56"
                 return parseFloat(String(value).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
             };
 
-            // *** CORREÇÃO: Nova função para lidar com a formatação de moeda de forma mais intuitiva. ***
             const setupCurrencyHandlers = (input) => {
-                // 1. Formata o valor inicial do campo.
                 const initialValue = parseCurrency(input.value);
                 input.value = formatCurrency(initialValue);
 
-                // 2. Ao focar (clicar no campo), remove a formatação para facilitar a edição.
-                // Ex: "R$ 50,00" vira "50,00"
                 input.addEventListener('focus', (e) => {
                     const numericValue = parseCurrency(e.target.value);
                     if (numericValue !== 0) {
@@ -342,12 +363,9 @@
                     }
                 });
 
-                // 3. Ao desfocar (clicar fora), formata o número digitado para o padrão de moeda.
-                // Ex: "50,25" vira "R$ 50,25"
                 input.addEventListener('blur', (e) => {
                     const numericValue = parseFloat(e.target.value.replace(',', '.')) || 0;
                     e.target.value = formatCurrency(numericValue);
-                    // Recalcula tudo para garantir que a mudança seja refletida.
                     calculateAll();
                 });
             };
@@ -372,7 +390,6 @@
                             name: eventItem.querySelector('.event-name').value,
                             type: eventItem.querySelector('.event-type-selector').value,
                             hours: eventItem.querySelector('.event-hours').value,
-                            // Salva o valor já formatado para manter a consistência
                             fixedValue: eventItem.querySelector('.event-fixed-value').value,
                             specificRate: eventItem.querySelector('.event-specific-rate').value,
                             checked: eventItem.querySelector('.event-checkbox').checked
@@ -565,7 +582,6 @@
 
             const addEvent = (eventList, data = {}) => {
                 const eventItem = document.createElement('div');
-                // --- EVENT ITEM LAYOUT UPDATED ---
                 eventItem.className = 'event-item flex flex-col gap-2 p-3 border rounded-lg bg-gray-50';
                 eventItem.innerHTML = `
                     <div class="flex items-center gap-2 w-full">
@@ -663,7 +679,6 @@
 
                 eventItem.querySelectorAll('input, select').forEach(input => input.addEventListener('input', calculateAll));
                 
-                // *** CORREÇÃO: Aplicando a nova lógica de formatação de moeda. ***
                 eventItem.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
 
                 eventItem.querySelector('.remove-event-btn').addEventListener('click', () => {
@@ -745,39 +760,38 @@
                     data.events.forEach(eventData => addEvent(eventList, eventData));
                 }
                 
-                // --- NEW MINIMIZE BUTTON LOGIC ---
+                // --- LÓGICA DE MINIMIZAR ATUALIZADA ---
                 const summary = justAddedCard.querySelector('.employee-summary');
                 const minimizeBtn = justAddedCard.querySelector('.minimize-btn');
                 
-                const iconMinimize = `<svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>`;
-                const iconExpand = `<svg class="w-5 h-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>`;
-
-                const updateMinimizeIcon = () => {
-                    minimizeBtn.innerHTML = justAddedCard.open ? iconMinimize : iconExpand;
-                };
-
+                // Impede que o 'summary' feche o 'details' se o clique não for no botão de minimizar
                 summary.addEventListener('click', (e) => {
-                    if (!e.target.closest('button, input')) {
-                        e.preventDefault();
+                    // Permite cliques em inputs e botões dentro do summary
+                    if (e.target.closest('input, button')) {
+                        return;
                     }
-                });
-                
-                minimizeBtn.addEventListener('click', (e) => {
+                    // Previne o comportamento padrão (toggle) para o resto do summary
                     e.preventDefault();
                     justAddedCard.open = !justAddedCard.open;
-                    updateMinimizeIcon();
-                });
-
-                updateMinimizeIcon();
-                // --- END OF NEW MINIMIZE LOGIC ---
-
-                justAddedCard.querySelectorAll('input, select, details').forEach(input => {
-                    input.addEventListener('input', calculateAll);
-                    input.addEventListener('change', calculateAll);
-                    input.addEventListener('toggle', saveData); 
                 });
                 
-                // *** CORREÇÃO: Aplicando a nova lógica de formatação de moeda. ***
+                // O botão de minimizar também controla o estado
+                minimizeBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Previne o duplo toggle
+                    e.stopPropagation(); // Impede que o clique se propague para o summary
+                    justAddedCard.open = !justAddedCard.open;
+                });
+                
+                justAddedCard.addEventListener('toggle', () => {
+                    // A animação é feita via CSS, mas salvamos o estado
+                    saveData();
+                });
+
+                justAddedCard.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('input', calculateAll);
+                    input.addEventListener('change', calculateAll);
+                });
+                
                 justAddedCard.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
                 
                 const removeBtn = justAddedCard.querySelector('.remove-employee');

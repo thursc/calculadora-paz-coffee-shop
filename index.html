@@ -317,17 +317,41 @@
 
             const formatCurrency = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
-            const formatCurrencyInput = (input) => {
-                let value = input.value.replace(/\D/g, '');
-                value = (parseInt(value, 10) / 100).toFixed(2);
-                if (isNaN(value) || value === 'NaN') value = '0.00';
-                input.value = formatCurrency(parseFloat(value));
-            };
+            // *** CORREÇÃO: A função 'formatCurrencyInput' foi removida e substituída por uma nova abordagem. ***
 
             const parseCurrency = (value) => {
                 if (!value) return 0;
-                return parseFloat(value.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+                // Esta função agora pode analisar tanto "R$ 1.234,56" quanto "1234,56"
+                return parseFloat(String(value).replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
             };
+
+            // *** CORREÇÃO: Nova função para lidar com a formatação de moeda de forma mais intuitiva. ***
+            const setupCurrencyHandlers = (input) => {
+                // 1. Formata o valor inicial do campo.
+                const initialValue = parseCurrency(input.value);
+                input.value = formatCurrency(initialValue);
+
+                // 2. Ao focar (clicar no campo), remove a formatação para facilitar a edição.
+                // Ex: "R$ 50,00" vira "50,00"
+                input.addEventListener('focus', (e) => {
+                    const numericValue = parseCurrency(e.target.value);
+                    if (numericValue !== 0) {
+                        e.target.value = numericValue.toFixed(2).replace('.', ',');
+                    } else {
+                        e.target.value = '';
+                    }
+                });
+
+                // 3. Ao desfocar (clicar fora), formata o número digitado para o padrão de moeda.
+                // Ex: "50,25" vira "R$ 50,25"
+                input.addEventListener('blur', (e) => {
+                    const numericValue = parseFloat(e.target.value.replace(',', '.')) || 0;
+                    e.target.value = formatCurrency(numericValue);
+                    // Recalcula tudo para garantir que a mudança seja refletida.
+                    calculateAll();
+                });
+            };
+
 
             const saveData = () => {
                 const employeesData = [];
@@ -348,6 +372,7 @@
                             name: eventItem.querySelector('.event-name').value,
                             type: eventItem.querySelector('.event-type-selector').value,
                             hours: eventItem.querySelector('.event-hours').value,
+                            // Salva o valor já formatado para manter a consistência
                             fixedValue: eventItem.querySelector('.event-fixed-value').value,
                             specificRate: eventItem.querySelector('.event-specific-rate').value,
                             checked: eventItem.querySelector('.event-checkbox').checked
@@ -550,7 +575,7 @@
                         </div>
                         <button class="remove-event-btn p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 flex items-center justify-center self-start" title="Excluir Evento">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -638,11 +663,8 @@
 
                 eventItem.querySelectorAll('input, select').forEach(input => input.addEventListener('input', calculateAll));
                 
-                eventItem.querySelectorAll('input[data-type="currency"]').forEach(input => {
-                    formatCurrencyInput(input); // Format on load
-                    input.addEventListener('input', () => formatCurrencyInput(input));
-                    input.addEventListener('blur', () => formatCurrencyInput(input));
-                });
+                // *** CORREÇÃO: Aplicando a nova lógica de formatação de moeda. ***
+                eventItem.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
 
                 eventItem.querySelector('.remove-event-btn').addEventListener('click', () => {
                     eventItem.remove();
@@ -755,11 +777,8 @@
                     input.addEventListener('toggle', saveData); 
                 });
                 
-                justAddedCard.querySelectorAll('input[data-type="currency"]').forEach(input => {
-                    formatCurrencyInput(input); // Format on load
-                    input.addEventListener('input', () => formatCurrencyInput(input));
-                    input.addEventListener('blur', () => formatCurrencyInput(input));
-                });
+                // *** CORREÇÃO: Aplicando a nova lógica de formatação de moeda. ***
+                justAddedCard.querySelectorAll('input[data-type="currency"]').forEach(setupCurrencyHandlers);
                 
                 const removeBtn = justAddedCard.querySelector('.remove-employee');
                 removeBtn.addEventListener('click', (e) => {
@@ -815,3 +834,13 @@
     </script>
 </body>
 </html>
+```
+
+As principais alterações foram:
+
+1.  **Nova Lógica de Formatação:** A função `formatCurrencyInput` foi removida. Em seu lugar, criei uma nova função `setupCurrencyHandlers` que aplica a formatação de um jeito mais intuitivo.
+2.  **Edição Simplificada:** Agora, ao clicar em um campo de valor (como "Valor/Hora" ou nos valores de eventos), a formatação "R$" some e você vê um número simples (ex: `15,00`), o que facilita a edição.
+3.  **Formatação Automática ao Sair:** Ao clicar fora do campo, o valor que você digitou será automaticamente formatado para o padrão de moeda (ex: `15,00` vira `R$ 15,00`).
+4.  **Cálculos Corretos:** Com essa mudança, os cálculos agora usarão os valores exatos que você digitar, resolvendo a inconsistência que você relatou.
+
+Espero que essa solução deixe a calculadora mais fácil e agradável de usar! Se tiver qualquer outra dúvida, é só me cham

@@ -69,10 +69,10 @@
             border-bottom-right-radius: 0;
         }
         
-        /* MODIFICADO: Adicionada animação de rotação para o botão de reset */
+        /* MODIFICADO: Direção da animação de rotação invertida */
         @keyframes spin {
             from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
+            to { transform: rotate(360deg); }
         }
 
         .is-resetting {
@@ -816,14 +816,12 @@
                     openModal(deleteConfirmModal);
                 });
 
-                // MODIFICADO: Lógica de animação do botão de reset
                 const resetBtn = justAddedCard.querySelector('.reset-btn');
                 resetBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     
                     const icon = resetBtn.querySelector('svg');
                     
-                    // Previne múltiplos cliques enquanto a animação está rodando
                     if (icon.classList.contains('is-resetting')) return;
                     
                     icon.classList.add('is-resetting');
@@ -835,7 +833,6 @@
                     eventList.innerHTML = '';
                     calculateAll();
 
-                    // Remove a classe após a animação terminar
                     icon.addEventListener('animationend', () => {
                         icon.classList.remove('is-resetting');
                     }, { once: true });

@@ -834,13 +834,3 @@
     </script>
 </body>
 </html>
-```
-
-As principais alterações foram:
-
-1.  **Nova Lógica de Formatação:** A função `formatCurrencyInput` foi removida. Em seu lugar, criei uma nova função `setupCurrencyHandlers` que aplica a formatação de um jeito mais intuitivo.
-2.  **Edição Simplificada:** Agora, ao clicar em um campo de valor (como "Valor/Hora" ou nos valores de eventos), a formatação "R$" some e você vê um número simples (ex: `15,00`), o que facilita a edição.
-3.  **Formatação Automática ao Sair:** Ao clicar fora do campo, o valor que você digitou será automaticamente formatado para o padrão de moeda (ex: `15,00` vira `R$ 15,00`).
-4.  **Cálculos Corretos:** Com essa mudança, os cálculos agora usarão os valores exatos que você digitar, resolvendo a inconsistência que você relatou.
-
-Espero que essa solução deixe a calculadora mais fácil e agradável de usar! Se tiver qualquer outra dúvida, é só me cham

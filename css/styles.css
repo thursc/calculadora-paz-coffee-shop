@@ -298,6 +298,33 @@ html.dark .employee-footer {
     backface-visibility: hidden;
 }
 
+/* --- Feedback Visual do Próprio Card ao Resetar --- */
+@keyframes cardResetPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+    30% {
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45), 0 8px 24px -4px rgba(245, 158, 11, 0.2);
+        border-color: rgba(245, 158, 11, 0.55) !important;
+        transform: scale3d(0.996, 0.996, 1);
+    }
+    70% {
+        box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.15), 0 4px 12px -2px rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.25);
+        transform: scale3d(1, 1, 1);
+    }
+    100% {
+        box-shadow: none;
+        border-color: inherit;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.employee-card-details.is-card-resetting {
+    animation: cardResetPulse 0.52s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    will-change: transform, box-shadow, border-color;
+}
+
 /* --- Itens de Eventos / Adicionais (Padronização Visual com os Turnos - 120Hz/240Hz+) --- */
 .event-item {
     transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1),
@@ -398,14 +425,22 @@ html.dark .event-item.is-active .lock-badge {
     color: #fbbf24;
 }
 
-/* --- Animações Leves de Adição e Exclusão de Colaborador (120Hz/240Hz+) --- */
-@keyframes cardEnter {
+/* --- Animações de Adição e Exclusão de Colaborador (120Hz/240Hz+) --- */
+@keyframes cardEnterMobile {
     0% {
         opacity: 0;
-        transform: translate3d(0, 18px, 0) scale3d(0.93, 0.93, 1);
+        transform: translate3d(16px, 0, 0) scale3d(0.98, 0.98, 1);
     }
-    65% {
-        transform: translate3d(0, -2px, 0) scale3d(1.01, 1.01, 1);
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+    }
+}
+
+@keyframes cardEnterDesktop {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 12px, 0) scale3d(0.98, 0.98, 1);
     }
     100% {
         opacity: 1;
@@ -414,11 +449,17 @@ html.dark .event-item.is-active .lock-badge {
 }
 
 .card-animate-enter {
-    animation: cardEnter 0.34s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: cardEnterMobile 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     will-change: transform, opacity;
     backface-visibility: hidden;
     transform-style: preserve-3d;
-    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45), 0 10px 25px -5px rgba(245, 158, 11, 0.2) !important;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.35), 0 8px 20px -4px rgba(245, 158, 11, 0.12) !important;
+}
+
+@media (min-width: 768px) {
+    .card-animate-enter {
+        animation-name: cardEnterDesktop;
+    }
 }
 
 .card-animate-delete {
@@ -457,6 +498,28 @@ html.dark .event-item.is-active .lock-badge {
 .event-item-animate-enter {
     animation: eventItemEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+/* Animação suave de saída para itens de adicionais/eventos */
+.event-item-animate-leave {
+    opacity: 0 !important;
+    transform: translate3d(0, -6px, 0) scale3d(0.96, 0.96, 1) !important;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    border-width: 0 !important;
+    overflow: hidden !important;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                max-height 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                padding 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                margin 0.26s cubic-bezier(0.16, 1, 0.3, 1),
+                border-width 0.26s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    pointer-events: none !important;
+    will-change: opacity, transform, max-height;
     backface-visibility: hidden;
 }
 

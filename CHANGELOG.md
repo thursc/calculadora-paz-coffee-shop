@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.0] - 12/10/2026
+
+### ✨ Feedback Visual no Card ao Resetar, Saída Suave de Eventos e Entrada Agradável de Colaboradores
+
+#### 1. Feedback Visual no Próprio Card ao Resetar
+- **Pulso de Confirmação no Card:** Ao clicar no botão de reset, além do flash do botão, o card inteiro do colaborador recebe a classe `.is-card-resetting` com animação `@keyframes cardResetPulse`. A borda pulsa com um anel âmbar suave (`box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45)`) e contração elástica sutil (`scale3d(0.996) → 1`), oferecendo ao usuário confirmação visual cristalina de que aquele colaborador teve seus turnos e adicionais limpos.
+
+#### 2. Animação Padronizada de Saída dos Eventos Deletados no Reset
+- **Fim do Desaparecimento Instantâneo:** Ao acionar o reset, os adicionais que não estão fixados (`dataset.locked !== 'true'`) não somem mais bruscamente do DOM.
+- **Saída Fluida no Padrão do Site:** Os itens recebem a animação `.event-item-animate-leave`, executando fade-out de opacidade, leve elevação em escala (`scale3d(0.96)`) e colapso orgânico de altura (`max-height: 0; padding: 0; margin: 0;`), integrando perfeitamente a lista antes de serem removidos do DOM.
+- **Arquitetura Unificada:** O método `removeWithAnimation` foi padronizado no componente [eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js), sendo utilizado tanto na exclusão manual individual quanto no reset em lote.
+
+#### 3. Entrada de Novo Colaborador Suave e Agradável (Mobile-First)
+- **Eliminação do Salto Vertical no Mobile:** Removido o salto de 18px no eixo Y e o rebote excessivo. No mobile, o card utiliza `@keyframes cardEnterMobile`, deslizando suavemente no eixo horizontal da esteira Kanban (`translate3d(16px, 0, 0) → 0`) com fade-in e escala aveludada (`0.98 → 1.0`).
+- **Foco Desacoplado sem Trancos:** No mobile, o foco no campo de nome agora utiliza `{ preventScroll: true }` com temporização sincronizada ao término da rolagem suave da esteira, impedindo que o surgimento do teclado virtual e o auto-scroll nativo colidam com a animação de entrada do card.
+- **Entrada Orgânica no Desktop:** No desktop, o card surge com descida sutil (`translate3d(0, 12px, 0) → 0`), curva cúbica de 0.4s e anel de brilho dourado refinado.
+
+---
+
 ## [v1.8.0] - 12/10/2026
 
 ### 🚀 Otimização Extrema de Fluidez para Displays de Alta Taxa de Atualização (120Hz, 144Hz, 240Hz, 320Hz+)

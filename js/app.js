@@ -265,23 +265,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.removeEventListener('animationend', onEnterEnd);
                 };
                 card.addEventListener('animationend', onEnterEnd, { once: true });
-                setTimeout(onEnterEnd, 400);
+                setTimeout(onEnterEnd, 450);
 
                 const nameInput = card.querySelector('.employee-name');
-                if (nameInput) {
-                    nameInput.focus();
-                }
 
                 // Desktop: usa scrollIntoView para o grid nativo da página
-                // Mobile: rola a esteira horizontal até o novo card
+                // Mobile: rola a esteira horizontal suavemente até o novo card
                 requestAnimationFrame(() => {
                     if (window.innerWidth >= 768) {
                         card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                        if (nameInput) {
+                            nameInput.focus({ preventScroll: true });
+                        }
                     } else {
                         employeeContainer.scrollTo({
                             left: card.offsetLeft - 16,
                             behavior: 'smooth'
                         });
+                        setTimeout(() => {
+                            if (nameInput && document.activeElement !== nameInput) {
+                                nameInput.focus({ preventScroll: true });
+                            }
+                        }, 320);
                     }
                 });
             }

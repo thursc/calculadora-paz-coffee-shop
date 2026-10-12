@@ -189,21 +189,24 @@ export function createEventElement(data = {}, onChangeCallback) {
         });
     });
 
-    removeBtn.addEventListener('click', () => {
-        eventItem.style.transition = 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1)';
-        eventItem.style.willChange = 'opacity, transform';
-        eventItem.style.opacity = '0';
-        eventItem.style.transform = 'translate3d(0, 4px, 0) scale3d(0.96, 0.96, 1)';
+    // Remoção suave com animação padronizada do site
+    eventItem.removeWithAnimation = (callback) => {
+        eventItem.classList.add('event-item-animate-leave');
         let cleaned = false;
         const onEnd = () => {
             if (cleaned) return;
             cleaned = true;
             eventItem.removeEventListener('transitionend', onEnd);
             eventItem.remove();
+            if (typeof callback === 'function') callback();
             if (typeof onChangeCallback === 'function') onChangeCallback();
         };
         eventItem.addEventListener('transitionend', onEnd, { once: true });
-        setTimeout(onEnd, 240);
+        setTimeout(onEnd, 280);
+    };
+
+    removeBtn.addEventListener('click', () => {
+        eventItem.removeWithAnimation();
     });
 
     // Helper de extração de dados compatível com o schema do localStorage

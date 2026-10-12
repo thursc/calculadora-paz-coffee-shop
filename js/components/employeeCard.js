@@ -191,7 +191,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
-    // Botão Resetar Turnos e Eventos (feedback visual animado no botão e ícone)
+    // Botão Resetar Turnos e Eventos (feedback visual animado no botão, ícone e card)
     const resetBtn = cardDetails.querySelector('.reset-btn');
     if (resetBtn) {
         resetBtn.addEventListener('click', (e) => {
@@ -199,29 +199,50 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             if (resetBtn.classList.contains('is-resetting')) return;
 
             resetBtn.classList.add('is-resetting');
+            cardDetails.classList.add('is-card-resetting');
 
             cardDetails.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {
                 cb.checked = false;
                 cb.dispatchEvent(new Event('change'));
             });
 
-            cardDetails.querySelectorAll('.event-item').forEach(eventItem => {
-                if (eventItem.dataset.locked !== 'true') {
-                    eventItem.remove();
-                }
-            });
+            // Remove eventos não fixados com animação fluida no padrão do site
+            const unlockedEvents = Array.from(cardDetails.querySelectorAll('.event-item')).filter(
+                el => el.dataset.locked !== 'true'
+            );
 
-            notifyChange();
+            if (unlockedEvents.length > 0) {
+                let remaining = unlockedEvents.length;
+                unlockedEvents.forEach(eventItem => {
+                    if (typeof eventItem.removeWithAnimation === 'function') {
+                        eventItem.removeWithAnimation(() => {
+                            remaining--;
+                            if (remaining === 0) {
+                                notifyChange();
+                            }
+                        });
+                    } else {
+                        eventItem.remove();
+                        remaining--;
+                        if (remaining === 0) {
+                            notifyChange();
+                        }
+                    }
+                });
+            } else {
+                notifyChange();
+            }
 
             let resetCleaned = false;
             const onResetEnd = () => {
                 if (resetCleaned) return;
                 resetCleaned = true;
                 resetBtn.classList.remove('is-resetting');
+                cardDetails.classList.remove('is-card-resetting');
                 resetBtn.removeEventListener('animationend', onResetEnd);
             };
             resetBtn.addEventListener('animationend', onResetEnd, { once: true });
-            setTimeout(onResetEnd, 490);
+            setTimeout(onResetEnd, 520);
         });
     }
 

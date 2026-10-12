@@ -4,6 +4,24 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.2.5] - 12/10/2026
+
+### 📱 Centralização Definitiva do Modal e Bloqueio de Zoom Out no Mobile
+- **Centralização do Modal de Holerite em Qualquer Posição da Lista**:
+  - Resolvido o erro em que clicar em colaboradores no final da lista horizontal fazia a janela modal surgir fora da tela (à esquerda).
+  - Travado o scroll horizontal em nível de documento (`html`, `body` e `<main>` limitados a `width: 100%`, `max-width: 100vw`, `overflow-x: hidden`), garantindo que apenas a trilha de colaboradores (`.kanban-track`) faça scroll horizontal.
+  - Fixação do modal com `position: fixed !important`, cobrindo exatamente `100dvh` e `100vw` centralizado na viewport visível do dispositivo.
+  - Bloqueio dinâmico do scroll da página (`body.overflow-hidden`) enquanto o modal estiver aberto, restaurando a rolagem suave ao fechar.
+- **Prevenção de Quebra por Zoom Out Acidental**:
+  - Viewport travada com `maximum-scale=1.0, user-scalable=no`, impedindo que gestos de pinça quebrem a proporção da tela ou tornem o layout estreito e inutilizável.
+- **Renomeação de Interface**:
+  - Botão principal do card atualizado de *"Gerar Demonstrativo"* para **"Gerar Holerite"**.
+  - Título da janela atualizado para **"Holerite de Pagamento"**.
+- **Cache-Busting**:
+  - Versão dos assets atualizada para `v=1.2.6`.
+
+---
+
 ## [v1.2.4] - 12/10/2026
 
 ### 📐 Alinhamento Vertical Homogêneo no Detalhamento de Cálculos

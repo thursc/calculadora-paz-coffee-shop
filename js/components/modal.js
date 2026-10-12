@@ -67,6 +67,7 @@ export class ModalManager {
 
     open(modal) {
         if (!modal) return;
+        document.body.classList.add('overflow-hidden');
         modal.classList.remove('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'false');
     }
@@ -75,11 +76,15 @@ export class ModalManager {
         if (!modal) return;
         modal.classList.add('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'true');
+        if (this.holeriteModal?.classList.contains('opacity-0') && this.deleteConfirmModal?.classList.contains('opacity-0')) {
+            document.body.classList.remove('overflow-hidden');
+        }
     }
 
     closeAll() {
         this.close(this.holeriteModal);
         this.close(this.deleteConfirmModal);
+        document.body.classList.remove('overflow-hidden');
         this.onConfirmDeleteCallback = null;
     }
 

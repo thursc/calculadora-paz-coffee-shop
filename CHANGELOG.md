@@ -2,6 +2,26 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.5] - 12/10/2026
+
+### 🚀 Auditoria Lote 2: Otimização de I/O com Debounce, Preservação de SVG e Correção de Rolagem
+
+#### 1. Debounce na Persistência de Dados e Eliminação de Lag de I/O (Item #5)
+- **Utilitário de Debounce Dedicado:** Criado [js/utils/debounce.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/debounce.js) com suporte a cancelamento e `flush` imediato.
+- **Desacoplamento UI vs I/O:** Em [app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), a atualização visual dos cartões permanece instantânea em tempo real (zero latência percebida), enquanto a gravação síncrona pesada no `localStorage.setItem` agora passa por debounce de 250ms durante a digitação de nomes e horas.
+- **Gravação Garantida no Descarregamento:** Integrado flush automático no evento `beforeunload` para assegurar que nenhum dado seja perdido ao fechar a aba abruptamente, além de gravação imediata (`immediate = true`) ao adicionar ou excluir colaboradores.
+
+#### 2. Preservação do Ícone SVG do Botão de Copiar Holerite (Item #6)
+- **Isolamento de Texto via Span:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), o texto "Copiar Texto" foi encapsulado no elemento `.copy-btn-text`.
+- **Fim da Destruição do SVG:** A mensagem temporária "Copiado!" agora atualiza exclusivamente o nó de texto sem sobrescrever ou destruir a árvore SVG original do ícone no DOM.
+- **Estilo de Feedback Limpo:** Substituídas as tentativas de manipulação de classes azuis conflitantes pela classe `.is-copied` com fundo verde esmeralda suave (`#059669`) em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css).
+
+#### 3. Remoção do Listener Duplo de Wheel e Normalização do Scroll (Item #10)
+- **Fim da Duplicação por Borbulhamento:** Removido o ouvinte não-passivo de `wheel` em `window`. O evento agora é escutado exclusivamente no elemento da esteira (`employeeContainer`), eliminando o disparo duplicado do scroll horizontal que acelerava e causava trancos de até `2.7x`.
+- **Física de Rolagem Natural:** Normalizado o incremento de deslocamento para resposta tátil contínua e suave na esteira.
+
+---
+
 ## [v1.9.4] - 12/10/2026
 
 ### 🛡️ Auditoria Lote 1: Integridade Financeira, SSOT e Prevenção de Corrupção de Dados

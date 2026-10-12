@@ -6,6 +6,7 @@
 import { loadStoredEmployees, saveStoredEmployees } from './state/storage.js';
 import { ModalManager } from './components/modal.js';
 import { createEmployeeCard } from './components/employeeCard.js';
+import { debounce } from './utils/debounce.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const employeeContainer = document.getElementById('employee-container');
@@ -123,22 +124,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // 3. Recálculo Individual e Persistência
+    // 3. Recálculo Individual e Persistência (com Debounce para I/O)
     // ==========================================
-    function recalculateAndSave() {
+    const debouncedSave = debounce((data) => {
+        saveStoredEmployees(data);
+    }, 250);
+
+    function collectEmployeesData() {
         const employeesData = [];
         const cards = employeeContainer.querySelectorAll('.employee-card-details');
-
         cards.forEach(card => {
-            if (typeof card.updateCalculations === 'function') {
-                card.updateCalculations();
-            }
             if (typeof card.getEmployeeData === 'function') {
                 employeesData.push(card.getEmployeeData());
             }
         });
+        return employeesData;
+    }
 
-        saveStoredEmployees(employeesData);
+    function recalculateAndSave(immediate = false) {
+        const cards = employeeContainer.querySelectorAll('.employee-card-details');
+
+        // Atualização visual imediata em cada card na UI (zero lag perceptível)
+        cards.forEach(card => {
+            if (typeof card.updateCalculations === 'function') {
+                card.updateCalculations();
+            }
+        });
+
+        const employeesData = collectEmployeesData();
+
+        // Persistência controlada: imediata em ações estruturais, com debounce em digitação contínua
+        if (immediate) {
+            debouncedSave.cancel();
+            saveStoredEmployees(employeesData);
+        } else {
+            debouncedSave(employeesData);
+        }
     }
 
     // ==========================================
@@ -220,8 +241,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                             if (isMobile) {
                                                 employeeContainer.style.scrollSnapType = '';
                                             }
-                                            // Persiste no storage de forma assíncrona após o término da animação
-                                            recalculateAndSave();
+                                            // Persiste no storage de forma imediata após o término da animação
+                                            recalculateAndSave(true);
                                         };
 
                                         if (movingElements.length > 0) {
@@ -291,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            recalculateAndSave();
+            recalculateAndSave(true);
         } catch (err) {
             console.error('Erro ao adicionar colaborador:', err);
         }
@@ -356,10 +377,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             e.preventDefault();
-            employeeContainer.scrollLeft += (delta * 1.35);
+            employeeContainer.scrollLeft += delta;
         }
 
-        window.addEventListener('wheel', handleWheel, { passive: false });
+        // Listener vinculado exclusivamente ao container da esteira (elimina disparo duplo por borbulhamento no window)
         employeeContainer.addEventListener('wheel', handleWheel, { passive: false });
 
         // Teclas de seta: apenas ativas no mobile / esteira Kanban
@@ -423,7 +444,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addEmployee({}, false);
         }
 
-        recalculateAndSave();
+        recalculateAndSave(true);
 
         // Sempre posiciona no topo e no primeiro colaborador (x=0, y=0) ao iniciar
         resetScrollPosition();
@@ -434,4 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addEventListener('load', resetScrollPosition, { once: true });
     window.addEventListener('pageshow', resetScrollPosition);
+    window.addEventListener('beforeunload', () => {
+        debouncedSave.flush();
+    });
 });

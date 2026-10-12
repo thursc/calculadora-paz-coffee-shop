@@ -602,6 +602,13 @@ html.dark .event-item.is-active .lock-badge {
     opacity: 1;
 }
 
+/* Feedback de cópia do holerite preservando ícone e contraste */
+#copy-holerite-btn.is-copied {
+    background: #059669 !important;
+    background-image: none !important;
+    color: #ffffff !important;
+}
+
 /* --- Foco Acessível --- */
 button:focus {
     outline: none;

@@ -13,6 +13,9 @@ export class ModalManager {
         this.deleteConfirmText = document.getElementById('delete-confirm-text');
         this.confirmDeleteBtn = document.getElementById('confirm-delete-btn');
 
+        this.copyBtnText = this.copyHoleriteBtn?.querySelector('.copy-btn-text');
+        this.copyTimeout = null;
+
         this.onConfirmDeleteCallback = null;
 
         this.init();
@@ -33,22 +36,26 @@ export class ModalManager {
             }
         });
 
-        // Copiar holerite com API moderna e feedback visual
+        // Copiar holerite com API moderna e feedback visual sem destruir a árvore SVG
         if (this.copyHoleriteBtn) {
             this.copyHoleriteBtn.addEventListener('click', async () => {
-                const text = this.holeriteTextarea.value;
+                const text = this.holeriteTextarea?.value || '';
                 const copied = await copyTextToClipboard(text, this.holeriteTextarea);
 
                 if (copied) {
-                    const originalText = this.copyHoleriteBtn.textContent;
-                    this.copyHoleriteBtn.textContent = 'Copiado!';
-                    this.copyHoleriteBtn.classList.remove('bg-blue-500', 'hover:bg-blue-700');
-                    this.copyHoleriteBtn.classList.add('bg-green-500', 'hover:bg-green-600');
+                    if (this.copyTimeout) clearTimeout(this.copyTimeout);
 
-                    setTimeout(() => {
-                        this.copyHoleriteBtn.textContent = originalText;
-                        this.copyHoleriteBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                        this.copyHoleriteBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+                    if (this.copyBtnText) {
+                        this.copyBtnText.textContent = 'Copiado!';
+                    }
+                    this.copyHoleriteBtn.classList.add('is-copied');
+
+                    this.copyTimeout = setTimeout(() => {
+                        if (this.copyBtnText) {
+                            this.copyBtnText.textContent = 'Copiar Texto';
+                        }
+                        this.copyHoleriteBtn.classList.remove('is-copied');
+                        this.copyTimeout = null;
                     }, 2000);
                 }
             });
@@ -102,10 +109,15 @@ export class ModalManager {
         if (this.holeriteTextarea) {
             this.holeriteTextarea.value = text;
         }
+        if (this.copyTimeout) {
+            clearTimeout(this.copyTimeout);
+            this.copyTimeout = null;
+        }
+        if (this.copyBtnText) {
+            this.copyBtnText.textContent = 'Copiar Texto';
+        }
         if (this.copyHoleriteBtn) {
-            this.copyHoleriteBtn.textContent = 'Copiar Texto';
-            this.copyHoleriteBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
-            this.copyHoleriteBtn.classList.add('bg-blue-500', 'hover:bg-blue-700');
+            this.copyHoleriteBtn.classList.remove('is-copied');
         }
         this.open(this.holeriteModal);
     }

@@ -128,6 +128,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
 
         hoursInput.addEventListener('input', () => {
+            const raw = parseFloat(hoursInput.value);
+            if (!Number.isNaN(raw) && raw < 0) {
+                hoursInput.value = '0';
+            }
             if (hoursInput.value && !isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) > 0) {
                 hoursInput.dataset.lastValue = hoursInput.value;
             }
@@ -388,26 +392,12 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             dobradinhaIndicator.classList.toggle('hidden', !calculation.bonusDobradinhaChecked);
         }
 
-        // Atualizar valores parciais dos eventos na UI
+        // Atualizar valores parciais dos eventos na UI a partir do resultado oficial de calculator.js (SSOT)
         const eventElements = cardContent.querySelectorAll('.event-item');
         eventElements.forEach((el, index) => {
-            const eventData = empData.events[index];
-            if (!eventData) return;
-
-            let val = 0;
-            if (eventData.checked) {
-                const hours = parseFloat(eventData.hours) || 0;
-                if (eventData.type === 'hours') {
-                    val = hours * calculation.hourlyRate;
-                } else if (eventData.type === 'fixed') {
-                    val = parseFloat(String(eventData.fixedValue).replace(/R\$/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-                } else if (eventData.type === 'hours_specific') {
-                    const specific = parseFloat(String(eventData.specificRate).replace(/R\$/g, '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-                    val = hours * specific;
-                }
-            }
+            const calculated = calculation.calculatedEvents?.[index];
             if (typeof el.setCalculatedValue === 'function') {
-                el.setCalculatedValue(formatCurrency(val));
+                el.setCalculatedValue(calculated ? calculated.formattedValue : 'R$ 0,00');
             }
         });
 

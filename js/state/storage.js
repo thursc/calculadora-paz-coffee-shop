@@ -17,7 +17,9 @@ export function loadStoredEmployees() {
 
         return parsed.map((emp, index) => {
             const rawRate = emp.hourlyRate;
-            const hourlyRate = (!rawRate || rawRate === 'R$ 15,00') ? DEFAULT_HOURLY_RATE : rawRate;
+            const hourlyRate = (rawRate === null || rawRate === undefined || rawRate === '')
+                ? DEFAULT_HOURLY_RATE
+                : rawRate;
             return {
                 id: emp.id || `employee-${Date.now()}-${index}`,
                 name: typeof emp.name === 'string' ? emp.name : '',

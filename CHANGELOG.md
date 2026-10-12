@@ -2,6 +2,27 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.4] - 12/10/2026
+
+### 🛡️ Auditoria Lote 1: Integridade Financeira, SSOT e Prevenção de Corrupção de Dados
+
+#### 1. Correção do Truncamento no Blur de Moedas (Item #1)
+- **Eliminação de Truncamento em Milhares:** Corrigido o evento `blur` em [currency.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/currency.js) para utilizar `parseCurrency` em vez de `parseFloat(replace(',', '.'))`. Valores formatados com separador de milhar (ex.: `R$ 1.250,00`) não são mais truncados incorretamente para `R$ 1,25`.
+- **Parsing pt-BR Robusto:** A função `parseCurrency` foi aprimorada para diferenciar formatos com vírgula (pt-BR com milhares em ponto) e pontos decimais puros, além de blindar contra valores nulos e negativos.
+
+#### 2. Preservação de Taxas Reais no LocalStorage (Item #2)
+- **Fim da Sobrescrita de R$ 15,00:** Eliminada a condição hardcoded em [storage.js](file:///d:/dev/calculadora-paz-coffee-shop/js/state/storage.js) que forçava colaboradores configurados com taxa de `R$ 15,00` a voltarem para o padrão de `R$ 20,00` a cada recarregamento da página. Agora apenas valores nulos ou vazios recebem a taxa padrão.
+
+#### 3. Prevenção e Trava contra Números Negativos (Item #3)
+- **Blindagem no Serviço de Cálculo:** [calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js) agora aplica `Math.max(0, ...)` na taxa horária, horas de turnos, valores de adicionais e no total líquido a pagar, impedindo que números negativos reduzam a remuneração ou gerem demonstrativos inválidos.
+- **Sanitização Direta nos Inputs:** Adicionadas travas automáticas nos inputs de horas de turnos ([employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js)) e de eventos ([eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js)), resetando entradas negativas para zero instantaneamente.
+
+#### 4. Unificação de Fonte Única da Verdade (SSOT - Item #4)
+- **Eliminação de Código Duplicado:** Removida a lógica matemática paralela em [employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js) que recalculava manualmente os valores de cada adicional.
+- **Resultado Puro de `calculator.js`:** O serviço `calculateEmployee` agora gera e retorna o mapeamento unificado `calculatedEvents`, garantindo que os subtotais exibidos nas linhas dos adicionais sejam rigorosamente idênticos aos valores computados no holerite e no total individual do card.
+
+---
+
 ## [v1.9.3] - 12/10/2026
 
 ### ✨ Exclusão de Adicionais com FLIP & Flash Suave do Reset com Suporte a Cliques Consecutivos

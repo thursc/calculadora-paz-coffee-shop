@@ -11,9 +11,10 @@ import { formatCurrency, parseCurrency } from '../utils/currency.js';
  * @returns {Object} Detalhamento dos cálculos
  */
 export function calculateEmployee(employee) {
-    const hourlyRate = typeof employee.hourlyRate === 'number'
+    const rawHourlyRate = typeof employee.hourlyRate === 'number'
         ? employee.hourlyRate
         : parseCurrency(employee.hourlyRate);
+    const hourlyRate = Math.max(0, rawHourlyRate || 0);
 
     let salaryFromShifts = 0;
     let workedSundayMorning = false;
@@ -27,8 +28,9 @@ export function calculateEmployee(employee) {
 
         const shiftDef = SHIFTS.find(s => s.id === shiftItem.id) || {};
         const label = shiftItem.label || shiftDef.label || shiftItem.id;
-        const hours = parseFloat(shiftItem.hours) || 0;
-        const shiftValue = hours * hourlyRate;
+        const rawHours = parseFloat(shiftItem.hours);
+        const hours = (!Number.isNaN(rawHours) && rawHours > 0) ? rawHours : 0;
+        const shiftValue = Math.max(0, hours * hourlyRate);
 
         salaryFromShifts += shiftValue;
 
@@ -61,45 +63,56 @@ export function calculateEmployee(employee) {
     const eventsBreakdown = [];
     const events = Array.isArray(employee.events) ? employee.events : [];
 
-    events.forEach(eventItem => {
-        if (!eventItem.checked) return;
-
-        const eventHours = parseFloat(eventItem.hours) || 0;
+    const calculatedEvents = events.map(eventItem => {
+        const rawEventHours = parseFloat(eventItem.hours);
+        const eventHours = (!Number.isNaN(rawEventHours) && rawEventHours > 0) ? rawEventHours : 0;
         let eventValue = 0;
         let specificRate = 0;
 
-        if (eventItem.type === 'hours') {
-            eventValue = eventHours * hourlyRate;
-        } else if (eventItem.type === 'fixed') {
-            eventValue = parseCurrency(eventItem.fixedValue);
-        } else if (eventItem.type === 'hours_specific') {
-            specificRate = parseCurrency(eventItem.specificRate);
-            eventValue = eventHours * specificRate;
-        }
-
-        eventsTotal += eventValue;
-
-        if (eventValue > 0) {
-            const eventName = eventItem.name?.trim() || 'Adicional sem nome';
-            let detailText = `${eventName}: ${formatCurrency(eventValue)}`;
-
-            if ((eventItem.type === 'hours' || eventItem.type === 'hours_specific') && eventHours > 0) {
-                const rateDetail = eventItem.type === 'hours_specific' ? ` @ ${formatCurrency(specificRate)}/h` : '';
-                detailText = `${eventName}: ${formatCurrency(eventValue)} (${eventHours}h${rateDetail})`;
+        if (eventItem.checked) {
+            if (eventItem.type === 'hours') {
+                eventValue = Math.max(0, eventHours * hourlyRate);
+            } else if (eventItem.type === 'fixed') {
+                eventValue = Math.max(0, parseCurrency(eventItem.fixedValue));
+            } else if (eventItem.type === 'hours_specific') {
+                specificRate = Math.max(0, parseCurrency(eventItem.specificRate));
+                eventValue = Math.max(0, eventHours * specificRate);
             }
 
-            eventsBreakdown.push({
-                name: eventName,
-                type: eventItem.type,
-                hours: eventHours,
-                value: eventValue,
-                specificRate,
-                formattedText: detailText
-            });
+            eventsTotal += eventValue;
+
+            if (eventValue > 0) {
+                const eventName = eventItem.name?.trim() || 'Adicional sem nome';
+                let detailText = `${eventName}: ${formatCurrency(eventValue)}`;
+
+                if ((eventItem.type === 'hours' || eventItem.type === 'hours_specific') && eventHours > 0) {
+                    const rateDetail = eventItem.type === 'hours_specific' ? ` @ ${formatCurrency(specificRate)}/h` : '';
+                    detailText = `${eventName}: ${formatCurrency(eventValue)} (${eventHours}h${rateDetail})`;
+                }
+
+                eventsBreakdown.push({
+                    name: eventName,
+                    type: eventItem.type,
+                    hours: eventHours,
+                    value: eventValue,
+                    specificRate,
+                    formattedText: detailText
+                });
+            }
         }
+
+        return {
+            name: eventItem.name,
+            type: eventItem.type,
+            hours: eventHours,
+            checked: Boolean(eventItem.checked),
+            specificRate,
+            value: eventValue,
+            formattedValue: formatCurrency(eventValue)
+        };
     });
 
-    const totalPay = salaryFromShifts + bonusDobradinha + eventsTotal;
+    const totalPay = Math.max(0, salaryFromShifts + bonusDobradinha + eventsTotal);
 
     // Horas acumuladas da equipe
     const shiftHours = shiftsBreakdown.reduce((acc, s) => acc + (s.hours || 0), 0);
@@ -119,6 +132,7 @@ export function calculateEmployee(employee) {
         shiftsBreakdown,
         eventsTotal,
         eventsBreakdown,
+        calculatedEvents,
         totalPay,
         totalHours,
         hasActiveWork

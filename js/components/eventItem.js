@@ -174,6 +174,13 @@ export function createEventElement(data = {}, onChangeCallback) {
     });
     typeSelector.dispatchEvent(new Event('change'));
 
+    hoursInput.addEventListener('input', () => {
+        const raw = parseFloat(hoursInput.value);
+        if (!Number.isNaN(raw) && raw < 0) {
+            hoursInput.value = '0';
+        }
+    });
+
     eventItem.querySelectorAll('input:not([data-type="currency"]), select').forEach(input => {
         input.addEventListener('input', () => {
             if (typeof onChangeCallback === 'function') onChangeCallback();

@@ -231,6 +231,40 @@ html.dark .employee-summary {
     border-bottom: 1px solid rgba(41, 37, 36, 0.8);
 }
 
+/* --- Campo de Nome do Colaborador (Cantos Arredondados idênticos aos Turnos) --- */
+.employee-name {
+    border-radius: 0.5rem !important; /* rounded-lg (8px) correspondente a .shift-hours */
+    transition: border-color 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+                box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+                background-color 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.employee-name:hover:not(:focus) {
+    background-color: rgba(0, 0, 0, 0.025);
+}
+
+html.dark .employee-name:hover:not(:focus) {
+    background-color: rgba(255, 255, 255, 0.035);
+}
+
+.employee-name:focus,
+.employee-name:focus-visible {
+    border-radius: 0.5rem !important;
+    outline: none !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 1px #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.04);
+}
+
+html.dark .employee-name:focus,
+html.dark .employee-name:focus-visible {
+    border-radius: 0.5rem !important;
+    outline: none !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 1px #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.06);
+}
+
 .employee-footer {
     border-top: 1px solid rgba(229, 231, 235, 0.7);
 }
@@ -693,10 +727,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     }
 
     /* Cards de colaborador ocupam toda a altura da célula do grid com footer ancorado */
-    #employee-container .employee-card-details {
+    #employee-container .employee-card-details:not(.hidden) {
         display: flex;
         flex-direction: column;
         height: 100%;
+    }
+
+    /* Ocultação prioritária no grid e na esteira quando filtrado pela busca */
+    #employee-container .employee-card-details.hidden,
+    #employee-container #add-employee-card.hidden,
+    .hidden {
+        display: none !important;
     }
 
     .employee-card-details .employee-summary {
@@ -709,7 +750,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     }
 
     /* Card de Adicionar Colaborador no Grid Desktop */
-    #employee-container #add-employee-card {
+    #employee-container #add-employee-card:not(.hidden) {
+        display: block;
         min-height: 360px;
         height: 100%;
     }

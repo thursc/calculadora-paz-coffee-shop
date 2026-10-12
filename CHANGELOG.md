@@ -2,6 +2,20 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.7] - 12/10/2026
+
+### 🎨 Correção da Busca no Desktop e Contorno Arredondado do Campo de Colaborador
+
+#### 1. Correção da Filtragem de Busca no Grid Desktop
+- **Resolução de Conflito de Especificidade CSS:** Corrigida a regra `#employee-container .employee-card-details` em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), que no desktop forçava `display: flex;` e sobrescrevia a classe `.hidden` do Tailwind.
+- **Isolamento de Ocultação:** A regra do grid agora utiliza `:not(.hidden)` e foi reforçada a declaração `display: none !important;` para elementos com `.hidden`. A busca instantânea agora filtra e oculta os colaboradores em tempo real tanto no desktop quanto no mobile.
+
+#### 2. Contorno com Cantos Arredondados no Campo do Nome do Colaborador
+- **Alinhamento Visual com os Campos de Turnos:** O campo `.employee-name` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) recebeu `border-radius: 0.5rem !important;` (`rounded-lg`), padding interno adequado e borda arredondada sutil.
+- **Foco Idêntico aos Turnos:** Ao ser selecionado/focado, o contorno agora segue o formato de cápsula arredondada com anel suave âmbar (`box-shadow: 0 0 0 1px #f59e0b`), eliminando completamente o retângulo reto de cantos vivos anterior.
+
+---
+
 ## [v1.9.6] - 12/10/2026
 
 ### ♿ Auditoria Lote 3: Acessibilidade (WCAG 2.1 AA), Focus Trap e Limpeza de Código

@@ -30,8 +30,9 @@ export function parseCurrency(value) {
  * Vincula comportamento de máscara/foco amigável para campos monetários
  * @param {HTMLInputElement} input
  * @param {Function} [onBlurCallback]
+ * @param {Function} [onInputCallback]
  */
-export function setupCurrencyHandlers(input, onBlurCallback) {
+export function setupCurrencyHandlers(input, onBlurCallback, onInputCallback) {
     const initialValue = parseCurrency(input.value);
     input.value = formatCurrency(initialValue);
 
@@ -41,6 +42,17 @@ export function setupCurrencyHandlers(input, onBlurCallback) {
             e.target.value = numericValue.toFixed(2).replace('.', ',');
         } else {
             e.target.value = '';
+        }
+    });
+
+    input.addEventListener('input', (e) => {
+        const raw = e.target.value;
+        if (raw.includes('-')) {
+            e.target.value = raw.replace(/-/g, '');
+        }
+        if (typeof onInputCallback === 'function') {
+            const currentNumericValue = parseCurrency(e.target.value);
+            onInputCallback(currentNumericValue);
         }
     });
 

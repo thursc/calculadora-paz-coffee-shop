@@ -2,6 +2,26 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.11] - 12/10/2026
+
+### 🚀 Melhorias de UI, UX e Quality of Life (QoL)
+
+#### 1. Crítico & Lógica de Interação
+- **Recálculo em Tempo Real da Taxa Horária:** Em [js/utils/currency.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/currency.js) e [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), o evento `input` agora dispara imediatamente a atualização dos cálculos e subtotais enquanto o usuário digita (com debounce de 250ms na persistência I/O), eliminando a necessidade de esperar o `blur`.
+- **Harmonização Vertical dos Cards (Alinhamento dos Rodapés):** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) e [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), o grid desktop foi atualizado com `align-items: stretch` e os cards de colaboradores padronizados com `flex-col justify-between` e `.employee-content` com `flex-grow: 1`. Os rodapés (`TOTAL A PAGAR` e o botão `Gerar Holerite`) permanecem perfeitamente alinhados na mesma linha horizontal em todos os cartões.
+
+#### 2. Quality of Life (QoL) & Operação Rápida
+- **Botão "Enviar no WhatsApp" no Modal de Holerite:** Adicionado em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js) botão dedicado com gradiente verde esmeralda e ícone do WhatsApp que dispara diretamente a mensagem codificada (`api.whatsapp.com/send?text=...`) em nova aba/app.
+- **Toast Temporário de Desfazer Exclusão (Undo - 5s):** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), ao excluir um colaborador, um toast flutuante surge no canto inferior com botão "Desfazer" ativo por 5 segundos. Clicar em "Desfazer" restaura instantaneamente o card com todos os turnos, horas e adicionais preservados.
+- **Atalho de Teclado Global (`Alt+N`):** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), atalho `Alt+N` adiciona imediatamente um novo colaborador na esteira com scroll suave e foco no campo do nome sem tocar no mouse.
+
+#### 3. Estética, Microinterações & Estados Vazios
+- **Destaque Semântico no Modal de Exclusão:** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), o nome do colaborador agora é destacado com badge estilizada e tipografia em negrito (`<strong>`), eliminando dúvidas sobre a exclusão.
+- **Transição de Ícone no Botão Copiar:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), o botão de cópia agora transiciona fluidamente entre o ícone da prancheta e um ícone de `Check` verde esmeralda com rotação elástica.
+- **Placeholder Amigável nos Adicionais:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), a seção de adicionais exibe uma caixa pontilhada sutil ("Nenhum adicional ou taxa extra nesta semana") quando vazia, sumindo automaticamente ao adicionar o primeiro evento.
+
+---
+
 ## [v1.9.10] - 12/10/2026
 
 ### 🌓 Transição Ultra Fluida de Tema (Dark / Light Mode)

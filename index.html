@@ -29,7 +29,7 @@
             }
         } catch (_) {}
     </script>
-    <link rel="stylesheet" href="css/styles.css?v=1.9.10">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.11">
 </head>
 
 <body
@@ -229,18 +229,35 @@
                         readonly></textarea>
                 </div>
 
-                <div class="flex justify-end gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
+                <div class="flex flex-wrap sm:flex-nowrap justify-end gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
                     <button type="button"
-                        class="modal-close-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors">
+                        class="modal-close-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer">
                         Fechar
                     </button>
                     <button type="button" id="copy-holerite-btn"
-                        class="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-bold rounded-xl shadow-md transition-all active:scale-95 text-xs sm:text-sm">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                        </svg>
+                        class="flex items-center gap-1.5 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-bold rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm transition-all active:scale-95 text-xs sm:text-sm cursor-pointer"
+                        title="Copiar texto do holerite">
+                        <span class="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
+                            <!-- Ícone Clipboard (Prancheta) -->
+                            <svg class="clipboard-icon absolute inset-0 w-full h-full transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            <!-- Ícone Check (Verde Sucesso) -->
+                            <svg class="check-icon absolute inset-0 w-full h-full text-emerald-500 transition-all duration-300 opacity-0 scale-0 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
                         <span class="copy-btn-text">Copiar Texto</span>
+                    </button>
+                    <button type="button" id="send-whatsapp-btn"
+                        class="flex items-center gap-1.5 px-4.5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-md transition-all active:scale-95 text-xs sm:text-sm cursor-pointer"
+                        title="Abrir no WhatsApp com mensagem preenchida">
+                        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.972.587 1.96.95 3.016.95 3.181 0 5.768-2.587 5.768-5.766.001-3.187-2.575-5.771-5.988-6.137zm3.376 8.212c-.144.405-.837.774-1.17.824-.312.045-.697.072-2.029-.481-1.611-.669-2.639-2.316-2.72-2.424-.08-.108-.654-.87-.654-1.659 0-.788.413-1.177.559-1.336.145-.159.317-.199.423-.199.106 0 .212.002.304.007.098.005.228-.037.357.272.133.319.455 1.109.495 1.19.04.082.067.177.013.285-.053.108-.08.176-.159.269-.079.092-.167.206-.239.277-.08.079-.163.165-.07.325.093.16.413.682.886 1.104.609.544 1.122.712 1.282.792.16.08.253.067.347-.04.093-.108.4-.467.507-.627.106-.16.213-.133.359-.08.146.053.931.439 1.09.519.16.08.266.12.306.186.039.067.039.387-.105.792z"/>
+                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.176L2 22l4.985-1.408C8.455 21.498 10.173 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.628 0-3.136-.5-4.391-1.356l-.314-.213-2.929.827.827-2.929-.213-.314C4.128 14.757 3.628 13.435 3.628 12c0-4.617 3.755-8.372 8.372-8.372s8.372 3.755 8.372 8.372c0 4.617-3.755 8.372-8.372 8.372z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Enviar no WhatsApp</span>
                     </button>
                 </div>
             </div>
@@ -281,11 +298,36 @@
     </div>
 
     <!-- ========================================================
+         TOAST DE DESFAZER EXCLUSÃO (UNDO)
+         ======================================================== -->
+    <div id="undo-toast"
+        class="fixed bottom-5 right-5 sm:right-6 z-50 max-w-sm w-[calc(100vw-2.5rem)] sm:w-auto bg-stone-900 dark:bg-stone-100 text-stone-100 dark:text-stone-900 px-4 py-3 rounded-2xl shadow-2xl flex items-center justify-between gap-3 border border-stone-800 dark:border-stone-200 transition-all duration-300 transform translate-y-20 opacity-0 pointer-events-none"
+        role="status" aria-live="polite">
+        <div class="flex items-center gap-2.5 min-w-0">
+            <span class="text-amber-400 dark:text-amber-600 flex-shrink-0 text-base" aria-hidden="true">🗑️</span>
+            <span id="undo-toast-message" class="text-xs sm:text-sm font-medium truncate">Colaborador excluído</span>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <button type="button" id="undo-toast-btn"
+                class="px-2.5 py-1 text-xs font-bold text-amber-400 dark:text-amber-600 hover:text-amber-300 dark:hover:text-amber-700 bg-stone-800 dark:bg-stone-200 rounded-lg transition-colors cursor-pointer active:scale-95">
+                Desfazer
+            </button>
+            <button type="button" id="undo-toast-close"
+                class="p-1 text-stone-400 hover:text-stone-200 dark:hover:text-stone-700 rounded-lg transition-colors cursor-pointer"
+                aria-label="Fechar aviso">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================================
          TEMPLATE DO CARD DE FUNCIONÁRIO (COLUNA KANBAN)
          ======================================================== -->
     <template id="employee-template">
         <div
-            class="kanban-col employee-card-details w-[85vw] sm:w-[340px] min-w-[310px] max-w-[360px] flex-shrink-0 snap-start bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm transition-all flex flex-col" style="overflow:clip">
+            class="kanban-col employee-card-details w-[85vw] sm:w-[340px] min-w-[310px] max-w-[360px] flex-shrink-0 snap-start bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm transition-all flex flex-col justify-between" style="overflow:clip">
             <!-- Cabeçalho do Card (Resumo e Ações) -->
             <div
                 class="employee-summary p-3.5 sm:p-4 bg-stone-50/70 dark:bg-stone-900/40 flex flex-col gap-2.5">
@@ -326,7 +368,7 @@
             </div>
 
             <!-- Conteúdo do Card (Taxa Horária, Turnos, Dobradinha, Adicionais) -->
-            <div class="employee-content px-3.5 sm:px-4 flex flex-col gap-4" role="region">
+            <div class="employee-content px-3.5 sm:px-4 flex flex-col gap-4 flex-grow" role="region">
                 <!-- Campo de Valor/Hora Compacto -->
                 <div
                     class="flex items-center justify-between bg-stone-100/70 dark:bg-stone-900 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800">
@@ -389,6 +431,10 @@
                     </div>
                     <div class="event-list space-y-2">
                         <!-- Itens de adicionais inseridos via JS -->
+                    </div>
+                    <!-- Placeholder quando vazio -->
+                    <div class="events-empty-placeholder border border-dashed border-stone-200 dark:border-stone-800/80 rounded-xl py-2 px-3 text-center text-stone-400 dark:text-stone-500 text-[11px] select-none transition-all mt-2">
+                        Nenhum adicional ou taxa extra nesta semana.
                     </div>
                 </div>
             </div>
@@ -453,7 +499,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.10"></script>
+    <script type="module" src="js/app.js?v=1.9.11"></script>
 </body>
 
 </html>

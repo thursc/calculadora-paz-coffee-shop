@@ -25,6 +25,62 @@ document.addEventListener('DOMContentLoaded', () => {
     const storageAlertMessage = document.getElementById('storage-alert-message');
     const storageAlertCloseBtn = document.getElementById('storage-alert-close-btn');
 
+    // Elementos do Toast de Desfazer Exclusão (Undo)
+    const undoToast = document.getElementById('undo-toast');
+    const undoToastMessage = document.getElementById('undo-toast-message');
+    const undoToastBtn = document.getElementById('undo-toast-btn');
+    const undoToastClose = document.getElementById('undo-toast-close');
+
+    let undoTimeout = null;
+    let pendingDeletedEmployee = null;
+
+    function showUndoToast(employeeData, employeeName) {
+        if (!undoToast) return;
+        pendingDeletedEmployee = employeeData;
+
+        if (undoToastMessage) {
+            const displayName = (employeeName || employeeData.name || '').trim() || 'Colaborador';
+            undoToastMessage.textContent = `"${displayName}" excluído`;
+        }
+
+        if (undoTimeout) {
+            clearTimeout(undoTimeout);
+        }
+
+        undoToast.classList.add('is-visible');
+
+        undoTimeout = setTimeout(() => {
+            hideUndoToast();
+        }, 5000);
+    }
+
+    function hideUndoToast() {
+        if (undoTimeout) {
+            clearTimeout(undoTimeout);
+            undoTimeout = null;
+        }
+        if (undoToast) {
+            undoToast.classList.remove('is-visible');
+        }
+        pendingDeletedEmployee = null;
+    }
+
+    if (undoToastBtn) {
+        undoToastBtn.addEventListener('click', () => {
+            if (pendingDeletedEmployee) {
+                const dataToRestore = { ...pendingDeletedEmployee };
+                hideUndoToast();
+                addEmployee(dataToRestore, true);
+            }
+        });
+    }
+
+    if (undoToastClose) {
+        undoToastClose.addEventListener('click', () => {
+            hideUndoToast();
+        });
+    }
+
     const modalManager = new ModalManager();
 
     // ==========================================
@@ -162,8 +218,15 @@ document.addEventListener('DOMContentLoaded', () => {
             filterEmployees(e.target.value);
         });
 
-        // Atalho global rápido (Ctrl+K ou barra '/') para focar a busca no desktop
+        // Atalho global rápido (Alt+N para novo colaborador, Ctrl+K ou barra '/' para focar a busca)
         window.addEventListener('keydown', (e) => {
+            // Atalho global Alt+N para adicionar colaborador
+            if (e.altKey && e.key.toLowerCase() === 'n') {
+                e.preventDefault();
+                addEmployee({}, true);
+                return;
+            }
+
             const isCtrlK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
             const isSlash = e.key === '/';
             const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
@@ -277,9 +340,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 onStateChange: recalculateAndSave,
                 onRequestDelete: (cardElement, employeeName) => {
                     modalManager.openDeleteConfirm(
-                        `Tem certeza que deseja excluir ${employeeName}?`,
+                        employeeName,
                         () => {
                             const isMobile = window.innerWidth < 768;
+                            const deletedData = typeof cardElement.getEmployeeData === 'function'
+                                ? cardElement.getEmployeeData()
+                                : null;
 
                             // 1. FLIP (First): Armazena as posições dos elementos irmãos antes da exclusão
                             const siblings = Array.from(employeeContainer.children).filter(
@@ -349,6 +415,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                             }
                                             // Persiste no storage de forma imediata após o término da animação
                                             recalculateAndSave(true);
+                                            // Exibe o toast temporário de desfazer exclusão (Undo - 5s)
+                                            if (deletedData) {
+                                                showUndoToast(deletedData, employeeName);
+                                            }
                                         };
 
                                         if (movingElements.length > 0) {

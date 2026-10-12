@@ -193,6 +193,8 @@ export function createEventElement(data = {}, onChangeCallback) {
     eventItem.querySelectorAll('input[data-type="currency"]').forEach(input => {
         setupCurrencyHandlers(input, () => {
             if (typeof onChangeCallback === 'function') onChangeCallback();
+        }, () => {
+            if (typeof onChangeCallback === 'function') onChangeCallback();
         });
     });
 

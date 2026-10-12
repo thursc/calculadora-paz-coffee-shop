@@ -13,6 +13,7 @@ export class ModalManager {
         this.deleteConfirmModal = document.getElementById('delete-confirm-modal');
         this.holeriteTextarea = document.getElementById('holerite-text');
         this.copyHoleriteBtn = document.getElementById('copy-holerite-btn');
+        this.sendWhatsappBtn = document.getElementById('send-whatsapp-btn');
         this.deleteConfirmText = document.getElementById('delete-confirm-text');
         this.confirmDeleteBtn = document.getElementById('confirm-delete-btn');
 
@@ -61,6 +62,17 @@ export class ModalManager {
                         this.copyTimeout = null;
                     }, 2000);
                 }
+            });
+        }
+
+        // Disparo direto de mensagem pré-formatada para o WhatsApp
+        if (this.sendWhatsappBtn) {
+            this.sendWhatsappBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const text = this.holeriteTextarea?.value || '';
+                if (!text) return;
+                const encodedText = encodeURIComponent(text);
+                window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank', 'noopener,noreferrer');
             });
         }
 
@@ -194,9 +206,10 @@ export class ModalManager {
         this.open(this.holeriteModal, this.copyHoleriteBtn);
     }
 
-    openDeleteConfirm(message, onConfirm) {
+    openDeleteConfirm(employeeName, onConfirm) {
         if (this.deleteConfirmText) {
-            this.deleteConfirmText.textContent = message;
+            const name = (employeeName || '').trim() || 'este colaborador';
+            this.deleteConfirmText.innerHTML = `Tem certeza que deseja excluir <strong class="font-bold text-stone-900 dark:text-stone-50 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20">${name}</strong>? Todos os turnos e adicionais desta escala serão removidos.`;
         }
         this.onConfirmDeleteCallback = onConfirm;
         const cancelBtn = this.deleteConfirmModal?.querySelector('.modal-close-btn');

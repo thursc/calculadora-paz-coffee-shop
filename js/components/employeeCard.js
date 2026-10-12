@@ -204,8 +204,19 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
+    // Gerenciador do estado vazio da seção de adicionais
+    const eventsEmptyPlaceholder = cardContent.querySelector('.events-empty-placeholder');
+    function updateEventsEmptyState() {
+        if (eventsEmptyPlaceholder) {
+            const hasEvents = eventList.querySelectorAll('.event-item').length > 0;
+            eventsEmptyPlaceholder.classList.toggle('hidden', hasEvents);
+        }
+    }
+    updateEventsEmptyState();
+
     // Função de notificação para a aplicação principal
     function notifyChange() {
+        updateEventsEmptyState();
         if (typeof onStateChange === 'function') {
             onStateChange();
         }
@@ -377,7 +388,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     });
 
     if (hourlyRateInput) {
-        setupCurrencyHandlers(hourlyRateInput, notifyChange);
+        setupCurrencyHandlers(hourlyRateInput, notifyChange, notifyChange);
     }
 
     // Extração estruturada de dados compatível com o schema do localStorage

@@ -1,8 +1,11 @@
 /**
  * Gerenciamento dos modais da aplicação (Holerite e Confirmação de Exclusão)
+ * Inclui Focus Trap acessível (WCAG 2.1 AA) e Focus Restoration para tecnologias assistivas
  */
 
 import { copyTextToClipboard } from '../utils/clipboard.js';
+
+const FOCUSABLE_SELECTOR = 'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export class ModalManager {
     constructor() {
@@ -17,6 +20,8 @@ export class ModalManager {
         this.copyTimeout = null;
 
         this.onConfirmDeleteCallback = null;
+        this.lastFocusedElement = null;
+        this.activeModal = null;
 
         this.init();
     }
@@ -29,11 +34,9 @@ export class ModalManager {
             });
         });
 
-        // Fechamento com a tecla Escape
+        // Fechamento com a tecla Escape e Focus Trap para a tecla Tab
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeAll();
-            }
+            this.handleKeyDown(e);
         });
 
         // Copiar holerite com API moderna e feedback visual sem destruir a árvore SVG
@@ -78,8 +81,54 @@ export class ModalManager {
         }
     }
 
-    open(modal) {
+    handleKeyDown(e) {
+        if (!this.activeModal) return;
+
+        if (e.key === 'Escape') {
+            e.preventDefault();
+            this.closeAll();
+            return;
+        }
+
+        if (e.key === 'Tab') {
+            this.trapFocus(e);
+        }
+    }
+
+    trapFocus(e) {
+        const modal = this.activeModal;
         if (!modal) return;
+
+        const focusables = Array.from(modal.querySelectorAll(FOCUSABLE_SELECTOR)).filter(
+            el => el.offsetParent !== null || el.getClientRects().length > 0
+        );
+
+        if (focusables.length === 0) {
+            e.preventDefault();
+            return;
+        }
+
+        const firstElement = focusables[0];
+        const lastElement = focusables[focusables.length - 1];
+
+        if (e.shiftKey) {
+            if (document.activeElement === firstElement || !modal.contains(document.activeElement)) {
+                e.preventDefault();
+                lastElement.focus();
+            }
+        } else {
+            if (document.activeElement === lastElement || !modal.contains(document.activeElement)) {
+                e.preventDefault();
+                firstElement.focus();
+            }
+        }
+    }
+
+    open(modal, initialFocusElement = null) {
+        if (!modal) return;
+        this.lastFocusedElement = document.activeElement;
+        this.activeModal = modal;
+
         // Aplica overflow-hidden apenas para modais com rolagem extensa (holerite),
         // evitando forçar recálculo global de layout (reflow) da página no modal de exclusão
         if (modal === this.holeriteModal) {
@@ -87,21 +136,44 @@ export class ModalManager {
         }
         modal.classList.remove('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'false');
+
+        // Mover foco para o elemento inicial ou primeiro focalizável dentro do modal
+        requestAnimationFrame(() => {
+            if (initialFocusElement && typeof initialFocusElement.focus === 'function') {
+                initialFocusElement.focus();
+            } else {
+                const firstFocusable = modal.querySelector(FOCUSABLE_SELECTOR);
+                if (firstFocusable && typeof firstFocusable.focus === 'function') {
+                    firstFocusable.focus();
+                }
+            }
+        });
     }
 
     close(modal) {
         if (!modal) return;
         modal.classList.add('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'true');
+
+        if (this.activeModal === modal) {
+            this.activeModal = null;
+        }
+
         if (modal === this.holeriteModal || (this.holeriteModal?.classList.contains('opacity-0') && this.deleteConfirmModal?.classList.contains('opacity-0'))) {
             document.body.classList.remove('overflow-hidden');
         }
+
+        // Restaura o foco para o elemento que disparou a abertura do modal
+        if (this.lastFocusedElement && typeof this.lastFocusedElement.focus === 'function') {
+            this.lastFocusedElement.focus();
+        }
+        this.lastFocusedElement = null;
     }
 
     closeAll() {
         this.close(this.holeriteModal);
         this.close(this.deleteConfirmModal);
-        document.body.classList.remove('overflow-hidden');
+        this.activeModal = null;
         this.onConfirmDeleteCallback = null;
     }
 
@@ -119,7 +191,7 @@ export class ModalManager {
         if (this.copyHoleriteBtn) {
             this.copyHoleriteBtn.classList.remove('is-copied');
         }
-        this.open(this.holeriteModal);
+        this.open(this.holeriteModal, this.copyHoleriteBtn);
     }
 
     openDeleteConfirm(message, onConfirm) {
@@ -127,6 +199,8 @@ export class ModalManager {
             this.deleteConfirmText.textContent = message;
         }
         this.onConfirmDeleteCallback = onConfirm;
-        this.open(this.deleteConfirmModal);
+        const cancelBtn = this.deleteConfirmModal?.querySelector('.modal-close-btn');
+        this.open(this.deleteConfirmModal, cancelBtn);
     }
 }
+

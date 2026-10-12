@@ -609,13 +609,41 @@ html.dark .event-item.is-active .lock-badge {
     color: #ffffff !important;
 }
 
-/* --- Foco Acessível --- */
+/* --- Foco Acessível (WCAG 2.1 AA - Critério 2.4.7 Foco Visível) --- */
 button:focus {
     outline: none;
 }
-button:focus-visible, input:focus-visible, select:focus-visible {
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45);
+}
+
+/* Foco evidente nos Chips Táteis de Turnos, Dobradinha e Adicionais (com inputs sr-only) */
+.shift-pill.is-focused,
+.shift-pill:has(.shift-checkbox:focus-visible) {
+    outline: 2px solid var(--accent-amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--accent-amber-glow);
+}
+
+.dobradinha-pill.is-focused,
+.dobradinha-pill:has(.bonus-dobradinha-checkbox:focus-visible) {
+    outline: 2px solid #059669;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.25);
+}
+
+.event-item.is-focused,
+.event-item:has(.event-checkbox:focus-visible) {
+    outline: 2px solid var(--accent-amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px var(--accent-amber-glow);
+}
+
+.event-toggle-label:has(.event-checkbox:focus-visible) .event-check-indicator {
+    outline: 2px solid var(--accent-amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px var(--accent-amber-glow);
 }
 
 /* --- Detalhamento de Cálculos (Alinhamento Vertical Homogêneo) --- */

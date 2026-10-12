@@ -58,21 +58,22 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const savedShift = savedShifts.find(s => s.id === shift.id) || {};
         const shiftEl = document.createElement('div');
         // cursor-pointer no container inteiro — toda a linha é clicável
+        const shiftInputId = `shift-${uniqueId}-${shift.id}`;
         shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none cursor-pointer';
         shiftEl.innerHTML = `
             <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2">
-                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}">
+                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}">
                 <span class="shift-check-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0 transition-colors">
                     <svg class="w-2.5 h-2.5 hidden text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                 </span>
-                <span class="shift-label-text text-sm font-semibold text-stone-800 dark:text-stone-200 whitespace-nowrap">
+                <label for="${shiftInputId}" class="shift-label-text text-sm font-semibold text-stone-800 dark:text-stone-200 whitespace-nowrap cursor-pointer">
                     ${shift.label}
-                </span>
+                </label>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0 shift-hours-wrapper">
-                <input type="number" class="shift-hours w-16 py-1 px-2 text-right text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 transition-opacity" step="0.5" min="0">
+                <input type="number" class="shift-hours w-16 py-1 px-2 text-right text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 transition-opacity" step="0.5" min="0" aria-label="Horas de ${shift.label}">
                 <span class="text-xs text-stone-400 font-medium">hrs</span>
             </div>
         `;
@@ -108,14 +109,34 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             }
         };
 
+        // Foco acessível via teclado
+        checkbox.addEventListener('focus', () => shiftEl.classList.add('is-focused'));
+        checkbox.addEventListener('blur', () => shiftEl.classList.remove('is-focused'));
+
         // Clique em qualquer parte da linha ativa/desativa o turno,
         // EXCETO se o alvo for dentro do wrapper de horas
         shiftEl.addEventListener('click', (e) => {
             if (e.target.closest('.shift-hours-wrapper')) return;
+            // Se o clique foi acionado diretamente no checkbox (ex: ativado por teclado com Espaço), não reinverter
+            if (e.target === checkbox) {
+                setShiftState(checkbox.checked);
+                notifyChange();
+                return;
+            }
             e.preventDefault();
             checkbox.checked = !checkbox.checked;
             setShiftState(checkbox.checked);
             notifyChange();
+        });
+
+        // Suporte à tecla Enter quando focado no checkbox
+        checkbox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                checkbox.checked = !checkbox.checked;
+                setShiftState(checkbox.checked);
+                notifyChange();
+            }
         });
 
         // Impede que qualquer clique no wrapper de horas borbulhe para a linha e ative o turno
@@ -147,11 +168,30 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     });
 
 
-    // Pílula interativa da Dobradinha
+    // Pílula interativa da Dobradinha (com foco acessível e teclado)
     if (dobradinhaContainer) {
         dobradinhaContainer.addEventListener('click', (e) => {
             if (dobradinhaCheckbox.disabled) return;
+            if (e.target === dobradinhaCheckbox) {
+                notifyChange();
+                return;
+            }
             dobradinhaCheckbox.checked = !dobradinhaCheckbox.checked;
+            notifyChange();
+        });
+
+        dobradinhaCheckbox.addEventListener('focus', () => dobradinhaContainer.classList.add('is-focused'));
+        dobradinhaCheckbox.addEventListener('blur', () => dobradinhaContainer.classList.remove('is-focused'));
+
+        dobradinhaCheckbox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !dobradinhaCheckbox.disabled) {
+                e.preventDefault();
+                dobradinhaCheckbox.checked = !dobradinhaCheckbox.checked;
+                notifyChange();
+            }
+        });
+
+        dobradinhaCheckbox.addEventListener('change', () => {
             notifyChange();
         });
     }

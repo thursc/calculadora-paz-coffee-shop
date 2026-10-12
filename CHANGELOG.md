@@ -2,7 +2,34 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
-## [v1.9.5] - 12/10/2026
+## [v1.9.6] - 12/10/2026
+
+### ♿ Auditoria Lote 3: Acessibilidade (WCAG 2.1 AA), Focus Trap e Limpeza de Código
+
+#### 1. Liberação do Zoom no Viewport Mobile (Item #7 - WCAG 1.4.4 Resize Text)
+- **Acessibilidade Visual em Dispositivos Móveis:** Ajustada a tag `<meta name="viewport">` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) para `width=device-width, initial-scale=1.0, viewport-fit=cover`.
+- **Eliminação de Barreiras:** Removidas as diretivas restritivas `maximum-scale=1.0` e `user-scalable=no`, permitindo que usuários com baixa visão façam zoom e ampliem o texto com gestos de pinça conforme as diretrizes WCAG 2.1 AA.
+
+#### 2. Foco Visível e Suporte a Teclado nos Chips de Turnos e Dobradinha (Item #8 - WCAG 2.4.7 Focus Visible)
+- **Anéis de Foco Evidentes:** Implementadas regras CSS em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) utilizando `:has(:focus-visible)` e classes `.is-focused` de alta compatibilidade para desenhar anéis de foco âmbar (`--accent-amber`) e esmeralda de alto contraste ao redor dos chips quando navegados por teclado (`Tab`).
+- **Navegação Semântica com Teclado:** Em [employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), os checkboxes receberam IDs únicos, atributos `aria-label` e rótulos vinculados com `<label for="...">`.
+- **Alternância Completa com Teclas:** Habilitado suporte à alternância de turnos e dobradinha tanto pela barra de espaço (nativa) quanto pela tecla `Enter`, sincronizando o estado visual e o recálculo da folha.
+
+#### 3. Focus Trap e Restauração de Foco nos Modais (Item #9 - WAI-ARIA Modal Dialog)
+- **Ciclo Fechado de Tabulação:** Em [modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), adicionado interceptor da tecla `Tab` que aprisiona o foco ciclicamente dentro do modal aberto, impedindo que o cursor do teclado vaze para o conteúdo em segundo plano.
+- **Restauração de Foco Automática:** Ao fechar qualquer modal (por Esc, botão X, botão fechar ou clique no backdrop), o foco do navegador é restaurado com precisão para o elemento original que o acionou (`lastFocusedElement`).
+- **Foco Inicial Inteligente:** Ao abrir o demonstrativo de holerite, o foco vai diretamente para o botão "Copiar Texto"; na confirmação de exclusão, o foco inicial vai para o botão "Cancelar", prevenindo confirmações acidentais por Enter.
+- **Marcação ARIA Completa:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), modais receberam `aria-labelledby` e `aria-describedby` vinculados aos seus respectivos títulos e textos explicativos.
+
+#### 4. Limpeza de Classes Tailwind Inválidas (Item #11)
+- **Normalização com Tailwind v3:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), substituídas as classes inexistentes `shadow-xs` e `shadow-2xs` pela classe padrão suportada `shadow-sm`, garantindo renderização consistente entre navegadores.
+
+#### 5. Remoção de Código Morto (Item #12 - Manutenibilidade)
+- **Limpeza em calculator.js:** Removida a função órfã `calculateDashboardMetrics` em [calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js), que não era consumida em nenhuma parte da aplicação, mantendo o serviço de cálculo exclusivamente focado nas regras de remuneração da equipe.
+
+---
+
+
 
 ### 🚀 Auditoria Lote 2: Otimização de I/O com Debounce, Preservação de SVG e Correção de Rolagem
 

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Paz Coffee Shop - Calculadora de Equipe</title>
     <!-- Tailwind CSS com suporte a Dark Mode via classe -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,7 +21,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=1.9.5">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.6">
 </head>
 
 <body
@@ -31,7 +31,7 @@
          CABEÇALHO / BARRA DE COMANDOS EXECUTIVA
          ======================================================== -->
     <header
-        class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-xs transition-colors duration-200">
+        class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
             <!-- Marca: Logo + Paz Coffee Shop sempre por extenso -->
             <div class="flex items-center gap-2.5 min-w-0 order-1">
@@ -58,10 +58,10 @@
                         </svg>
                     </div>
                     <input type="text" id="employee-search" placeholder="Buscar colaborador..."
-                        class="w-full pl-9 pr-10 md:pr-14 py-2 bg-stone-100/80 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800 rounded-xl text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all shadow-2xs">
+                        class="w-full pl-9 pr-10 md:pr-14 py-2 bg-stone-100/80 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800 rounded-xl text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all shadow-sm">
                     <!-- Atalho visual de teclado no desktop -->
                     <div class="hidden md:flex absolute inset-y-0 right-0 pr-2.5 items-center pointer-events-none">
-                        <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-stone-400 dark:text-stone-500 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-md shadow-2xs">Ctrl K</kbd>
+                        <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-stone-400 dark:text-stone-500 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-md shadow-sm">Ctrl K</kbd>
                     </div>
                     <button type="button" id="clear-search-btn"
                         class="absolute inset-y-0 right-0 md:right-11 pr-2.5 flex items-center text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hidden cursor-pointer"
@@ -149,14 +149,14 @@
          ======================================================== -->
     <div id="holerite-modal"
         class="modal pointer-events-none fixed inset-0 flex items-center justify-center opacity-0 z-50 p-4"
-        role="dialog" aria-modal="true" aria-hidden="true">
+        role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="holerite-title">
         <div class="modal-overlay fixed inset-0 bg-black/65 backdrop-blur-md"></div>
         <div
             class="modal-container relative bg-white dark:bg-[#1a1715] w-full max-w-lg mx-auto rounded-2xl shadow-2xl z-10 overflow-hidden border border-stone-200 dark:border-stone-800 max-h-[90vh] flex flex-col">
             <div class="modal-content p-5 sm:p-6 flex flex-col flex-grow overflow-y-auto text-left">
                 <div class="flex justify-between items-center pb-3 border-b border-stone-200 dark:border-stone-800">
                     <div>
-                        <h3 class="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">Holerite de
+                        <h3 id="holerite-title" class="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">Holerite de
                             Pagamento</h3>
                         <p class="text-xs text-stone-500 dark:text-stone-400">Texto pronto para enviar no WhatsApp do
                             colaborador</p>
@@ -199,13 +199,13 @@
          ======================================================== -->
     <div id="delete-confirm-modal"
         class="modal pointer-events-none fixed inset-0 flex items-center justify-center opacity-0 z-50 p-4"
-        role="dialog" aria-modal="true" aria-hidden="true">
+        role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-text">
         <div class="modal-overlay fixed inset-0 bg-black/65"></div>
         <div
             class="modal-container relative bg-white dark:bg-[#1a1715] w-full max-w-sm mx-auto rounded-2xl shadow-2xl z-10 overflow-hidden border border-stone-200 dark:border-stone-800">
             <div class="modal-content p-5 sm:p-6 text-left">
                 <div class="flex justify-between items-center pb-3 border-b border-stone-200 dark:border-stone-800">
-                    <h3 class="text-lg font-bold text-stone-900 dark:text-stone-100">Confirmar Exclusão</h3>
+                    <h3 id="delete-confirm-title" class="text-lg font-bold text-stone-900 dark:text-stone-100">Confirmar Exclusão</h3>
                     <button type="button"
                         class="modal-close-btn p-1.5 rounded-lg text-stone-400 hover:text-stone-800 dark:hover:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-800 active:scale-90 transition-all cursor-pointer"
                         aria-label="Fechar modal">
@@ -300,7 +300,7 @@
                     <div class="dobradinha-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-800/30 cursor-pointer select-none"
                         data-bonus="dobradinha" title="Adiciona R$ 50,00 quando escalado manhã e noite no domingo">
                         <div class="flex items-center gap-2">
-                            <input type="checkbox" class="bonus-dobradinha-checkbox sr-only" disabled>
+                            <input type="checkbox" class="bonus-dobradinha-checkbox sr-only" disabled aria-label="Bônus Dobradinha de Domingo (+R$ 50,00)">
                             <span
                                 class="dobradinha-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-2.5 h-2.5 hidden text-emerald-500" viewBox="0 0 20 20"
@@ -400,7 +400,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.5"></script>
+    <script type="module" src="js/app.js?v=1.9.6"></script>
 </body>
 
 </html>

@@ -4,6 +4,27 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.2.6] - 12/10/2026
+
+### 🖱️ Navegação Horizontal Desktop, Início no Primeiro Colaborador e Taxa Padrão de R$ 20,00
+- **Scroll do Mouse e Teclas de Seta Horizontais no Desktop**:
+  - A roda do mouse (`wheel`) agora translada o scroll vertical para a esteira horizontal de colaboradores, proporcionando navegação fluida e natural no desktop.
+  - O scroll vertical nativo é mantido intacto dentro dos modais de Holerite e Confirmação.
+  - Adicionado suporte às teclas de seta (`ArrowLeft` e `ArrowRight`) para avançar e retroceder cards na esteira (passo de 360px), além das teclas `Home` (início) e `End` (fim).
+  - Preserva a digitação em inputs, textareas e seletores de formulário sem capturar as setas.
+  - Ajustado `scroll-snap-type: x proximity` em telas maiores que 640px para evitar travamentos ou estalos bruscos durante a rolagem contínua com a roda do mouse.
+- **Início Sempre Focado no Primeiro Colaborador (Extrema Esquerda)**:
+  - Desativada a restauração automática de scroll do histórico do navegador (`history.scrollRestoration = 'manual'`).
+  - Implementado `scrollToFirstEmployee()`, garantindo que ao abrir ou recarregar a página a visualização comece sempre no primeiro funcionário à esquerda (posição 0).
+- **Atualização da Taxa Horária Padrão para R$ 20,00**:
+  - Constante `DEFAULT_HOURLY_RATE` alterada de `R$ 15,00` para `R$ 20,00` em [config.js](file:///d:/dev/calculadora-paz-coffee-shop/js/config.js).
+  - Atualizado o valor padrão no template HTML em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e em [employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js).
+  - Adicionada rotina de migração em [storage.js](file:///d:/dev/calculadora-paz-coffee-shop/js/state/storage.js) para atualizar colaboradores salvos no localStorage com o padrão antigo de R$ 15,00 para o novo valor de R$ 20,00.
+- **Cache-Busting**:
+  - Versão dos assets elevada para `v=1.2.7`.
+
+---
+
 ## [v1.2.5] - 12/10/2026
 
 ### 📱 Centralização Definitiva do Modal e Bloqueio de Zoom Out no Mobile

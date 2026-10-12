@@ -187,10 +187,83 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. Inicialização da Aplicação
+    // 5. Início Focado no Primeiro Colaborador
+    // ==========================================
+    function scrollToFirstEmployee() {
+        if (!employeeContainer) return;
+        employeeContainer.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+        window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+        const firstCard = employeeContainer.querySelector('.employee-card-details');
+        if (firstCard) {
+            firstCard.scrollIntoView({ behavior: 'instant', inline: 'start', block: 'nearest' });
+        }
+    }
+
+    // ==========================================
+    // 6. Navegação Desktop: Scroll do Mouse e Setas
+    // ==========================================
+    function setupDesktopNavigation() {
+        // Scroll horizontal fluido com a roda do mouse (wheel)
+        window.addEventListener('wheel', (e) => {
+            // Se algum modal estiver aberto ou o cursor estiver dentro de um modal, mantém o comportamento vertical nativo
+            if (document.body.classList.contains('overflow-hidden') || e.target.closest('.modal')) {
+                return;
+            }
+
+            // Se o usuário estiver usando trackpad com rolagem horizontal nativa (deltaX), preserva o evento nativo
+            if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                return;
+            }
+
+            if (e.deltaY !== 0 && employeeContainer) {
+                e.preventDefault();
+                employeeContainer.scrollLeft += e.deltaY;
+            }
+        }, { passive: false });
+
+        // Setas do teclado (Esquerda e Direita)
+        window.addEventListener('keydown', (e) => {
+            // Ignora se algum modal estiver aberto
+            if (document.body.classList.contains('overflow-hidden') || document.querySelector('.modal:not(.opacity-0)')) {
+                return;
+            }
+
+            // Preserva as teclas caso o usuário esteja editando algum input, textarea ou select
+            const activeEl = document.activeElement;
+            const activeTag = activeEl ? activeEl.tagName.toLowerCase() : '';
+            if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || activeEl?.isContentEditable) {
+                return;
+            }
+
+            // Largura média de um card com espaçamento (~340px + gap 24px)
+            const step = 360;
+
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                employeeContainer.scrollBy({ left: step, behavior: 'smooth' });
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                employeeContainer.scrollBy({ left: -step, behavior: 'smooth' });
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                employeeContainer.scrollTo({ left: 0, behavior: 'smooth' });
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                employeeContainer.scrollTo({ left: employeeContainer.scrollWidth, behavior: 'smooth' });
+            }
+        });
+    }
+
+    // ==========================================
+    // 7. Inicialização da Aplicação
     // ==========================================
     function init() {
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+
         initTheme();
+        setupDesktopNavigation();
 
         try {
             const saved = loadStoredEmployees();
@@ -206,7 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         recalculateAndSave();
+
+        // Sempre posiciona no primeiro colaborador (mais à esquerda) ao iniciar
+        requestAnimationFrame(() => {
+            scrollToFirstEmployee();
+        });
     }
 
     init();
+
+    window.addEventListener('load', scrollToFirstEmployee, { once: true });
+    window.addEventListener('pageshow', scrollToFirstEmployee);
 });

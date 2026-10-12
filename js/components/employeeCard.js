@@ -3,7 +3,7 @@
  * Visual moderno estilo Cafeteria com Chips Táteis (Toggle Pills) e Coluna Kanban
  */
 
-import { SHIFTS } from '../config.js';
+import { SHIFTS, DEFAULT_HOURLY_RATE } from '../config.js';
 import { setupCurrencyHandlers, formatCurrency } from '../utils/currency.js';
 import { calculateEmployee } from '../services/calculator.js';
 import { generateHoleriteText } from '../services/holerite.js';
@@ -50,7 +50,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
     nameInput.value = data.name || '';
     if (hourlyRateInput) {
-        hourlyRateInput.value = data.hourlyRate || 'R$ 15,00';
+        hourlyRateInput.value = data.hourlyRate || DEFAULT_HOURLY_RATE;
     }
     dobradinhaCheckbox.checked = Boolean(data.bonusDobradinha);
 
@@ -273,7 +273,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         return {
             id: cardDetails.dataset.id,
             name: nameInput.value,
-            hourlyRate: hourlyRateInput ? hourlyRateInput.value : (data.hourlyRate || 'R$ 15,00'),
+            hourlyRate: hourlyRateInput ? hourlyRateInput.value : (data.hourlyRate || DEFAULT_HOURLY_RATE),
             shifts,
             bonusDobradinha: dobradinhaCheckbox.checked,
             events,

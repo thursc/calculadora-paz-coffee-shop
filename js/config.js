@@ -13,4 +13,4 @@ export const BONUS_DOBRADINHA_VALUE = 50;
 
 export const STORAGE_KEY = 'pazCoffeeCalculatorData';
 
-export const DEFAULT_HOURLY_RATE = 'R$ 15,00';
+export const DEFAULT_HOURLY_RATE = 'R$ 20,00';

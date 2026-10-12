@@ -15,15 +15,19 @@ export function loadStoredEmployees() {
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
 
-        return parsed.map((emp, index) => ({
-            id: emp.id || `employee-${Date.now()}-${index}`,
-            name: typeof emp.name === 'string' ? emp.name : '',
-            hourlyRate: emp.hourlyRate || DEFAULT_HOURLY_RATE,
-            shifts: Array.isArray(emp.shifts) ? emp.shifts : [],
-            bonusDobradinha: Boolean(emp.bonusDobradinha),
-            events: Array.isArray(emp.events) ? emp.events : [],
-            open: emp.open !== false
-        }));
+        return parsed.map((emp, index) => {
+            const rawRate = emp.hourlyRate;
+            const hourlyRate = (!rawRate || rawRate === 'R$ 15,00') ? DEFAULT_HOURLY_RATE : rawRate;
+            return {
+                id: emp.id || `employee-${Date.now()}-${index}`,
+                name: typeof emp.name === 'string' ? emp.name : '',
+                hourlyRate,
+                shifts: Array.isArray(emp.shifts) ? emp.shifts : [],
+                bonusDobradinha: Boolean(emp.bonusDobradinha),
+                events: Array.isArray(emp.events) ? emp.events : [],
+                open: emp.open !== false
+            };
+        });
     } catch (err) {
         console.error('Erro ao ler dados do localStorage:', err);
         return [];

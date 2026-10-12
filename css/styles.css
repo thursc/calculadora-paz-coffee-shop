@@ -72,6 +72,12 @@ html.dark ::-webkit-scrollbar-thumb {
     -webkit-overflow-scrolling: touch;
 }
 
+@media (min-width: 640px) {
+    .kanban-track {
+        scroll-snap-type: x proximity;
+    }
+}
+
 .kanban-col {
     scroll-snap-align: start;
 }

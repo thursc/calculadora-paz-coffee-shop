@@ -4,6 +4,33 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.3.0] - 12/10/2026
+
+### 🖥️ Refatoração de Ergonomia e Responsividade Desktop (Mobile-First Estrito)
+- **Cabeçalho Unificado e Barra de Comandos Integrada**:
+  - Em telas médias e grandes (`md:`, `lg:`, `xl:`), o topo organiza-se em uma barra executiva horizontal fluida: Logotipo e marca à esquerda, campo de busca com foco rápido e atalho visual `<kbd>Ctrl K</kbd>` centralizado, e botões de ação à direita.
+  - No mobile (`< md`), a busca quebra de linha de forma limpa na segunda fileira sem esmagar o logotipo ou os botões de ação.
+- **Visualização em Grade Fluida (`Grid Mode`) no Desktop**:
+  - Fim da sensação de espaço ocioso em monitores Full HD, Ultrawide e notebooks: os colaboradores distribuem-se automaticamente em colunas dinâmicas fluidas (`repeat(auto-fill, minmax(320px, 1fr))` com container máximo de 1560px centralizado).
+  - Cards equalizados verticalmente: rodapés (`employee-footer`) fixados de forma homogênea no fundo através de alinhamento `margin-top: auto`.
+  - Cards recolhidos no modo grade alinham-se no topo (`align-self: start`) sem esticar espaço vazio indesejado.
+- **Alternador de Visualização Desktop (Grade ↔ Esteira)**:
+  - Adicionado seletor segmentado elegante no cabeçalho exclusivo para telas desktop (`hidden md:flex`) permitindo alternar instantaneamente entre **Grade Fluida** e **Esteira Horizontal (Kanban)**.
+  - Preferência de visualização persistida no `localStorage ('pazCoffeeDesktopView')`.
+- **Scroll Inteligente e Atalhos Ergonômicos**:
+  - Quando no modo Grade no desktop, a rolagem do mouse e teclas voltam ao comportamento vertical natural da página, sem retenção desnecessária. No modo Esteira, a navegação horizontal fluida e suave permanece ativa.
+  - Atalhos globais `Ctrl + K` e barra `/` focam e selecionam instantaneamente o campo de busca de colaboradores, e `Escape` desseleciona.
+- **Microinterações e Ergonomia de Cursor com Mouse**:
+  - Efeitos de `hover` sutis com sombras suaves e realce de borda âmbar nos cards de colaborador, chips táteis e botão de adicionar via `@media (hover: hover) and (pointer: fine)`.
+  - Modais (Holerite e Confirmação de Exclusão) com desfoque de fundo mais profundo (`backdrop-blur-md`), largura máxima controlada (`max-w-lg`) e centralização geométrica perfeita.
+  - Cursores interativos explícitos (`cursor-pointer`) em todos os botões, chips e áreas clicáveis.
+- **Garantia de Não-Regressão Mobile**:
+  - Nenhuma classe base utilizada pelo mobile foi alterada ou quebrada; todas as regras desktop foram escopadas em `min-width: 768px`.
+- **Cache-Busting**:
+  - Versão dos assets elevada para `v=1.3.0`.
+
+---
+
 ## [v1.2.8] - 12/10/2026
 
 ### ✨ Animações Fluidas e Leves para Adicionar e Excluir Colaboradores

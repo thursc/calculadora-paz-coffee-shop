@@ -93,6 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.addEventListener('input', (e) => {
             filterEmployees(e.target.value);
         });
+
+        // Atalho global rápido (Ctrl+K ou barra '/') para focar a busca no desktop
+        window.addEventListener('keydown', (e) => {
+            const isCtrlK = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k';
+            const isSlash = e.key === '/';
+            const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+            const isEditing = activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || document.activeElement?.isContentEditable;
+
+            if (isCtrlK || (isSlash && !isEditing)) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            } else if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.blur();
+            }
+        });
     }
 
     if (clearSearchBtn) {
@@ -103,6 +119,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 searchInput.focus();
             }
         });
+    }
+
+    // ==========================================
+    // 2.5 Alternador de Visualização Desktop (Grade Fluida vs Kanban)
+    // ==========================================
+    const VIEW_MODE_KEY = 'pazCoffeeDesktopView';
+    const viewGridBtn = document.getElementById('view-mode-grid');
+    const viewKanbanBtn = document.getElementById('view-mode-kanban');
+
+    function setDesktopViewMode(mode) {
+        const isGrid = mode === 'grid';
+        if (employeeContainer) {
+            employeeContainer.classList.toggle('desktop-grid-view', isGrid);
+            employeeContainer.classList.toggle('desktop-kanban-view', !isGrid);
+        }
+
+        const activeClasses = ['bg-white', 'dark:bg-stone-800', 'text-stone-900', 'dark:text-stone-100', 'shadow-sm'];
+        const inactiveClasses = ['text-stone-500', 'hover:text-stone-800', 'dark:text-stone-400', 'dark:hover:text-stone-200'];
+
+        if (viewGridBtn && viewKanbanBtn) {
+            if (isGrid) {
+                viewGridBtn.classList.add(...activeClasses);
+                viewGridBtn.classList.remove(...inactiveClasses);
+                viewKanbanBtn.classList.remove(...activeClasses);
+                viewKanbanBtn.classList.add(...inactiveClasses);
+            } else {
+                viewKanbanBtn.classList.add(...activeClasses);
+                viewKanbanBtn.classList.remove(...inactiveClasses);
+                viewGridBtn.classList.remove(...activeClasses);
+                viewGridBtn.classList.add(...inactiveClasses);
+            }
+        }
+
+        try {
+            localStorage.setItem(VIEW_MODE_KEY, mode);
+        } catch (err) {
+            console.warn('Erro ao salvar preferência de layout:', err);
+        }
+    }
+
+    function initDesktopView() {
+        let savedView = null;
+        try {
+            savedView = localStorage.getItem(VIEW_MODE_KEY);
+        } catch (err) {
+            console.warn('Erro ao ler preferência de layout:', err);
+        }
+
+        // Padrão no desktop: grid fluido moderno
+        setDesktopViewMode(savedView || 'grid');
+
+        if (viewGridBtn) {
+            viewGridBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setDesktopViewMode('grid');
+            });
+        }
+
+        if (viewKanbanBtn) {
+            viewKanbanBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setDesktopViewMode('kanban');
+            });
+        }
     }
 
     // ==========================================
@@ -226,6 +306,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // No modo Grade no Desktop (>= 768px), o scroll vertical da página deve ser 100% natural e nativo
+            if (employeeContainer && employeeContainer.classList.contains('desktop-grid-view') && window.innerWidth >= 768) {
+                return;
+            }
+
             // Se o usuário estiver usando trackpad com rolagem horizontal nativa (deltaX), preserva o evento nativo
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
                 return;
@@ -252,6 +337,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('keydown', (e) => {
             // Ignora se algum modal estiver aberto
             if (document.body.classList.contains('overflow-hidden') || document.querySelector('.modal:not(.opacity-0)')) {
+                return;
+            }
+
+            // Se estiver no modo Grade no desktop, as setas horizontais não devem forçar rolagem de esteira
+            if (employeeContainer && employeeContainer.classList.contains('desktop-grid-view') && window.innerWidth >= 768) {
                 return;
             }
 
@@ -290,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initTheme();
+        initDesktopView();
         setupDesktopNavigation();
 
         try {

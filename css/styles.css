@@ -313,3 +313,163 @@ button:focus-visible, input:focus-visible, select:focus-visible {
     margin-top: 0 !important;
 }
 
+/* ==========================================================================
+   Desktop Responsiveness & Ergonomics (min-width: 768px)
+   Mobile (< 768px) permanece 100% intocado e mobile-first estrito.
+   ========================================================================== */
+@media (min-width: 768px) {
+    /* Container no Modo Grid Fluido Desktop */
+    #employee-container.desktop-grid-view {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+        gap: 1.5rem !important;
+        width: 100% !important;
+        max-width: 1560px !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+        padding-bottom: 3.5rem !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+        scroll-snap-type: none !important;
+    }
+
+    /* Cards no Modo Grid Fluido Desktop */
+    #employee-container.desktop-grid-view .kanban-col,
+    #employee-container.desktop-grid-view .employee-card-details {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        flex-shrink: 1 !important;
+        height: 100%;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    /* Card quando recolhido no Modo Grid não estica artificialmente */
+    #employee-container.desktop-grid-view .employee-card-details:not(.is-open) {
+        align-self: start;
+    }
+
+    /* Padronização de alinhamento vertical dos cards no Desktop */
+    .employee-card-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .employee-card-details .employee-summary {
+        flex-shrink: 0;
+    }
+
+    .employee-card-details .employee-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .employee-card-details .employee-footer {
+        margin-top: auto;
+    }
+
+    /* Card de Adicionar Colaborador no Grid Desktop */
+    #employee-container.desktop-grid-view #add-employee-card,
+    #employee-container.desktop-grid-view .add-card-placeholder {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        min-height: 380px !important;
+        height: 100% !important;
+    }
+
+    #employee-container.desktop-grid-view #add-employee-card button {
+        height: 100% !important;
+        min-height: 380px !important;
+    }
+
+    /* Container no Modo Esteira Kanban Desktop */
+    #employee-container.desktop-kanban-view {
+        display: flex !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        max-width: 100% !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+
+    #employee-container.desktop-kanban-view .kanban-col {
+        width: 340px !important;
+        min-width: 320px !important;
+        max-width: 360px !important;
+        flex-shrink: 0 !important;
+    }
+}
+
+/* Microinterações sutis exclusivas para desktop com mouse (hover) */
+@media (hover: hover) and (pointer: fine) {
+    .employee-card-details {
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
+    }
+
+    .employee-card-details:hover {
+        border-color: rgba(217, 119, 6, 0.35);
+        box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 6px 14px -4px rgba(0, 0, 0, 0.04);
+    }
+
+    html.dark .employee-card-details:hover {
+        border-color: rgba(245, 158, 11, 0.35);
+        box-shadow: 0 14px 30px -6px rgba(0, 0, 0, 0.45), 0 6px 14px -4px rgba(0, 0, 0, 0.3);
+    }
+
+    #add-employee-card button,
+    .add-card-placeholder button {
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    #add-employee-card:hover button,
+    .add-card-placeholder:hover button {
+        border-color: rgba(245, 158, 11, 0.6) !important;
+        background-color: rgba(245, 158, 11, 0.04) !important;
+        transform: translateY(-2px);
+    }
+
+    html.dark #add-employee-card:hover button,
+    html.dark .add-card-placeholder:hover button {
+        background-color: rgba(245, 158, 11, 0.08) !important;
+    }
+
+    .shift-pill:not(.is-active):hover {
+        background-color: rgba(245, 158, 11, 0.06);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    html.dark .shift-pill:not(.is-active):hover {
+        background-color: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .dobradinha-pill:not(.is-active):hover {
+        background-color: rgba(16, 185, 129, 0.06);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    html.dark .dobradinha-pill:not(.is-active):hover {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    .generate-holerite-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    html.dark .generate-holerite-btn:hover {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+
+    .cursor-pointer, button, [role="button"], summary {
+        cursor: pointer;
+    }
+}
+
+

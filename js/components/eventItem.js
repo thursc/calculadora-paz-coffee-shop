@@ -202,7 +202,7 @@ export function createEventElement(data = {}, onChangeCallback) {
             if (typeof onChangeCallback === 'function') onChangeCallback();
         };
         eventItem.addEventListener('transitionend', onEnd, { once: true });
-        setTimeout(onEnd, 190);
+        setTimeout(onEnd, 260);
     };
 
     removeBtn.addEventListener('click', () => {

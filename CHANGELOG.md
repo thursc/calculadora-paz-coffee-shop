@@ -2,6 +2,24 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.2] - 12/10/2026
+
+### 🌊 Varredura Suave Cadenciada, Slide-Out Fluido de Adicionais e Rotação Horária do Reset
+
+#### 1. Desaceleração e Refinamento do Sweep Wave (Card)
+- **Cadência Suave de 0.85s:** A animação de varredura líquida (`cardSweepWave`) foi estendida de 0.5s para 0.85s com curva cúbica aveludada (`cubic-bezier(0.22, 1, 0.36, 1)`), eliminando a sensação de pressa e proporcionando um deslize relaxante e perceptível.
+- **Feixe Mais Harmonioso e Amplo:** Abertura do feixe ajustada para 75% da largura com deslocamento estendido de `-150%` a `260%`, mantendo o gradiente translúcido de luz âmbar com excelente visibilidade sem ofuscar as informações do card.
+- **Temporização Desacoplada:** O tempo de vida do pseudo-elemento no DOM foi sincronizado para 880ms em [employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), enquanto o botão de reset mantém seu feedback tátil ágil de ~500ms.
+
+#### 2. Nova Animação de Saída de Adicionais/Eventos (Slide-Out Lateral)
+- **Deslize Lateral com Dissolução Fluida:** Substituído o fade no lugar por um movimento moderno de Slide-Out Lateral (`translate3d(36px, 0, 0) scale3d(0.96, 0.96, 1)`) combinado com fade-out gradual (`opacity: 0`) em 0.22s/0.24s.
+- **Zero Linhas Residuais ou Travamento:** Anulação imediata de `border-color` e `box-shadow` sem compressão mecânica de altura, evitando 100% o achatamento de bordas e garantindo uma saída limpa e natural tanto na exclusão individual quanto no reset em lote.
+
+#### 3. Inversão do Sentido do Ícone de Reset (Sentido Horário)
+- **Rotação Natural Horária:** A animação `@keyframes resetSnapSpin` foi ajustada para girar no sentido horário natural (`0deg` → `220deg` → `370deg` → `360deg`), corrigindo a sensação de rotação invertida com o mesmo efeito elástico de encaixe tátil (*snap back*).
+
+---
+
 ## [v1.9.1] - 12/10/2026
 
 ### 🌊 Varredura de Luz (Sweep Wave) no Card e Eliminação da Linha Residual nos Adicionais

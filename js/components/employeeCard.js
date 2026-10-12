@@ -233,16 +233,21 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 notifyChange();
             }
 
-            let resetCleaned = false;
-            const onResetEnd = () => {
-                if (resetCleaned) return;
-                resetCleaned = true;
+            // Limpeza do botão de reset (flash e rotação horária)
+            let resetBtnCleaned = false;
+            const onBtnResetEnd = () => {
+                if (resetBtnCleaned) return;
+                resetBtnCleaned = true;
                 resetBtn.classList.remove('is-resetting');
-                cardDetails.classList.remove('is-card-resetting');
-                resetBtn.removeEventListener('animationend', onResetEnd);
+                resetBtn.removeEventListener('animationend', onBtnResetEnd);
             };
-            resetBtn.addEventListener('animationend', onResetEnd, { once: true });
-            setTimeout(onResetEnd, 520);
+            resetBtn.addEventListener('animationend', onBtnResetEnd, { once: true });
+            setTimeout(onBtnResetEnd, 500);
+
+            // Limpeza da varredura líquida do card (sweep suave e cadenciado de 0.85s)
+            setTimeout(() => {
+                cardDetails.classList.remove('is-card-resetting');
+            }, 880);
         });
     }
 

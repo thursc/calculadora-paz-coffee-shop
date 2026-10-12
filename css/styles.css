@@ -271,13 +271,13 @@ html.dark .employee-footer {
         transform: rotate3d(0, 0, 1, 0deg);
     }
     45% {
-        transform: rotate3d(0, 0, 1, -220deg);
+        transform: rotate3d(0, 0, 1, 220deg);
     }
     80% {
-        transform: rotate3d(0, 0, 1, -370deg);
+        transform: rotate3d(0, 0, 1, 370deg);
     }
     100% {
-        transform: rotate3d(0, 0, 1, -360deg);
+        transform: rotate3d(0, 0, 1, 360deg);
     }
 }
 
@@ -298,7 +298,7 @@ html.dark .employee-footer {
     backface-visibility: hidden;
 }
 
-/* --- Opção 1: Sweep Wave (Varredura de Luz Líquida no Card ao Resetar - Sem Alterar Bordas ou Escala) --- */
+/* --- Opção 1: Sweep Wave (Varredura de Luz Líquida Suave e Cadenciada - 0.85s) --- */
 .employee-card-details {
     position: relative;
     overflow: hidden;
@@ -306,17 +306,17 @@ html.dark .employee-footer {
 
 @keyframes cardSweepWave {
     0% {
-        transform: translate3d(-120%, 0, 0) skewX(-20deg);
+        transform: translate3d(-150%, 0, 0) skewX(-20deg);
         opacity: 0;
     }
-    20% {
+    15% {
         opacity: 1;
     }
-    80% {
+    85% {
         opacity: 1;
     }
     100% {
-        transform: translate3d(240%, 0, 0) skewX(-20deg);
+        transform: translate3d(260%, 0, 0) skewX(-20deg);
         opacity: 0;
     }
 }
@@ -326,18 +326,18 @@ html.dark .employee-footer {
     position: absolute;
     top: 0;
     left: 0;
-    width: 65%;
+    width: 75%;
     height: 100%;
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(245, 158, 11, 0.05) 20%,
-        rgba(245, 158, 11, 0.2) 50%,
-        rgba(245, 158, 11, 0.05) 80%,
+        rgba(245, 158, 11, 0.04) 20%,
+        rgba(245, 158, 11, 0.18) 50%,
+        rgba(245, 158, 11, 0.04) 80%,
         transparent 100%
     );
-    transform: translate3d(-120%, 0, 0) skewX(-20deg);
-    animation: cardSweepWave 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    transform: translate3d(-150%, 0, 0) skewX(-20deg);
+    animation: cardSweepWave 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
     pointer-events: none;
     z-index: 20;
     will-change: transform, opacity;
@@ -348,7 +348,7 @@ html.dark .employee-card-details.is-card-resetting::after {
         90deg,
         transparent 0%,
         rgba(245, 158, 11, 0.06) 20%,
-        rgba(245, 158, 11, 0.26) 50%,
+        rgba(245, 158, 11, 0.22) 50%,
         rgba(245, 158, 11, 0.06) 80%,
         transparent 100%
     );
@@ -530,17 +530,17 @@ html.dark .event-item.is-active .lock-badge {
     backface-visibility: hidden;
 }
 
-/* Animação suave de saída para itens de adicionais/eventos (Zero Linhas Residuais) */
+/* Animação ultra fluida de saída para itens de adicionais/eventos (Slide-Out Lateral + Fade Suave) */
 .event-item-animate-leave {
     opacity: 0 !important;
-    transform: scale3d(0.92, 0.92, 1) !important;
+    transform: translate3d(36px, 0, 0) scale3d(0.96, 0.96, 1) !important;
     border-color: transparent !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    transition: opacity 0.16s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.12s ease,
-                box-shadow 0.12s ease !important;
+    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.16s ease,
+                box-shadow 0.16s ease !important;
     pointer-events: none !important;
     will-change: opacity, transform;
     backface-visibility: hidden;

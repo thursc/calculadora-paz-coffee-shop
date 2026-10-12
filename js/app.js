@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Gerenciamento de Tema (Dark / Light Mode)
     // ==========================================
     const THEME_KEY = 'pazCoffeeTheme';
+    let activeViewTransition = null;
+    let themeTransitionTimeout = null;
     
     function applyTheme(theme) {
         const isDark = theme === 'dark';
@@ -42,13 +44,56 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (themeToggleBtn) {
-            const sunIcon = themeToggleBtn.querySelector('.sun-icon');
-            const moonIcon = themeToggleBtn.querySelector('.moon-icon');
-            if (sunIcon && moonIcon) {
-                sunIcon.classList.toggle('hidden', !isDark);
-                moonIcon.classList.toggle('hidden', isDark);
+            const nextModeLabel = isDark ? 'Mudar para modo claro' : 'Mudar para modo escuro';
+            themeToggleBtn.setAttribute('aria-label', nextModeLabel);
+            themeToggleBtn.setAttribute('title', nextModeLabel);
+        }
+    }
+
+    function toggleTheme() {
+        const currentIsDark = document.documentElement.classList.contains('dark');
+        const nextTheme = currentIsDark ? 'light' : 'dark';
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Caso 1: View Transitions API nativa (GPU cross-fade ultra fluido a 60/120Hz sem lag de layout)
+        if (!prefersReducedMotion && typeof document.startViewTransition === 'function') {
+            try {
+                if (activeViewTransition) {
+                    activeViewTransition.skipTransition();
+                }
+            } catch (_) {}
+
+            try {
+                activeViewTransition = document.startViewTransition(() => {
+                    applyTheme(nextTheme);
+                });
+                activeViewTransition.finished.finally(() => {
+                    activeViewTransition = null;
+                });
+                return;
+            } catch (err) {
+                // Fallback caso ocorra algum erro na API do navegador
+                applyTheme(nextTheme);
+                return;
             }
         }
+
+        // Caso 2: Fallback sincronizado via classe temporária em navegadores legados
+        if (!prefersReducedMotion) {
+            if (themeTransitionTimeout) {
+                clearTimeout(themeTransitionTimeout);
+            }
+            document.documentElement.classList.add('is-theme-transitioning');
+            applyTheme(nextTheme);
+            themeTransitionTimeout = setTimeout(() => {
+                document.documentElement.classList.remove('is-theme-transitioning');
+                themeTransitionTimeout = null;
+            }, 280);
+            return;
+        }
+
+        // Caso 3: Preferência do usuário por redução de movimento (a11y)
+        applyTheme(nextTheme);
     }
 
     function initTheme() {
@@ -59,18 +104,18 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Erro ao ler tema salvo:', err);
         }
 
+        // Aplicação inicial síncrona sem disparar animação para prevenir flash de tema
         if (savedTheme) {
             applyTheme(savedTheme);
         } else {
-            // Padrão escuro inspirado no cardápio da Paz Coffee Shop
+            // Padrão escuro inspirado na cafeteria Paz Coffee Shop
             applyTheme('dark');
         }
 
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const currentIsDark = document.documentElement.classList.contains('dark');
-                applyTheme(currentIsDark ? 'light' : 'dark');
+                toggleTheme();
             });
         }
     }

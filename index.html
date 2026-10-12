@@ -21,11 +21,19 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=1.9.9">
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('pazCoffeeTheme');
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+            }
+        } catch (_) {}
+    </script>
+    <link rel="stylesheet" href="css/styles.css?v=1.9.10">
 </head>
 
 <body
-    class="min-h-screen flex flex-col text-stone-900 dark:text-stone-100 bg-[#faf7f2] dark:bg-[#100f0e] transition-colors duration-200 font-sans overflow-x-hidden w-full max-w-full relative">
+    class="min-h-screen flex flex-col text-stone-900 dark:text-stone-100 bg-[#faf7f2] dark:bg-[#100f0e] font-sans overflow-x-hidden w-full max-w-full relative">
 
     <!-- Alerta de Quota / Falha no LocalStorage (Item #14 - WCAG role="alert") -->
     <div id="storage-alert-banner"
@@ -55,7 +63,7 @@
          CABEÇALHO / BARRA DE COMANDOS EXECUTIVA
          ======================================================== -->
     <header
-        class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm transition-colors duration-200">
+        class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
             <!-- Marca: Logo + Paz Coffee Shop sempre por extenso -->
             <div class="flex items-center gap-2.5 min-w-0 order-1">
@@ -102,20 +110,22 @@
 
                 <!-- Switch de Modo Escuro / Claro -->
                 <button type="button" id="theme-toggle"
-                    class="p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-amber-400 border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer"
+                    class="relative p-2 rounded-xl bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-600 dark:text-amber-400 border border-stone-200 dark:border-stone-700 cursor-pointer overflow-hidden active:scale-95 transition-transform flex items-center justify-center"
                     title="Alternar Modo Claro/Escuro" aria-label="Alternar tema">
-                    <!-- Sol (visível no modo escuro) -->
-                    <svg class="sun-icon w-4 h-4 sm:w-5 sm:h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Lua (visível no modo claro) -->
-                    <svg class="moon-icon w-4 h-4 sm:w-5 sm:h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                    <span class="relative block w-4 h-4 sm:w-5 sm:h-5 pointer-events-none">
+                        <!-- Sol (visível no modo escuro) -->
+                        <svg class="sun-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <!-- Lua (visível no modo claro) -->
+                        <svg class="moon-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </span>
                 </button>
 
                 <!-- Botão Adicionar Funcionário -->
@@ -443,7 +453,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.9"></script>
+    <script type="module" src="js/app.js?v=1.9.10"></script>
 </body>
 
 </html>

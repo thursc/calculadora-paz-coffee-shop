@@ -2,6 +2,26 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.10] - 12/10/2026
+
+### 🌓 Transição Ultra Fluida de Tema (Dark / Light Mode)
+
+#### 1. Aceleração de Hardware via View Transitions API
+- **Cross-Fade Suave a 60/120Hz:** Implementada a [View Transitions API](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js) nativa em navegadores modernos (Chrome, Edge, Safari, Opera). A GPU renderiza um cross-fade instantâneo e contínuo entre os estados de tema sem recálculos fragmentados do DOM.
+- **Eliminação de Travamentos e Descompasso Visual:** Removidas transições CSS permanentes e desincronizadas em `body` e `header` (que causavam atraso de cor enquanto os cartões mudavam instantaneamente, gerando sensação de travamento e "tearing").
+- **Normalização de Mesclagem:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), configuradas as pseudo-classes `::view-transition-old(root)` e `::view-transition-new(root)` com `mix-blend-mode: normal` e easing `cubic-bezier(0.16, 1, 0.3, 1)`, prevenindo flash acinzentado de contraste.
+
+#### 2. Micro-Animação Fluida dos Ícones Sol e Lua
+- **Substituição de Cortes Secos:** Eliminada a alternância brusca com `display: none` (`.hidden`). O botão `#theme-toggle` agora empilha os ícones Sol e Lua com rotação e escala elástica via CSS (`rotate(90deg) scale(0)` para `rotate(0deg) scale(1)`).
+- **Sensação Tátil Premium:** Ao clicar no botão, os ícones giram e transicionam de forma orgânica e contínua.
+
+#### 3. Fallback Sincronizado e Acessibilidade (WCAG 2.1 AA)
+- **Fallback para Navegadores sem View Transitions:** Em navegadores antigos ou sem suporte nativo, é aplicada a classe temporária `.is-theme-transitioning` por 280ms, harmonizando a transição de todos os elementos na mesma taxa temporal.
+- **Respeito a `prefers-reduced-motion`:** Usuários que configuraram o sistema operacional para reduzir movimentos recebem a alternância instantânea sem animações cinéticas.
+- **Script Anti-FOUC no `<head>`:** Adicionado script síncrono ultra leve no `<head>` de [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) para aplicar imediatamente o tema salvo antes do primeiro frame, eliminando qualquer cintilação inicial de tema.
+
+---
+
 ## [v1.9.9] - 12/10/2026
 
 ### 📐 Otimização de Posição do Feedback de Busca Vazia (Desktop e Mobile)

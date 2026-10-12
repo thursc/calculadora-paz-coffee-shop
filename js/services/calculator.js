@@ -101,6 +101,14 @@ export function calculateEmployee(employee) {
 
     const totalPay = salaryFromShifts + bonusDobradinha + eventsTotal;
 
+    // Horas acumuladas da equipe
+    const shiftHours = shiftsBreakdown.reduce((acc, s) => acc + (s.hours || 0), 0);
+    const eventHours = eventsBreakdown.reduce((acc, e) => {
+        return (e.type === 'hours' || e.type === 'hours_specific') ? acc + (e.hours || 0) : acc;
+    }, 0);
+    const totalHours = shiftHours + eventHours;
+    const hasActiveWork = totalPay > 0 || totalHours > 0;
+
     return {
         hourlyRate,
         salaryFromShifts,
@@ -111,6 +119,38 @@ export function calculateEmployee(employee) {
         shiftsBreakdown,
         eventsTotal,
         eventsBreakdown,
-        totalPay
+        totalPay,
+        totalHours,
+        hasActiveWork
+    };
+}
+
+/**
+ * Calcula os indicadores consolidados da cafeteria para o Dashboard Global
+ * @param {Array<Object>} employeesCalculationList
+ * @returns {Object}
+ */
+export function calculateDashboardMetrics(employeesCalculationList) {
+    let totalWeeklyCost = 0;
+    let totalTeamHours = 0;
+    let activeStaffCount = 0;
+    const totalStaffCount = employeesCalculationList.length;
+
+    employeesCalculationList.forEach(calc => {
+        totalWeeklyCost += calc.totalPay || 0;
+        totalTeamHours += calc.totalHours || 0;
+        if (calc.hasActiveWork) {
+            activeStaffCount++;
+        }
+    });
+
+    const projectedMonthlyCost = totalWeeklyCost * 4.33;
+
+    return {
+        totalWeeklyCost,
+        projectedMonthlyCost,
+        totalTeamHours,
+        activeStaffCount,
+        totalStaffCount
     };
 }

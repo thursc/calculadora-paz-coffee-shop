@@ -4,8 +4,8 @@
 
 export const SHIFTS = [
     { id: 'sabado', label: 'Sábado', hours: 7 },
-    { id: 'domingo_manha', label: 'Dom. Manhã', hours: 7 },
-    { id: 'domingo_noite', label: 'Dom. Noite', hours: 8 },
+    { id: 'domingo_manha', label: 'Domingo (Manhã)', hours: 7 },
+    { id: 'domingo_noite', label: 'Domingo (Noite)', hours: 8 },
     { id: 'segunda', label: 'Segunda-feira', hours: 5 }
 ];
 

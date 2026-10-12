@@ -6,61 +6,72 @@ import { setupCurrencyHandlers } from '../utils/currency.js';
 
 export function createEventElement(data = {}, onChangeCallback) {
     const eventItem = document.createElement('div');
-    eventItem.className = 'event-item flex flex-col gap-2 p-3 border rounded-lg bg-gray-50';
+    eventItem.className = 'event-item flex flex-col gap-2 p-2.5 border border-stone-200 dark:border-stone-800 rounded-xl bg-stone-50/60 dark:bg-stone-800/30 transition-colors';
 
     eventItem.innerHTML = `
+        <!-- Linha 1: Checkbox, Nome do Adicional e Ações Rápidas -->
         <div class="flex items-center gap-2 w-full">
-            <input type="checkbox" class="event-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 flex-shrink-0 mt-1 self-start" aria-label="Ativar adicional">
-            <div class="flex-grow">
-                <input type="text" placeholder="Nome do Evento/Adicional" class="event-name w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+            <label class="flex items-center cursor-pointer flex-shrink-0">
+                <input type="checkbox" class="event-checkbox h-4 w-4 rounded text-amber-600 focus:ring-amber-500 border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-900 cursor-pointer" aria-label="Ativar adicional">
+            </label>
+            <div class="flex-grow min-w-0">
+                <input type="text" placeholder="Nome do Adicional" class="event-name w-full px-2 py-1 text-xs sm:text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 placeholder-stone-400 focus:ring-1 focus:ring-amber-500">
             </div>
-            <div class="flex items-center self-start">
-                <button type="button" class="lock-event-btn p-2 rounded-full hover:bg-gray-200 text-gray-400 hover:text-orange-500" title="Manter ao resetar" aria-label="Travar evento para não apagar ao resetar">
-                    <svg class="lock-icon-unlocked w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <div class="flex items-center gap-0.5 flex-shrink-0">
+                <button type="button" class="lock-event-btn p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-400 hover:text-amber-500 transition-colors" title="Manter ao resetar" aria-label="Travar evento para não apagar ao resetar">
+                    <svg class="lock-icon-unlocked w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,9c0,0,0-1.6,0-2c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,2,0,2"/>
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M18,21H6c-0.552,0-1-0.448-1-1V10c0-0.552,0.448-1,1-1h12c0.552,0,1,0.448,1,1v10C19,20.552,18.552,21,18,21z"/>
                     </svg>
-                    <svg class="lock-icon-locked w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <svg class="lock-icon-locked w-4 h-4 hidden text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M20,20V10c0-1.1-0.9-2-2-2H6c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12C19.1,22,20,21.1,20,20z M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,12c0-0.4,0-4.6,0-5c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,4.6,0,5"/>
                     </svg>
                 </button>
-                <button type="button" class="remove-event-btn p-2 rounded-full hover:bg-red-100 text-red-500 hover:text-red-700 flex items-center justify-center" title="Excluir Evento" aria-label="Excluir evento">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <button type="button" class="remove-event-btn p-1.5 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 text-stone-400 hover:text-red-500 transition-colors" title="Excluir Adicional" aria-label="Excluir adicional">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
         </div>
-        <div class="flex items-center flex-wrap gap-y-2 w-full">
-            <div class="flex items-center flex-wrap gap-x-4 gap-y-2 flex-grow">
-                <select class="event-type-selector bg-white border border-gray-300 rounded-lg p-2 flex-shrink-0">
-                    <option value="hours">Horas (Taxa Padrão)</option>
-                    <option value="hours_specific">Horas (Taxa Específica)</option>
-                    <option value="fixed">Valor Fixo</option>
-                </select>
-                
-                <div class="event-input-container flex items-center flex-wrap gap-x-2 gap-y-1 justify-start">
-                    <div class="event-hours-input-wrapper flex items-center gap-1">
-                        <input type="number" class="event-hours w-20 p-2 text-right border border-gray-300 rounded-lg" placeholder="0" step="0.5" min="0">
-                        <span class="text-sm text-gray-500">hrs</span>
-                    </div>
-                    
-                    <div class="event-specific-rate-wrapper hidden flex items-center gap-1">
-                        <span class="text-sm text-gray-500">@</span>
-                        <input type="text" inputmode="decimal" data-type="currency" class="event-specific-rate w-24 p-2 text-right border border-gray-300 rounded-lg" placeholder="R$ 0,00">
-                    </div>
 
-                    <div class="event-fixed-value-input-wrapper hidden flex items-center gap-1">
-                        <input type="text" inputmode="decimal" data-type="currency" class="event-fixed-value w-24 p-2 text-right border border-gray-300 rounded-lg" placeholder="R$ 0,00">
-                    </div>
+        <!-- Linha 2: Seletor de Tipo (Largura Total, Limpo e sem Cortes) -->
+        <div class="w-full">
+            <select class="event-type-selector w-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-200 rounded-lg px-2.5 py-1 text-xs focus:ring-1 focus:ring-amber-500">
+                <option value="hours">Horas (Taxa Padrão)</option>
+                <option value="hours_specific">Horas (Taxa Específica)</option>
+                <option value="fixed">Valor Fixo (R$)</option>
+            </select>
+        </div>
+
+        <!-- Linha 3: Entradas de Horas/Valor e Subtotal Calculado -->
+        <div class="flex items-center justify-between gap-1.5 pt-1.5 border-t border-stone-200/50 dark:border-stone-800/60">
+            <!-- Contêiner de Entradas de Valor/Horas -->
+            <div class="event-input-container flex items-center gap-1.5 flex-shrink-0">
+                <!-- Horas (Padrão e Específica) -->
+                <div class="event-hours-input-wrapper flex items-center gap-1 flex-shrink-0">
+                    <input type="number" class="event-hours w-12 px-1.5 py-1 text-right text-xs bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500" placeholder="0" step="0.5" min="0">
+                    <span class="text-[11px] text-stone-400 font-medium">hrs</span>
+                </div>
+                
+                <!-- Taxa Específica (@ R$) -->
+                <div class="event-specific-rate-wrapper hidden flex items-center gap-1 flex-shrink-0">
+                    <span class="text-xs text-stone-400 font-bold">@</span>
+                    <input type="text" inputmode="decimal" data-type="currency" class="event-specific-rate w-[76px] px-1.5 py-1 text-right text-xs bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 flex-shrink-0" placeholder="R$ 0,00">
+                </div>
+
+                <!-- Valor Fixo (R$) -->
+                <div class="event-fixed-value-input-wrapper hidden flex items-center gap-1 flex-shrink-0">
+                    <input type="text" inputmode="decimal" data-type="currency" class="event-fixed-value w-20 px-1.5 py-1 text-right text-xs bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 flex-shrink-0" placeholder="R$ 0,00">
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 flex-shrink-0 ml-auto">
-                 <span class="text-gray-500">=</span>
-                 <span class="event-calculated-value w-24 text-right font-semibold text-blue-600 text-lg">R$ 0,00</span>
+            <!-- Subtotal Calculado do Adicional -->
+            <div class="flex items-center gap-1 flex-shrink-0 ml-auto pl-1">
+                 <span class="text-xs text-stone-400 font-medium">=</span>
+                 <span class="event-calculated-value text-xs sm:text-sm font-black text-amber-600 dark:text-amber-400 whitespace-nowrap">R$ 0,00</span>
             </div>
         </div>
     `;
@@ -116,7 +127,7 @@ export function createEventElement(data = {}, onChangeCallback) {
     const inputs = eventItem.querySelectorAll('input:not(.event-checkbox), select');
     const setEventState = (isChecked) => {
         inputs.forEach(input => { input.disabled = !isChecked; });
-        eventItem.classList.toggle('disabled', !isChecked);
+        eventItem.classList.toggle('opacity-50', !isChecked);
     };
 
     setEventState(eventCheckbox.checked);

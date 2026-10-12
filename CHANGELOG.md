@@ -4,42 +4,108 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.2.4] - 12/10/2026
+
+### 📐 Alinhamento Vertical Homogêneo no Detalhamento de Cálculos
+- **Eliminação do Espaço Vazio Superior nos Cálculos Detalhados**:
+  - Substituído `space-y-2` por `flex flex-col gap-2` em `.details-content` no [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html). O seletor `space-y` aplicava margem superior incorreta no primeiro bloco visível quando os blocos anteriores estavam com `display: none`.
+  - Igualada a altura inicial dos textos de detalhamento (*"Turnos:"*, *"Adicionais:"*, *"Bônus:"*) com a mensagem de estado vazio (*"Nenhum turno ou adicional marcado nesta semana."*).
+  - Adicionado reset preventivo de `margin-top: 0 !important` em [styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) para o primeiro elemento visível do container.
+- **Cache-Busting**:
+  - Assets atualizados para `v=1.2.5`.
+
+---
+
+## [v1.2.3] - 12/10/2026
+
+### 🛠️ Correção da Taxa Específica nos Adicionais
+- **Eliminação da Expansão e Sobreposição do Input de Taxa**:
+  - Corrigida a classe de largura da taxa específica: substituído `w-18` (que não existe na escala padrão do Tailwind e fazia o input expandir para o tamanho nativo do HTML de ~180px) por `w-[76px] flex-shrink-0`.
+  - Ajustado o campo de horas da taxa específica para `w-12` (48px), liberando mais de 50px de espaço livre antes do subtotal (`= R$ XX,XX`).
+  - Garantido que nenhum campo sofra encolhimento ou colisão lateral em nenhuma resolução ou navegador.
+- **Cache-Busting**:
+  - Assets atualizados para `v=1.2.4`.
+
+---
+
+## [v1.2.2] - 12/10/2026
+
+### 📐 Estruturação Robusta dos Adicionais / Eventos (Eliminação de Overflow)
+- **Layout em 3 Linhas Funcionais**:
+  - **Linha 1**: Checkbox de ativação + Nome do adicional + Botões de Trava/Exclusão.
+  - **Linha 2**: Seletor de Tipo de Cálculo em largura total (`w-full`), exibindo os nomes completos das regras sem cortes nem colisão horizontal.
+  - **Linha 3**: Entradas numéricas (Horas / Valor Fixo / Taxa) à esquerda e subtotal calculado (`= R$ XX,XX`) perfeitamente posicionado à direita.
+- **Eliminação Definitiva de Estouro Lateral**:
+  - Resolução dos erros onde inputs de taxa específica (`@ R$ ...`) e valores fixos saíam do container ou sobrepunham o sinal de igualdade (`=`).
+  - Totalmente adaptado para colunas Kanban estreitas (mobile e desktop) com suporte flexível.
+- **Cache-Busting**:
+  - Assets atualizados para `v=1.2.3`.
+
+---
+
+## [v1.2.1] - 12/10/2026
+
+### 🛠️ Refinamento de Legibilidade e Escala Visual nos Cards
+- **Legibilidade Total dos Turnos**:
+  - Reorganização dos turnos trabalhados em lista vertical de largura total (`space-y-2`), eliminando completamente o truncamento de texto ("Dom. ...", "Segun...").
+  - Nomeação clara e sem ambiguidades: **Sábado**, **Domingo (Manhã)**, **Domingo (Noite)** e **Segunda-feira**.
+- **Unificação de Proporção e Escala Visual (Chrome e Firefox Mobile)**:
+  - Removido override global de `16px !important` em inputs/selects mobile que inflava desproporcionalmente os controles nativos no Chrome Android.
+  - Reset unificado de estilização para `<select>` com chevron SVG e dimensões controladas em todos os navegadores.
+  - Estruturação compacta e inline dos Adicionais / Eventos, mantendo seletor de tipo, valor e total em linha única sem quebras verticais excessivas.
+- **Detalhamento de Cálculo com Estado Vazio Tratado**:
+  - Adicionada mensagem amigável (*"Nenhum turno ou adicional marcado nesta semana."*) ao expandir a seção "Ver cálculo detalhado" sem itens selecionados, evitando exibir caixas em branco.
+- **Cache-Busting de Assets**:
+  - Adicionados sufixos de versão nos links de CSS e scripts para garantir carregamento instantâneo das últimas melhorias no mobile sem depender de limpeza de cache manual.
+
+---
+
+## [v1.2.0] - 12/10/2026
+
+### ☕ Redesign Operacional Focado em Freelancers (Paz Coffee Shop)
+
+Esta versão reformulou integralmente a interface visual e o fluxo de uso da calculadora, adaptando-a com exatidão à rotina real de pagamento de freelancers da cafeteria: **cálculo individual ágil, busca instantânea e geração imediata de demonstrativo para WhatsApp**.
+
+---
+
+### 🎨 Principais Mudanças Visuais e Estruturais
+
+1. **Cabeçalho Ultra-Compacto e Limpo**:
+   - Marca **"Paz Coffee Shop"** sempre por extenso em linha única (`whitespace-nowrap`), ao lado do logotipo vetorial da cafeteria.
+   - Remoção de textos secundários e indicadores desnecessários que poluíam o topo da tela no celular.
+   - Apenas duas ações essenciais no topo: **Alternância de Tema (Modo Escuro/Claro)** e **Adicionar Colaborador**.
+
+2. **Busca Instantânea de Colaboradores**:
+   - Campo de pesquisa inteligente integrado no topo da esteira (`🔍 Buscar colaborador...`).
+   - Filtro instantâneo em tempo real conforme a digitação, facilitando localizar qualquer freelancer entre os ~10 templates salvos.
+   - Botão rápido para limpar o filtro com um toque.
+
+3. **Layout Horizontal em Colunas (Esteira Kanban)**:
+   - Cards dos freelancers dispostos lado a lado com rolagem horizontal suave e snap tátil (`310px` a `360px`).
+   - Cada card funciona como um **template independente e permanente**: os turnos padrão ficam salvos e a mãe apenas ajusta as horas ou desmarca quem não trabalhou.
+   - Card tracejado de ação rápida no final da fila para cadastrar novos colaboradores no banco.
+
+4. **Foco 100% no Pagamento Individual**:
+   - Eliminação de métricas e KPIs consolidados ("Total da semana", "Projeção mensal", etc.), mantendo a tela despoluída e centrada no valor individual a ser enviado a cada colaborador.
+   - Destaque em tipografia nobre para o **Total a Pagar Individual** e botão largo para **Gerar Demonstrativo**.
+
+5. **Design Tátil com Chips Interativos (Toggle Pills)**:
+   - Substituição de caixas de seleção tradicionais por pílulas táteis em tom âmbar/caramelo para alternância rápida de turnos.
+   - Pílula dedicada para a **Dobradinha Domingo** (+R$ 50,00) com trava inteligente.
+   - Campos de adicionais/eventos compactos e harmoniosos.
+
+6. **Padronização Tipográfica Rigorosa**:
+   - Toda a aplicação foi unificada sob a família tipográfica **Inter** com hierarquia visual consistente de pesos e contrastes.
+
+---
+
 ## [v1.1.0] - 12/10/2026
 
 ### 🚀 Refatoração Modular e Otimização para Mobile
-
-Esta atualização reorganizou a arquitetura interna da aplicação, transformando o arquivo monolítico original em uma estrutura modular baseada em **ES Modules**, sem quebrar a compatibilidade com os dados já salvos no celular e mantendo o carregamento 100% estático no **GitHub Pages**.
-
----
-
-### 📂 Nova Estrutura do Projeto
-- **`assets/logo.svg`**: Extração do logotipo vetorial para arquivo dedicado, limpando mais de 80 linhas de coordenadas do HTML principal.
-- **`css/styles.css`**: Isolamento de todas as regras de animações, scrollbars personalizadas e comportamentos de sanfona (accordion).
-- **`js/config.js`**: Centralização de constantes de negócio (turnos da semana, valor da dobradinha e chave de armazenamento).
-- **`js/utils/`**:
-  - `currency.js`: Parsing e formatação segura de moeda brasileira (BRL).
-  - `clipboard.js`: Integração com a API moderna assíncrona `navigator.clipboard.writeText` com fallback resiliente para cópia no mobile.
-- **`js/services/`**:
-  - `calculator.js`: Regras de cálculo puras desacopladas do DOM (turnos, adicionais por hora/fixo, bônus de dobradinha).
-  - `holerite.js`: Montagem e formatação do texto de demonstrativo para envio via WhatsApp.
-- **`js/state/`**:
-  - `storage.js`: Gerenciamento de leitura e gravação no `localStorage`, garantindo total retrocompatibilidade com a chave `pazCoffeeCalculatorData`.
-- **`js/components/`**:
-  - `employeeCard.js`: Componente isolado para o cartão do funcionário e seus turnos.
-  - `eventItem.js`: Componente de adicionais/eventos com suporte a trava de reset.
-  - `modal.js`: Gerenciamento acessível dos modais de demonstrativo e confirmação de exclusão (com suporte a tecla `Escape`).
-- **`js/app.js`**: Ponto de entrada e orquestrador principal da aplicação.
-
----
-
-### ✨ Melhorias e Correções
-- **Performance Mobile**: `index.html` reduzido de **939 linhas** para **~120 linhas**, proporcionando leitura muito mais rápida e menor pegada de memória em aparelhos móveis (como o Poco X7 Pro).
-- **Substituição de API Depreciada**: O botão "Copiar Texto" agora utiliza `navigator.clipboard.writeText` em vez de `document.execCommand('copy')`.
-- **Validação e Acessibilidade**:
-  - Inputs numéricos com trava para valores negativos (`min="0"`).
-  - Modais com atributos de acessibilidade (`role="dialog"`, `aria-modal="true"`) e fechamento via teclado.
-  - Ícones e botões de ação com atributos `aria-label` adequados.
-- **Cálculo Puro e Testável**: Lógica financeira totalmente desacoplada de elementos HTML, testada com suíte automatizada.
+- Separação da arquitetura em ES Modules (`js/services/`, `js/components/`, `js/utils/`, `js/state/`).
+- Extração de `assets/logo.svg` e `css/styles.css`.
+- Preservação total da compatibilidade com os dados do `localStorage` (`pazCoffeeCalculatorData`).
+- Substituição de `execCommand` por `navigator.clipboard.writeText`.
 
 ---
 

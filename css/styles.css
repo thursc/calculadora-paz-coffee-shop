@@ -1,38 +1,81 @@
-body {
-    font-family: 'Inter', sans-serif;
+/* ==========================================================================
+   Paz Coffee Shop - Design System & Custom Styles
+   Inspirado na identidade visual da cafeteria: Charcoal, Espresso, Caramel & Cream
+   ========================================================================== */
+
+:root {
+    --bg-canvas: #faf7f2;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #ffffff;
+    --border-color: #e7e2d7;
+    --text-primary: #1c1917;
+    --text-secondary: #78716c;
+    --accent-amber: #d97706;
+    --accent-amber-glow: rgba(217, 119, 6, 0.15);
 }
 
-/* Custom scrollbar */
+html.dark {
+    --bg-canvas: #100f0e;
+    --bg-surface: #1a1715;
+    --bg-surface-elevated: #24201d;
+    --border-color: #2e2824;
+    --text-primary: #fafaf9;
+    --text-secondary: #a8a29e;
+    --accent-amber: #f59e0b;
+    --accent-amber-glow: rgba(245, 158, 11, 0.2);
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* --- Scrollbars Personalizadas (Sutis e Modernas) --- */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: #f97316;
-    border-radius: 10px;
+    background: #d6cebe;
+    border-radius: 9999px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+    background: #3a332d;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #ea580c;
+    background: var(--accent-amber);
 }
 
-.bonus-highlight,
-.shift-item {
-    transition: all 0.3s ease-in-out;
+/* --- Esteira Horizontal Kanban (Scroll Snap Tátil) --- */
+.kanban-track {
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 1.5rem;
+    scroll-padding-right: 1.5rem;
+    -webkit-overflow-scrolling: touch;
 }
 
-label:has(input:disabled) {
-    opacity: 0.5;
-    cursor: not-allowed;
+.kanban-col {
+    scroll-snap-align: start;
 }
 
-.event-item.disabled {
-    opacity: 0.6;
-    background-color: #f9fafb;
+/* Select customizado e consistente entre todos os navegadores mobile (Chrome, Firefox, Safari) */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23a8a29e'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.35rem center;
+    background-size: 0.95rem;
+    padding-right: 1.4rem !important;
 }
 
-/* Hide number input arrows */
+/* Ocultar setas padrão de campos number */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -40,47 +83,86 @@ input[type=number]::-webkit-outer-spin-button {
 }
 input[type=number] {
     -moz-appearance: textfield;
+    appearance: textfield;
 }
 
-.modal {
-    transition: opacity 0.25s ease;
+/* --- Chips Interativos Táteis para Turnos (Toggle Pills) --- */
+.shift-pill {
+    user-select: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* --- ANIMAÇÕES E ACCORDION --- */
+.shift-pill:active {
+    transform: scale(0.97);
+}
+
+/* Estado Inativo */
+.shift-pill:not(.is-active) {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+html.dark .shift-pill:not(.is-active) {
+    background-color: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Estado Ativo do Turno */
+.shift-pill.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12));
+    border-color: var(--accent-amber);
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 8px var(--accent-amber-glow);
+}
+
+html.dark .shift-pill.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.18));
+    border-color: var(--accent-amber);
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 10px rgba(245, 158, 11, 0.25);
+}
+
+/* --- Pílula de Dobradinha --- */
+.dobradinha-pill {
+    transition: all 0.25s ease;
+}
+
+.dobradinha-pill.is-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1));
+    border-color: #10b981;
+    box-shadow: 0 0 0 1px #10b981, 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+/* --- Efeito de Inversão do Logotipo no Modo Escuro --- */
+html.dark .logo-img {
+    filter: brightness(0) invert(1);
+}
+
+/* --- Animações do Accordion do Card --- */
 .employee-content {
     overflow: hidden;
-    transition: max-height 0.15s ease-in, padding-top 0.15s ease-in, padding-bottom 0.15s ease-in, border-width 0.15s ease-in;
-}
-
-.is-opening .employee-content {
-    transition-duration: 0.25s;
-    transition-timing-function: ease-out;
+    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, padding 0.2s ease;
 }
 
 .employee-card-details:not(.is-open) > .employee-content {
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    border-top-width: 0;
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .employee-card-details.is-open > .employee-content {
-    max-height: 2000px;
+    max-height: 2500px;
+    opacity: 1;
 }
 
 .employee-card-details .minimize-btn svg {
-    transition: transform 0.25s ease-in-out;
+    transition: transform 0.25s ease;
 }
 
-.employee-card-details.is-open .employee-summary .minimize-btn svg {
+.employee-card-details.is-open .minimize-btn svg {
     transform: rotate(-180deg);
 }
 
-.employee-card-details.is-open > .employee-summary {
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-}
-
+/* --- Ícone de Reset Girando --- */
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -90,15 +172,36 @@ input[type=number] {
     animation: spin 0.5s ease-in-out;
 }
 
-/* Estilo para o ícone de cadeado travado */
+/* --- Botão de Cadeado Travado --- */
 .lock-event-btn.locked {
-    color: #f97316; /* Laranja */
+    color: var(--accent-amber);
 }
 
-/* Remove o contorno de foco padrão para toque/mouse, mas mantém para teclado */
+/* --- Modais --- */
+.modal {
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.modal.opacity-0 {
+    visibility: hidden;
+}
+
+.modal:not(.opacity-0) {
+    visibility: visible;
+}
+
+/* --- Foco Acessível --- */
 button:focus {
     outline: none;
 }
-button:focus-visible {
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.4); /* Sutil brilho laranja */
+button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45);
 }
+
+/* --- Detalhamento de Cálculos (Alinhamento Vertical Homogêneo) --- */
+.details-content > div:first-child,
+.details-content > div:not(.hidden):first-of-type {
+    margin-top: 0 !important;
+}
+

@@ -2,6 +2,20 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.1] - 12/10/2026
+
+### 🌊 Varredura de Luz (Sweep Wave) no Card e Eliminação da Linha Residual nos Adicionais
+
+#### 1. Implementação da Opção 1: Sweep Wave no Card ao Resetar
+- **Estrutura e Bordas Estáveis:** Removida a alternância de cores de borda e a alteração de escala que causavam o efeito estroboscópico ("piscar de laranja para branco") e a sensação de travamento no card.
+- **Feixe de Luz Líquida Translúcida:** Ao acionar o reset, um feixe elegante em gradiente âmbar suave desliza da esquerda para a direita sobre o card via pseudo-elemento `::after` (`@keyframes cardSweepWave`), transmitindo a sensação limpa de uma "onda de varredura" sobre os dados, com o container permanecendo 100% firme.
+
+#### 2. Eliminação da Linha Reta Residual e Travamento na Saída de Adicionais
+- **Fim da Linha Achatada de Borda:** Eliminado o colapso mecânico de `max-height: 0` e `border-width: 0` que amassava o container e deixava uma linha horizontal de borda âmbar visível antes da remoção.
+- **Saída Fluida Acelerada por GPU:** A classe `.event-item-animate-leave` agora esmaece a opacidade em 160ms com escala sutil (`scale3d(0.92)`), anulando a borda (`border-color: transparent !important`) e a sombra (`box-shadow: none !important`) logo no primeiro instante da saída. O adicional dissolve no ar de forma leve e natural, sem qualquer linha ou engasgo de layout.
+
+---
+
 ## [v1.9.0] - 12/10/2026
 
 ### ✨ Feedback Visual no Card ao Resetar, Saída Suave de Eventos e Entrada Agradável de Colaboradores

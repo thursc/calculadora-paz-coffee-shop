@@ -2,6 +2,17 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.9] - 12/10/2026
+
+### 📐 Otimização de Posição do Feedback de Busca Vazia (Desktop e Mobile)
+
+#### 1. Reposicionamento Superior do Empty State de Busca
+- **Eliminação de Empurramento pelo Container:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), o componente `#search-empty-state` foi movido para o topo do `<main>`, antes do `#employee-container`.
+- **Ocultação da Esteira Vazia:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), quando a busca não encontra colaboradores, o container `#employee-container` recebe a classe `.hidden`, eliminando altura residual e evitando que o estado vazio seja jogado para o rodapé.
+- **Prevenção de Oclusão por Teclado Mobile:** As margens e o padding interno foram compactados (`p-5 sm:p-7`, `my-3 sm:my-6`), garantindo que o card fique localizado imediatamente abaixo da barra de pesquisa e permaneça 100% visível acima do teclado virtual em smartphones, além de ficar perfeitamente balanceado no topo do desktop.
+
+---
+
 ## [v1.9.8] - 12/10/2026
 
 ### 📢 Feedback de Busca Vazia (A11y) e Tratamento Visual para Falhas de LocalStorage

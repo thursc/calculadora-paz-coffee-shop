@@ -103,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchEmptyState) {
             const hasNoResults = term.length > 0 && visibleCount === 0;
             searchEmptyState.classList.toggle('hidden', !hasNoResults);
+            if (employeeContainer) {
+                employeeContainer.classList.toggle('hidden', hasNoResults);
+            }
             if (hasNoResults && searchEmptyTerm) {
                 searchEmptyTerm.textContent = `"${query.trim()}"`;
             }

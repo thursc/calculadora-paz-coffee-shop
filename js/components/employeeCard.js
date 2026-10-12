@@ -193,10 +193,22 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
     // Botão Resetar Turnos e Eventos (feedback visual animado no botão, ícone e card)
     const resetBtn = cardDetails.querySelector('.reset-btn');
+    let btnResetTimer = null;
+    let cardResetTimer = null;
+
     if (resetBtn) {
         resetBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (resetBtn.classList.contains('is-resetting')) return;
+
+            // Cancela timers pendentes para suportar reinicialização imediata em cliques consecutivos
+            if (btnResetTimer) clearTimeout(btnResetTimer);
+            if (cardResetTimer) clearTimeout(cardResetTimer);
+
+            // Reinicia classes e força reflow para que a animação recomece do frame 0 a cada clique
+            resetBtn.classList.remove('is-resetting');
+            cardDetails.classList.remove('is-card-resetting');
+            void resetBtn.offsetWidth;
+            void cardDetails.offsetWidth;
 
             resetBtn.classList.add('is-resetting');
             cardDetails.classList.add('is-card-resetting');
@@ -206,47 +218,93 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 cb.dispatchEvent(new Event('change'));
             });
 
-            // Remove eventos não fixados com animação fluida no padrão do site
+            // Remove eventos não fixados com animação FLIP suave (Proposta 1)
             const unlockedEvents = Array.from(cardDetails.querySelectorAll('.event-item')).filter(
                 el => el.dataset.locked !== 'true'
             );
 
             if (unlockedEvents.length > 0) {
+                const lockedEvents = Array.from(cardDetails.querySelectorAll('.event-item')).filter(
+                    el => el.dataset.locked === 'true'
+                );
+                const footer = cardDetails.querySelector('.employee-footer');
+                const targetsToAnimate = [...lockedEvents];
+                if (footer) targetsToAnimate.push(footer);
+
+                const firstPositions = targetsToAnimate.map(el => ({
+                    el,
+                    top: el.getBoundingClientRect().top
+                }));
+
                 let remaining = unlockedEvents.length;
                 unlockedEvents.forEach(eventItem => {
                     if (typeof eventItem.removeWithAnimation === 'function') {
                         eventItem.removeWithAnimation(() => {
                             remaining--;
                             if (remaining === 0) {
+                                executeBatchFlip();
                                 notifyChange();
                             }
-                        });
+                        }, { skipFlip: true });
                     } else {
                         eventItem.remove();
                         remaining--;
                         if (remaining === 0) {
+                            executeBatchFlip();
                             notifyChange();
                         }
                     }
                 });
+
+                function executeBatchFlip() {
+                    if (targetsToAnimate.length === 0) return;
+                    const movingElements = [];
+                    firstPositions.forEach(({ el, top }) => {
+                        if (!el.isConnected) return;
+                        const newTop = el.getBoundingClientRect().top;
+                        const deltaY = top - newTop;
+
+                        if (Math.abs(deltaY) > 0.5) {
+                            el.style.willChange = 'transform';
+                            el.style.transition = 'none';
+                            el.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+                            movingElements.push(el);
+                        }
+                    });
+
+                    if (movingElements.length > 0) {
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                movingElements.forEach(el => {
+                                    el.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                                    el.style.transform = 'translate3d(0, 0, 0)';
+                                });
+
+                                setTimeout(() => {
+                                    movingElements.forEach(el => {
+                                        el.style.transition = '';
+                                        el.style.transform = '';
+                                        el.style.willChange = '';
+                                    });
+                                }, 300);
+                            });
+                        });
+                    }
+                }
             } else {
                 notifyChange();
             }
 
-            // Limpeza do botão de reset (flash e rotação horária)
-            let resetBtnCleaned = false;
-            const onBtnResetEnd = () => {
-                if (resetBtnCleaned) return;
-                resetBtnCleaned = true;
+            // Limpeza do botão de reset (flash e rotação horária de 0.8s)
+            btnResetTimer = setTimeout(() => {
                 resetBtn.classList.remove('is-resetting');
-                resetBtn.removeEventListener('animationend', onBtnResetEnd);
-            };
-            resetBtn.addEventListener('animationend', onBtnResetEnd, { once: true });
-            setTimeout(onBtnResetEnd, 500);
+                btnResetTimer = null;
+            }, 820);
 
             // Limpeza da varredura líquida do card (sweep suave e cadenciado de 0.85s)
-            setTimeout(() => {
+            cardResetTimer = setTimeout(() => {
                 cardDetails.classList.remove('is-card-resetting');
+                cardResetTimer = null;
             }, 880);
         });
     }

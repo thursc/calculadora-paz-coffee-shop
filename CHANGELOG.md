@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.3] - 12/10/2026
+
+### ✨ Exclusão de Adicionais com FLIP & Flash Suave do Reset com Suporte a Cliques Consecutivos
+
+#### 1. Implementação da Proposta 1: FLIP nos Adicionais / Eventos
+- **Dissolução Elegante no Lugar:** Substituído o movimento lateral por uma dissolução suave e natural no lugar (`opacity: 1 → 0`, `scale: 1 → 0.94`) em 180ms. Elimina o corte na lateral e qualquer achatamento de bordas.
+- **Técnica FLIP (First, Last, Invert, Play):** Ao remover um adicional, as posições dos elementos irmãos abaixo e do rodapé do card são capturadas. Após a remoção do DOM, todos os elementos restantes deslizam suavemente para cima via GPU (`translate3d(0, deltaY, 0) → 0`) com curva cúbica aveludada (`cubic-bezier(0.16, 1, 0.3, 1)`), eliminando 100% dos saltos bruscos (*layout snap*).
+- **Suporte Integrado a Lote (Reset):** O mesmo padrão FLIP foi estendido para o botão de reset: quando adicionais não fixados são limpos em lote, os adicionais fixados restantes e o rodapé deslizam sincronizados e organicamente para as novas posições.
+
+#### 2. Flash do Botão de Reset Mais Lento e Suave (0.8s)
+- **Cadência Suave de 0.8s:** A animação `@keyframes resetFlashPulse` e o giro `@keyframes resetSnapSpin` foram estendidos de 0.48s para 0.8s, harmonizando perfeitamente com a varredura líquida do card (0.85s).
+- **Cores e Escala Aveludadas:** O pulso foi suavizado para escala de 1.05 com brilho âmbar translúcido e transição relaxante de volta ao estado inicial.
+
+#### 3. Reinicialização Imediata em Cliques Consecutivos do Reset
+- **Fim do Bloqueio de Cliques:** Removido o `pointer-events: none` de `.reset-btn.is-resetting` e eliminado o bloqueio condicional no JavaScript.
+- **Force-Reflow no Frame 0:** A cada clique consecutivo no botão de reset, timers pendentes são cancelados e um reflow síncrono (`void el.offsetWidth`) reinicia instantaneamente as animações do botão e do sweep do card, garantindo resposta visual e tátil a cada interação do usuário.
+
+---
+
 ## [v1.9.2] - 12/10/2026
 
 ### 🌊 Varredura Suave Cadenciada, Slide-Out Fluido de Adicionais e Rotação Horária do Reset

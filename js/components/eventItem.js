@@ -189,20 +189,88 @@ export function createEventElement(data = {}, onChangeCallback) {
         });
     });
 
-    // Remoção suave com animação padronizada do site
-    eventItem.removeWithAnimation = (callback) => {
+    // Remoção suave com animação padronizada do site (Proposta 1: Dissolução no lugar + FLIP nos irmãos)
+    eventItem.removeWithAnimation = (callback, options = {}) => {
+        const { skipFlip = false } = options;
+        const cardDetails = eventItem.closest('.employee-card-details');
+        const parent = eventItem.parentElement;
+
+        let targetsToAnimate = [];
+        let firstPositions = [];
+
+        if (!skipFlip && parent) {
+            // Coleta os eventos irmãos que estão abaixo deste na lista
+            let next = eventItem.nextElementSibling;
+            while (next) {
+                if (next.classList.contains('event-item')) {
+                    targetsToAnimate.push(next);
+                }
+                next = next.nextElementSibling;
+            }
+
+            // Coleta também o rodapé do card para deslizar junto suavemente
+            const footer = cardDetails ? cardDetails.querySelector('.employee-footer') : null;
+            if (footer) {
+                targetsToAnimate.push(footer);
+            }
+
+            firstPositions = targetsToAnimate.map(el => ({
+                el,
+                top: el.getBoundingClientRect().top
+            }));
+        }
+
         eventItem.classList.add('event-item-animate-leave');
+
         let cleaned = false;
         const onEnd = () => {
             if (cleaned) return;
             cleaned = true;
             eventItem.removeEventListener('transitionend', onEnd);
             eventItem.remove();
+
+            // FLIP (Invert & Play) para os elementos que estavam abaixo
+            if (!skipFlip && targetsToAnimate.length > 0) {
+                const movingElements = [];
+                firstPositions.forEach(({ el, top }) => {
+                    if (!el.isConnected) return;
+                    const newTop = el.getBoundingClientRect().top;
+                    const deltaY = top - newTop;
+
+                    if (Math.abs(deltaY) > 0.5) {
+                        el.style.willChange = 'transform';
+                        el.style.transition = 'none';
+                        el.style.transform = `translate3d(0, ${deltaY}px, 0)`;
+                        movingElements.push(el);
+                    }
+                });
+
+                if (movingElements.length > 0) {
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            movingElements.forEach(el => {
+                                el.style.transition = 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1)';
+                                el.style.transform = 'translate3d(0, 0, 0)';
+                            });
+
+                            setTimeout(() => {
+                                movingElements.forEach(el => {
+                                    el.style.transition = '';
+                                    el.style.transform = '';
+                                    el.style.willChange = '';
+                                });
+                            }, 300);
+                        });
+                    });
+                }
+            }
+
             if (typeof callback === 'function') callback();
             if (typeof onChangeCallback === 'function') onChangeCallback();
         };
+
         eventItem.addEventListener('transitionend', onEnd, { once: true });
-        setTimeout(onEnd, 260);
+        setTimeout(onEnd, 200);
     };
 
     removeBtn.addEventListener('click', () => {

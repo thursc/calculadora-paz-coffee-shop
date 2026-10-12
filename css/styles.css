@@ -238,25 +238,25 @@ html.dark .employee-footer {
     border-top: 1px solid rgba(41, 37, 36, 0.8);
 }
 
-/* --- Opção B: Feedback Visual do Botão Resetar (High Contrast Flash + Snap Spin - 120Hz/240Hz+) --- */
+/* --- Opção B: Feedback Visual do Botão Resetar (Flash Macio e Suave + Rotação Horária - 0.8s) --- */
 @keyframes resetFlashPulse {
     0% {
-        transform: scale3d(0.92, 0.92, 1);
-        background-color: #f59e0b;
+        transform: scale3d(0.96, 0.96, 1);
+        background-color: rgba(245, 158, 11, 0.85);
         color: #1c1917;
-        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45);
     }
-    35% {
-        transform: scale3d(1.07, 1.07, 1);
+    28% {
+        transform: scale3d(1.05, 1.05, 1);
         background-color: #f59e0b;
         color: #1c1917;
-        box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.35);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
     }
-    70% {
-        transform: scale3d(1.015, 1.015, 1);
-        background-color: #f59e0b;
+    65% {
+        transform: scale3d(1.01, 1.01, 1);
+        background-color: rgba(245, 158, 11, 0.6);
         color: #1c1917;
-        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
     }
     100% {
         transform: scale3d(1, 1, 1);
@@ -270,11 +270,11 @@ html.dark .employee-footer {
     0% {
         transform: rotate3d(0, 0, 1, 0deg);
     }
-    45% {
-        transform: rotate3d(0, 0, 1, 220deg);
+    48% {
+        transform: rotate3d(0, 0, 1, 210deg);
     }
-    80% {
-        transform: rotate3d(0, 0, 1, 370deg);
+    82% {
+        transform: rotate3d(0, 0, 1, 368deg);
     }
     100% {
         transform: rotate3d(0, 0, 1, 360deg);
@@ -282,15 +282,14 @@ html.dark .employee-footer {
 }
 
 .reset-btn.is-resetting {
-    animation: resetFlashPulse 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+    animation: resetFlashPulse 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
     will-change: transform, background-color, box-shadow;
-    pointer-events: none;
     transform: translateZ(0);
     backface-visibility: hidden;
 }
 
 .reset-btn.is-resetting svg {
-    animation: resetSnapSpin 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+    animation: resetSnapSpin 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
     will-change: transform;
     transform-origin: 50% 50%;
     color: #1c1917 !important;
@@ -530,17 +529,17 @@ html.dark .event-item.is-active .lock-badge {
     backface-visibility: hidden;
 }
 
-/* Animação ultra fluida de saída para itens de adicionais/eventos (Slide-Out Lateral + Fade Suave) */
+/* Animação refinada de saída para adicionais/eventos (Proposta 1: Dissolução no lugar + FLIP) */
 .event-item-animate-leave {
     opacity: 0 !important;
-    transform: translate3d(36px, 0, 0) scale3d(0.96, 0.96, 1) !important;
+    transform: scale3d(0.94, 0.94, 1) !important;
     border-color: transparent !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
-                border-color 0.16s ease,
-                box-shadow 0.16s ease !important;
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 0.12s ease,
+                box-shadow 0.12s ease !important;
     pointer-events: none !important;
     will-change: opacity, transform;
     backface-visibility: hidden;

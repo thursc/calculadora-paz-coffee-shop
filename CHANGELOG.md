@@ -2,6 +2,22 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.8] - 12/10/2026
+
+### 📢 Feedback de Busca Vazia (A11y) e Tratamento Visual para Falhas de LocalStorage
+
+#### 1. Feedback de Busca Vazia para Usuários e Tecnologias Assistivas (Item #13 - WCAG 4.1.3 Status Messages)
+- **Empty State Amigável:** Criado o componente `#search-empty-state` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e integrado em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), exibindo card moderno e centralizado quando um termo pesquisado não retorna nenhum colaborador.
+- **Anúncio Dinâmico via Leitor de Tela:** O container utiliza `role="status"` e `aria-live="polite"`, anunciando aos leitores de tela o termo não encontrado e eliminando a sensação de tela em branco ou quebrada.
+- **Ação Rápida de Reset:** Incluído o botão "Limpar busca" dentro do estado vazio para restaurar a lista com um clique ou pressionando Enter.
+
+#### 2. Tratamento Resiliente para QuotaExceededError no LocalStorage (Item #14)
+- **Detecção Precisa de Quota e Restrições:** Em [js/state/storage.js](file:///d:/dev/calculadora-paz-coffee-shop/js/state/storage.js), a função `saveStoredEmployees` agora captura especificamente erros de quota cheia (`QuotaExceededError`) e bloqueio de cookies em modo anônimo, disparando o evento `storage-save-error`.
+- **Banner de Alerta Visual:** Adicionado `#storage-alert-banner` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) com `role="alert"` e `aria-live="assertive"`, exibindo um aviso discreto mas nítido para o operador caso as alterações não possam ser salvas no disco do navegador, prevenindo perda inesperada de dados ao fechar a aba.
+- **Auto-recuperação:** Quando um salvamento posterior for bem-sucedido, o evento `storage-save-success` oculta automaticamente o aviso.
+
+---
+
 ## [v1.9.7] - 12/10/2026
 
 ### 🎨 Correção da Busca no Desktop e Contorno Arredondado do Campo de Colaborador

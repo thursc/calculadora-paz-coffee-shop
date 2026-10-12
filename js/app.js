@@ -17,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('employee-search');
     const clearSearchBtn = document.getElementById('clear-search-btn');
 
+    const searchEmptyState = document.getElementById('search-empty-state');
+    const searchEmptyTerm = document.getElementById('search-empty-term');
+    const searchEmptyClearBtn = document.getElementById('search-empty-clear-btn');
+
+    const storageAlertBanner = document.getElementById('storage-alert-banner');
+    const storageAlertMessage = document.getElementById('storage-alert-message');
+    const storageAlertCloseBtn = document.getElementById('storage-alert-close-btn');
+
     const modalManager = new ModalManager();
 
     // ==========================================
@@ -68,16 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 2. Busca Instantânea de Colaboradores
+    // 2. Busca Instantânea de Colaboradores (com A11y e Empty State)
     // ==========================================
     function filterEmployees(query) {
         const term = query.toLowerCase().trim();
         const cards = employeeContainer.querySelectorAll('.employee-card-details');
+        let visibleCount = 0;
 
         cards.forEach(card => {
             const name = (card.querySelector('.employee-name')?.value || '').toLowerCase();
             const matches = !term || name.includes(term);
             card.classList.toggle('hidden', !matches);
+            if (matches) visibleCount++;
         });
 
         // Oculta o card tracejado de adicionar se estiver filtrando por texto
@@ -87,6 +97,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (clearSearchBtn) {
             clearSearchBtn.classList.toggle('hidden', term.length === 0);
+        }
+
+        // Feedback de Busca Vazia (Item #13 - WCAG 4.1.3 Status Messages com aria-live)
+        if (searchEmptyState) {
+            const hasNoResults = term.length > 0 && visibleCount === 0;
+            searchEmptyState.classList.toggle('hidden', !hasNoResults);
+            if (hasNoResults && searchEmptyTerm) {
+                searchEmptyTerm.textContent = `"${query.trim()}"`;
+            }
         }
     }
 
@@ -121,6 +140,45 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    if (searchEmptyClearBtn) {
+        searchEmptyClearBtn.addEventListener('click', () => {
+            if (searchInput) {
+                searchInput.value = '';
+                filterEmployees('');
+                searchInput.focus();
+            }
+        });
+    }
+
+    // ==========================================
+    // 2.1 Alerta Visual de Armazenamento Local (Item #14)
+    // ==========================================
+    function initStorageNotifications() {
+        window.addEventListener('storage-save-error', (e) => {
+            const detail = e.detail || {};
+            if (storageAlertBanner) {
+                if (storageAlertMessage && detail.message) {
+                    storageAlertMessage.textContent = detail.message;
+                }
+                storageAlertBanner.classList.remove('hidden');
+            }
+        });
+
+        window.addEventListener('storage-save-success', () => {
+            if (storageAlertBanner && !storageAlertBanner.classList.contains('hidden')) {
+                storageAlertBanner.classList.add('hidden');
+            }
+        });
+
+        if (storageAlertCloseBtn) {
+            storageAlertCloseBtn.addEventListener('click', () => {
+                storageAlertBanner?.classList.add('hidden');
+            });
+        }
+    }
+
+    initStorageNotifications();
 
 
     // ==========================================

@@ -152,6 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalManager.openDeleteConfirm(
                         `Tem certeza que deseja excluir ${employeeName}?`,
                         () => {
+                            const isMobile = window.innerWidth < 768;
+
                             // 1. FLIP (First): Armazena as posições dos elementos irmãos antes da exclusão
                             const siblings = Array.from(employeeContainer.children).filter(
                                 el => el !== cardElement && (el.classList.contains('kanban-col') || el.id === 'add-employee-card')
@@ -161,13 +163,17 @@ document.addEventListener('DOMContentLoaded', () => {
                                 return { el, left: rect.left, top: rect.top };
                             });
 
+                            // Desativa temporariamente o scroll-snap no mobile para eliminar jitter/conflito
+                            if (isMobile) {
+                                employeeContainer.style.scrollSnapType = 'none';
+                            }
+
                             // 2. Animação de saída sutil do card excluído
                             cardElement.classList.add('card-animate-delete');
 
                             setTimeout(() => {
-                                // 3. Remove o card do DOM e recalcula
+                                // 3. Remove o card do DOM sem executar reflows pesados
                                 cardElement.remove();
-                                recalculateAndSave();
 
                                 // 4. FLIP (Invert): Mede nova posição e inverte instantaneamente
                                 const movingElements = [];
@@ -175,9 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                     if (!el.isConnected) return;
                                     const newRect = el.getBoundingClientRect();
                                     const deltaX = left - newRect.left;
-                                    const deltaY = top - newRect.top;
+                                    // No mobile (esteira horizontal), anula qualquer deltaY espúrio
+                                    const deltaY = isMobile ? 0 : (top - newRect.top);
 
                                     if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
+                                        el.style.willChange = 'transform';
                                         el.style.transition = 'none';
                                         el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
                                         movingElements.push(el);
@@ -187,19 +195,29 @@ document.addEventListener('DOMContentLoaded', () => {
                                 // 5. FLIP (Play): No frame seguinte, desliza suavemente até a nova posição
                                 requestAnimationFrame(() => {
                                     requestAnimationFrame(() => {
+                                        const transitionTiming = isMobile
+                                            ? 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)'
+                                            : 'transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1)';
+
                                         movingElements.forEach(el => {
-                                            el.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                                            el.style.transition = transitionTiming;
                                             el.style.transform = '';
                                         });
 
                                         setTimeout(() => {
                                             movingElements.forEach(el => {
                                                 el.style.transition = '';
+                                                el.style.willChange = '';
                                             });
-                                        }, 380);
+                                            if (isMobile) {
+                                                employeeContainer.style.scrollSnapType = '';
+                                            }
+                                            // Persiste no storage de forma assíncrona após o término da animação
+                                            recalculateAndSave();
+                                        }, isMobile ? 300 : 340);
                                     });
                                 });
-                            }, 200);
+                            }, isMobile ? 160 : 180);
                         }
                     );
                 },

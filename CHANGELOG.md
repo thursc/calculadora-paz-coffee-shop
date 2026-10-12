@@ -4,6 +4,33 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.6.0] - 12/10/2026
+
+### ⚡ Otimização de Performance, Animação Responsiva e Consistência Visual nos Eventos Adicionais
+
+#### 1. Performance e Eliminação de Engasgo na Exclusão
+- **Eliminação de Layout Thrashing:** O recálculo síncrono e a reconstrução do DOM de todos os cards vizinhos foi desacoplada da medição de posições. Ao excluir um colaborador, o nó é removido e as posições são medidas instantaneamente sem forçar reflow desnecessário na thread principal.
+- **Persistência Assíncrona:** A persistência no `localStorage` é executada de forma assíncrona após a conclusão da animação visual, garantindo 60/120 FPS ininterruptos durante a transição.
+
+#### 2. Animação de Exclusão Responsiva e Suave no Mobile
+- **Eliminação de Jitter:** Durante a animação de exclusão no mobile, o `scroll-snap-type` da esteira Kanban é suspenso temporariamente e restaurado ao término, impedindo o conflito do snap nativo com o transform dos elementos.
+- **Isolamento de Eixo:** No mobile (esteira horizontal), foi travado qualquer deslocamento vertical espúrio (`deltaY = 0`), garantindo um deslizamento limpo, natural e sem tremores.
+- **Aceleração por Hardware:** Aplicação de `will-change: transform` durante o movimento nos cards irmãos.
+
+#### 3. Padronização Visual do Checkbox dos Eventos Adicionais
+- **Design System Coerente:** Substituído o checkbox quadrado nativo pelo controle arredondado customizado (`rounded-full`), idêntico aos chips de "Turnos Trabalhados" e "Dobradinha de Domingo".
+- **Destaque Âmbar/Laranja:** Quando marcado/ativo, o controle recebe o anel com destaque âmbar (`border-amber-500 bg-amber-500/20`) e o ícone de check em tom âmbar vibrante.
+
+#### 4. Inputs dos Adicionais Sempre Desbloqueados para Edição
+- **Liberdade de Edição:** Removido o bloqueio com `disabled` nos campos dos adicionais. Agora o usuário pode preencher ou alterar o nome, tipo, horas ou valores do evento adicional a qualquer momento, mesmo quando estiver desmarcado.
+- **Estado Inativo Claro:** Quando desmarcado, o item apenas sinaliza visualmente a inatividade sem limitar a digitação ou foco.
+
+#### 5. Feedback Visual Evidente para "Manter ao Resetar" (Lock)
+- **Destaque Evidente do Item Fixado:** Quando a opção "Manter ao resetar" está ativa, o container do evento recebe classe `.is-locked` com borda contornada em tom âmbar dourado sutil, gradiente suave de fundo e sombra de realce.
+- **Badge e Ícone:** Exibição de um badge visível `Fixado` e realce no botão de cadeado, tornando o estado travado imediatamente reconhecível à primeira vista.
+
+---
+
 ## [v1.5.0] - 12/10/2026
 
 ### 🚀 Refinamentos de UX, Limpeza de Recursos e Feedback Visual

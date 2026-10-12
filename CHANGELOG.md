@@ -9,6 +9,9 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 ### ⚡ Otimização de Performance, Animação Responsiva e Consistência Visual nos Eventos Adicionais
 
 #### 1. Performance e Eliminação de Engasgo na Exclusão
+- **Eliminação de Reflow na Abertura do Modal:** Removida a alternância de `overflow-hidden` no `body` ao abrir o modal de confirmação de exclusão (que forçava reflow global sincrônico da página inteira devido ao desaparecimento da barra de rolagem).
+- **Overlay Otimizado por GPU:** Removido o filtro pesado de `backdrop-blur` no overlay de confirmação em favor de overlay com aceleração de hardware e animação de escala instantânea (`scale(0.96) → 1` em 0.15s), eliminando qualquer engasgo quando a janela aparece.
+- **Feedback Tátil Imediato:** Adicionado `active:scale-95` e `cursor-pointer` aos botões de confirmar e cancelar, além de desacoplar o fechamento da janela com `requestAnimationFrame` para resposta imediata ao toque/clique.
 - **Eliminação de Layout Thrashing:** O recálculo síncrono e a reconstrução do DOM de todos os cards vizinhos foi desacoplada da medição de posições. Ao excluir um colaborador, o nó é removido e as posições são medidas instantaneamente sem forçar reflow desnecessário na thread principal.
 - **Persistência Assíncrona:** A persistência no `localStorage` é executada de forma assíncrona após a conclusão da animação visual, garantindo 60/120 FPS ininterruptos durante a transição.
 

@@ -56,18 +56,28 @@ export class ModalManager {
 
         // Confirmação de exclusão
         if (this.confirmDeleteBtn) {
-            this.confirmDeleteBtn.addEventListener('click', () => {
-                if (typeof this.onConfirmDeleteCallback === 'function') {
-                    this.onConfirmDeleteCallback();
-                }
+            this.confirmDeleteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const callback = this.onConfirmDeleteCallback;
                 this.close(this.deleteConfirmModal);
+                if (typeof callback === 'function') {
+                    // Executa a saída no próximo frame para que a resposta do clique e fechamento do modal seja 100% instantânea
+                    requestAnimationFrame(() => {
+                        callback();
+                    });
+                }
             });
         }
     }
 
     open(modal) {
         if (!modal) return;
-        document.body.classList.add('overflow-hidden');
+        // Aplica overflow-hidden apenas para modais com rolagem extensa (holerite),
+        // evitando forçar recálculo global de layout (reflow) da página no modal de exclusão
+        if (modal === this.holeriteModal) {
+            document.body.classList.add('overflow-hidden');
+        }
         modal.classList.remove('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'false');
     }
@@ -76,7 +86,7 @@ export class ModalManager {
         if (!modal) return;
         modal.classList.add('pointer-events-none', 'opacity-0');
         modal.setAttribute('aria-hidden', 'true');
-        if (this.holeriteModal?.classList.contains('opacity-0') && this.deleteConfirmModal?.classList.contains('opacity-0')) {
+        if (modal === this.holeriteModal || (this.holeriteModal?.classList.contains('opacity-0') && this.deleteConfirmModal?.classList.contains('opacity-0'))) {
             document.body.classList.remove('overflow-hidden');
         }
     }

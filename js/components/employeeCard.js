@@ -183,6 +183,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             const empName = nameInput.value?.trim() || 'este colaborador';
             if (typeof onRequestDelete === 'function') {
                 onRequestDelete(cardDetails, empName);

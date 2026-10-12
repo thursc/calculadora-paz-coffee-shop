@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.7.0] - 12/10/2026
+
+### 🎨 Padronização Visual de Eventos Adicionais e Feedback Tátil no Reset (Opção B)
+
+#### 1. Padronização Visual e Desacoplamento de Estados em Eventos/Adicionais
+- **Espelhamento Fiel das Pílulas de Turnos Ativos:** O estado ativado (`.event-item.is-active`) agora espelha exatamente a identidade visual das pílulas de turnos (`.shift-pill.is-active`), recebendo borda âmbar (`var(--accent-amber)`), gradiente de fundo quente e anel com sombra de realce âmbar (`var(--accent-amber-glow)`).
+- **Desacoplamento Completo da Fixação ("Manter ao Resetar"):**
+  - O estado de fixação (`is-locked`) foi totalmente desacoplado da ativação de cálculo. Um item fixado porém desativado **não** recebe mais gradiente ou contorno âmbar no card, eliminando qualquer ambiguidade de que estaria somando no total.
+  - **Badge "Fixado" Inteligente:**
+    - Quando o item está **desativado e fixado**: o badge exibe estilo neutro e discreto (`stone-500/stone-600`), com botão de cadeado neutro, deixando 100% evidente que o evento está protegido contra o reset, mas não está ativo no holerite.
+    - Quando o item está **ativado e fixado**: o badge harmoniza em tom âmbar brilhante com o restante do card ativo.
+- **Matriz 2×2 de Estados Consistente:** Todas as 4 combinações (Desativado/Livre, Ativado/Livre, Desativado/Fixado e Ativado/Fixado) possuem representação visual intuitiva e sem ruídos.
+- **Opacidade Dinâmica e Subtotal Suave:** Itens inativos operam com opacidade sutil (0.72) e subtotal esmaecido, enquanto itens ativos têm opacidade plena (1.0).
+
+#### 2. Microinteração do Botão "Resetar Turnos e Eventos" (Opção B - High Contrast Flash + Snap Spin)
+- **High Contrast Flash:** Ao clicar em resetar, o botão dispara um flash sólido em âmbar vibrante (`#f59e0b`), invertendo o ícone para preto café de alto contraste (`#1c1917`), acompanhado por um pulso com anel expansivo de luz (`box-shadow`), dissipando suavemente de volta ao repouso.
+- **Snap Spin Anti-Horário:** O ícone SVG executa uma rotação anti-horária ágil com efeito de snap elástico (`rotate(0deg) → -220deg → -370deg → -360deg` com easing `cubic-bezier(0.25, 1, 0.5, 1)`), transmitindo a sensação tátil de mola rebobinada.
+- **Prevenção de Cliques Múltiplos:** `pointer-events: none` aplicado durante o ciclo da animação para evitar acionamentos concorrentes.
+
 ---
 
 ## [v1.6.0] - 12/10/2026

@@ -6,7 +6,7 @@ import { setupCurrencyHandlers } from '../utils/currency.js';
 
 export function createEventElement(data = {}, onChangeCallback) {
     const eventItem = document.createElement('div');
-    eventItem.className = 'event-item event-item-animate-enter flex flex-col gap-2 p-2.5 border border-stone-200 dark:border-stone-800 rounded-xl bg-stone-50/60 dark:bg-stone-800/30 transition-colors';
+    eventItem.className = 'event-item event-item-animate-enter flex flex-col gap-2 p-2.5 border rounded-xl';
 
     eventItem.innerHTML = `
         <!-- Linha 1: Checkbox Estilizado, Nome do Adicional e Ações Rápidas -->
@@ -23,7 +23,7 @@ export function createEventElement(data = {}, onChangeCallback) {
                 <input type="text" placeholder="Nome do Adicional" class="event-name w-full px-2 py-1 text-xs sm:text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 placeholder-stone-400 focus:ring-1 focus:ring-amber-500">
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
-                <span class="lock-badge hidden items-center text-[10px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded-md select-none">
+                <span class="lock-badge hidden items-center text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md select-none">
                     Fixado
                 </span>
                 <button type="button" class="lock-event-btn p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-400 hover:text-amber-500 transition-colors" title="Manter ao resetar" aria-label="Travar evento para não apagar ao resetar">
@@ -32,7 +32,7 @@ export function createEventElement(data = {}, onChangeCallback) {
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,9c0,0,0-1.6,0-2c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,2,0,2"/>
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M18,21H6c-0.552,0-1-0.448-1-1V10c0-0.552,0.448-1,1-1h12c0.552,0,1,0.448,1,1v10C19,20.552,18.552,21,18,21z"/>
                     </svg>
-                    <svg class="lock-icon-locked w-4 h-4 hidden text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <svg class="lock-icon-locked w-4 h-4 hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M20,20V10c0-1.1-0.9-2-2-2H6c-1.1,0-2,0.9-2,2v10c0,1.1,0.9,2,2,2h12C19.1,22,20,21.1,20,20z M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
                         <path fill="none" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" d="M17,12c0-0.4,0-4.6,0-5c0-2.8-2.2-5-5-5S7,4.2,7,7c0,0.4,0,4.6,0,5"/>
                     </svg>
@@ -142,16 +142,15 @@ export function createEventElement(data = {}, onChangeCallback) {
     // Inputs permanecem SEMPRE editáveis (sem aplicar disabled),
     // permitindo ao usuário alterar nome, tipo, horas ou valores a qualquer momento.
     const setEventState = (isChecked) => {
+        eventItem.classList.toggle('is-active', isChecked);
         if (isChecked) {
             checkIcon.classList.remove('hidden');
             checkIndicator.classList.add('border-amber-500', 'bg-amber-500/20');
             checkIndicator.classList.remove('border-stone-300', 'dark:border-stone-600');
-            eventItem.classList.remove('opacity-60');
         } else {
             checkIcon.classList.add('hidden');
             checkIndicator.classList.remove('border-amber-500', 'bg-amber-500/20');
             checkIndicator.classList.add('border-stone-300', 'dark:border-stone-600');
-            eventItem.classList.add('opacity-60');
         }
     };
 

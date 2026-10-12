@@ -208,51 +208,155 @@ html.dark .employee-footer {
     border-top: 1px solid rgba(41, 37, 36, 0.8);
 }
 
-/* --- Feedback Visual do Botão Resetar --- */
-@keyframes resetBtnPulse {
-    0% { transform: scale(1); }
-    35% { transform: scale(0.88); }
-    70% { transform: scale(1.08); }
-    100% { transform: scale(1); }
+/* --- Opção B: Feedback Visual do Botão Resetar (High Contrast Flash + Snap Spin) --- */
+@keyframes resetFlashPulse {
+    0% {
+        transform: scale(0.92);
+        background-color: #f59e0b;
+        color: #1c1917;
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+    }
+    35% {
+        transform: scale(1.08);
+        background-color: #f59e0b;
+        color: #1c1917;
+        box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.35);
+    }
+    70% {
+        transform: scale(1.02);
+        background-color: #f59e0b;
+        color: #1c1917;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+    }
+    100% {
+        transform: scale(1);
+        background-color: transparent;
+        color: inherit;
+        box-shadow: none;
+    }
 }
 
-@keyframes resetSpinCounterClockwise {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(-360deg); }
+@keyframes resetSnapSpin {
+    0% {
+        transform: rotate(0deg);
+    }
+    45% {
+        transform: rotate(-220deg);
+    }
+    80% {
+        transform: rotate(-370deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
 }
 
 .reset-btn.is-resetting {
-    animation: resetBtnPulse 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-    background-color: rgba(245, 158, 11, 0.15) !important;
-    color: #d97706 !important;
-}
-
-html.dark .reset-btn.is-resetting {
-    background-color: rgba(245, 158, 11, 0.22) !important;
-    color: #f59e0b !important;
+    animation: resetFlashPulse 0.48s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+    pointer-events: none;
 }
 
 .reset-btn.is-resetting svg {
-    animation: resetSpinCounterClockwise 0.45s cubic-bezier(0.4, 0, 0.2, 1);
-    color: #f59e0b !important;
+    animation: resetSnapSpin 0.48s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+    color: #1c1917 !important;
+    stroke: #1c1917 !important;
 }
 
-/* --- Estado Fixado / Manter ao Resetar nos Adicionais --- */
-.event-item.is-locked {
-    border-color: rgba(245, 158, 11, 0.45) !important;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(245, 158, 11, 0.02)) !important;
-    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), 0 2px 8px rgba(245, 158, 11, 0.06);
+/* --- Itens de Eventos / Adicionais (Padronização Visual com os Turnos) --- */
+.event-item {
+    transition: background 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease;
 }
 
-html.dark .event-item.is-locked {
-    border-color: rgba(245, 158, 11, 0.5) !important;
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.04)) !important;
-    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 2px 10px rgba(0, 0, 0, 0.25);
+/* Estado Inativo (Desmarcado) */
+.event-item:not(.is-active) {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(0, 0, 0, 0.08) !important;
+    opacity: 0.72;
 }
 
+html.dark .event-item:not(.is-active) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    opacity: 0.72;
+}
+
+.event-item:not(.is-active) .event-calculated-value {
+    opacity: 0.5;
+}
+
+/* Estado Ativo (Marcar presença no holerite - Espelho Fiel das Pílulas de Turnos) */
+.event-item.is-active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12)) !important;
+    border-color: var(--accent-amber) !important;
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 8px var(--accent-amber-glow) !important;
+}
+
+html.dark .event-item.is-active {
+    opacity: 1 !important;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.18)) !important;
+    border-color: var(--accent-amber) !important;
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 10px rgba(245, 158, 11, 0.25) !important;
+}
+
+.event-item.is-active .event-calculated-value {
+    opacity: 1;
+}
+
+/* --- Estado Fixado (Desacoplado - Preservação no Reset sem Falso Destaque de Ativo) --- */
 .lock-event-btn.locked {
-    background-color: rgba(245, 158, 11, 0.15) !important;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Botão Fixado quando Inativo: tom neutro discreto */
+.event-item:not(.is-active) .lock-event-btn.locked {
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    color: #78716c !important;
+}
+
+html.dark .event-item:not(.is-active) .lock-event-btn.locked {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #a8a29e !important;
+}
+
+/* Botão Fixado quando Ativo: tom âmbar vibrante integrado ao card */
+.event-item.is-active .lock-event-btn.locked {
+    background-color: rgba(245, 158, 11, 0.18) !important;
     color: var(--accent-amber) !important;
+}
+
+/* Badge "Fixado" */
+.event-item .lock-badge {
+    transition: all 0.2s ease;
+}
+
+/* Badge quando Inativo: Neutro discreto */
+.event-item:not(.is-active) .lock-badge {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    color: #57534e;
+}
+
+html.dark .event-item:not(.is-active) .lock-badge {
+    background-color: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: #d6d3d1;
+}
+
+/* Badge quando Ativo: Âmbar harmonizado com card */
+.event-item.is-active .lock-badge {
+    background-color: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #b45309;
+}
+
+html.dark .event-item.is-active .lock-badge {
+    background-color: rgba(245, 158, 11, 0.25);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    color: #fbbf24;
 }
 
 /* --- Animações Leves de Adição e Exclusão de Colaborador --- */

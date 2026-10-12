@@ -4,6 +4,25 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.2.7] - 12/10/2026
+
+### 🖱️ Fluidez Total no Scroll do Mouse, Ancoragem em (x=0, y=0) e Novo Card Compacto
+- **Scroll do Mouse Horizontal Buttery-Smooth no Desktop**:
+  - Eliminado o travamento na roda do mouse: adicionada normalização universal de `deltaMode` (no Firefox/Windows, cada notch emitia apenas 3px de scroll em modo linhas, tornando a esteira quase estática; agora é escalonado em pixels reais proporcionais).
+  - Desativado o `scroll-snap-type` em resoluções desktop (`min-width: 768px`) em [styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), impedindo que o motor de snap dispute com a rolagem do mouse e cause estalos ou paradas bruscas.
+  - Multiplicador de fluidez calibrado (1.35x) com captura ativa no container e na janela.
+- **Ancoragem Fiel no Topo e Início da Página (x=0, y=0)**:
+  - Eliminada a rolagem vertical indesejada gerada anteriormente por `scrollIntoView`, que ocultava o cabeçalho e a barra de busca.
+  - Criado `resetScrollPosition()` com garantia de `window.scrollTo(0, 0)`, `scrollTop = 0` e `employeeContainer.scrollLeft = 0` na inicialização e recarregamento da página.
+- **Card Recolhido com Resumo Financeiro Completo (Conforme Mockup)**:
+  - Reestruturado o template do colaborador: o rodapé com **Total a Pagar**, botão **"Gerar Holerite"** e link **"Ver cálculo detalhado"** agora permanece **sempre visível**, tanto no card aberto quanto fechado.
+  - Ao recolher o card, a Taxa Horária, Turnos Trabalhados, Dobradinha e Adicionais/Eventos são suavemente recolhidos sem ocupar espaço.
+  - Visual minimalista e contínuo no modo recolhido, com bordas divisórias aplicadas apenas quando expandido.
+- **Cache-Busting**:
+  - Versão dos assets elevada para `v=1.2.8`.
+
+---
+
 ## [v1.2.6] - 12/10/2026
 
 ### 🖱️ Navegação Horizontal Desktop, Início no Primeiro Colaborador e Taxa Padrão de R$ 20,00

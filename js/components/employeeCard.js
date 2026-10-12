@@ -22,20 +22,20 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     // Importante: hourly-rate está localizado no resumo (summary) do card
     const hourlyRateInput = cardDetails.querySelector('.hourly-rate');
 
-    const dobradinhaCheckbox = cardContent.querySelector('.bonus-dobradinha-checkbox');
-    const dobradinhaContainer = cardContent.querySelector('[data-bonus="dobradinha"]');
-    const dobradinhaIndicator = cardContent.querySelector('.dobradinha-indicator svg');
-    const shiftsContainer = cardContent.querySelector('.shifts-container');
-    const eventList = cardContent.querySelector('.event-list');
-    const employeeTotalEl = cardContent.querySelector('.employee-total');
+    const dobradinhaCheckbox = cardDetails.querySelector('.bonus-dobradinha-checkbox');
+    const dobradinhaContainer = cardDetails.querySelector('[data-bonus="dobradinha"]');
+    const dobradinhaIndicator = cardDetails.querySelector('.dobradinha-indicator svg');
+    const shiftsContainer = cardDetails.querySelector('.shifts-container');
+    const eventList = cardDetails.querySelector('.event-list');
+    const employeeTotalEl = cardDetails.querySelector('.employee-total');
 
-    const shiftsBreakdownContainer = cardContent.querySelector('.shifts-breakdown-container');
-    const eventsBreakdownContainer = cardContent.querySelector('.events-breakdown-container');
-    const bonusBreakdownContainer = cardContent.querySelector('.bonus-breakdown-container');
-    const shiftsListEl = cardContent.querySelector('.shifts-breakdown-list');
-    const eventsListEl = cardContent.querySelector('.events-breakdown-list');
-    const bonusListEl = cardContent.querySelector('.bonus-breakdown-list');
-    const emptyBreakdownMessage = cardContent.querySelector('.empty-breakdown-message');
+    const shiftsBreakdownContainer = cardDetails.querySelector('.shifts-breakdown-container');
+    const eventsBreakdownContainer = cardDetails.querySelector('.events-breakdown-container');
+    const bonusBreakdownContainer = cardDetails.querySelector('.bonus-breakdown-container');
+    const shiftsListEl = cardDetails.querySelector('.shifts-breakdown-list');
+    const eventsListEl = cardDetails.querySelector('.events-breakdown-list');
+    const bonusListEl = cardDetails.querySelector('.bonus-breakdown-list');
+    const emptyBreakdownMessage = cardDetails.querySelector('.empty-breakdown-message');
 
     const uniqueId = data.id || `employee-${Date.now()}`;
     cardDetails.dataset.id = uniqueId;
@@ -224,7 +224,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     }
 
     // Botão Gerar Holerite
-    const generateHoleriteBtn = cardContent.querySelector('.generate-holerite-btn');
+    const generateHoleriteBtn = cardDetails.querySelector('.generate-holerite-btn');
     if (generateHoleriteBtn) {
         generateHoleriteBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -253,7 +253,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     // Extração estruturada de dados compatível com o schema do localStorage
     cardDetails.getEmployeeData = () => {
         const shifts = [];
-        cardContent.querySelectorAll('.shift-item').forEach(shiftItem => {
+        cardDetails.querySelectorAll('.shift-item').forEach(shiftItem => {
             const cb = shiftItem.querySelector('.shift-checkbox');
             const hoursInput = shiftItem.querySelector('.shift-hours');
             shifts.push({
@@ -264,7 +264,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
 
         const events = [];
-        cardContent.querySelectorAll('.event-item').forEach(eventItem => {
+        cardDetails.querySelectorAll('.event-item').forEach(eventItem => {
             if (typeof eventItem.getEventData === 'function') {
                 events.push(eventItem.getEventData());
             }

@@ -187,15 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. Início Focado no Primeiro Colaborador
+    // 5. Início Focado no Topo e Primeiro Colaborador (x=0, y=0)
     // ==========================================
-    function scrollToFirstEmployee() {
-        if (!employeeContainer) return;
-        employeeContainer.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+    function resetScrollPosition() {
         window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
-        const firstCard = employeeContainer.querySelector('.employee-card-details');
-        if (firstCard) {
-            firstCard.scrollIntoView({ behavior: 'instant', inline: 'start', block: 'nearest' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+        if (employeeContainer) {
+            employeeContainer.scrollLeft = 0;
         }
     }
 
@@ -203,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. Navegação Desktop: Scroll do Mouse e Setas
     // ==========================================
     function setupDesktopNavigation() {
-        // Scroll horizontal fluido com a roda do mouse (wheel)
-        window.addEventListener('wheel', (e) => {
+        // Scroll horizontal fluido e responsivo com a roda do mouse (wheel)
+        function handleWheel(e) {
             // Se algum modal estiver aberto ou o cursor estiver dentro de um modal, mantém o comportamento vertical nativo
             if (document.body.classList.contains('overflow-hidden') || e.target.closest('.modal')) {
                 return;
@@ -215,11 +214,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (e.deltaY !== 0 && employeeContainer) {
-                e.preventDefault();
-                employeeContainer.scrollLeft += e.deltaY;
+            if (e.deltaY === 0 || !employeeContainer) return;
+
+            // Normalização universal do deltaY (compatibilidade total Chrome, Firefox e Edge no Windows e Mac)
+            let delta = e.deltaY;
+            if (e.deltaMode === 1) { // Firefox Windows deltaMode = 1 (lines)
+                delta *= 36;
+            } else if (e.deltaMode === 2) { // Pages
+                delta *= 360;
             }
-        }, { passive: false });
+
+            e.preventDefault();
+            employeeContainer.scrollLeft += (delta * 1.35);
+        }
+
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        employeeContainer.addEventListener('wheel', handleWheel, { passive: false });
 
         // Setas do teclado (Esquerda e Direita)
         window.addEventListener('keydown', (e) => {
@@ -280,14 +290,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         recalculateAndSave();
 
-        // Sempre posiciona no primeiro colaborador (mais à esquerda) ao iniciar
-        requestAnimationFrame(() => {
-            scrollToFirstEmployee();
-        });
+        // Sempre posiciona no topo e no primeiro colaborador (x=0, y=0) ao iniciar
+        resetScrollPosition();
+        requestAnimationFrame(resetScrollPosition);
     }
 
     init();
 
-    window.addEventListener('load', scrollToFirstEmployee, { once: true });
-    window.addEventListener('pageshow', scrollToFirstEmployee);
+    window.addEventListener('load', resetScrollPosition, { once: true });
+    window.addEventListener('pageshow', resetScrollPosition);
 });

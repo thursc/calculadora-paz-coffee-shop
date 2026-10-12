@@ -72,9 +72,9 @@ html.dark ::-webkit-scrollbar-thumb {
     -webkit-overflow-scrolling: touch;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
     .kanban-track {
-        scroll-snap-type: x proximity;
+        scroll-snap-type: none !important;
     }
 }
 
@@ -157,7 +157,7 @@ html.dark .logo-img {
 /* --- Animações do Accordion do Card --- */
 .employee-content {
     overflow: hidden;
-    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease, padding 0.2s ease;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, padding 0.25s ease;
 }
 
 .employee-card-details:not(.is-open) > .employee-content {
@@ -170,7 +170,24 @@ html.dark .logo-img {
 
 .employee-card-details.is-open > .employee-content {
     max-height: 2500px;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
     opacity: 1;
+}
+
+/* Divisores dinâmicos sutis (visíveis apenas quando o card está expandido) */
+.employee-card-details.is-open .employee-summary {
+    border-bottom: 1px solid rgba(229, 231, 235, 0.7);
+}
+html.dark .employee-card-details.is-open .employee-summary {
+    border-bottom: 1px solid rgba(41, 37, 36, 0.8);
+}
+
+.employee-card-details.is-open .employee-footer {
+    border-top: 1px solid rgba(229, 231, 235, 0.7);
+}
+html.dark .employee-card-details.is-open .employee-footer {
+    border-top: 1px solid rgba(41, 37, 36, 0.8);
 }
 
 .employee-card-details .minimize-btn svg {

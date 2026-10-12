@@ -59,9 +59,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     SHIFTS.forEach(shift => {
         const savedShift = savedShifts.find(s => s.id === shift.id) || {};
         const shiftEl = document.createElement('div');
-        shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none';
+        // cursor-pointer no container inteiro — toda a linha é clicável
+        shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none cursor-pointer';
         shiftEl.innerHTML = `
-            <div class="shift-toggle-btn flex items-center gap-2.5 cursor-pointer flex-grow min-w-0 pr-2">
+            <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2">
                 <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}">
                 <span class="shift-check-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0 transition-colors">
                     <svg class="w-2.5 h-2.5 hidden text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
@@ -73,7 +74,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 </span>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0 shift-hours-wrapper">
-                <input type="number" class="shift-hours w-16 py-1 px-2 text-right text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500" step="0.5" min="0">
+                <input type="number" class="shift-hours w-16 py-1 px-2 text-right text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 transition-opacity" step="0.5" min="0">
                 <span class="text-xs text-stone-400 font-medium">hrs</span>
             </div>
         `;
@@ -83,7 +84,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const checkIcon = shiftEl.querySelector('.shift-check-indicator svg');
         const indicatorRing = shiftEl.querySelector('.shift-check-indicator');
         const hoursInput = shiftEl.querySelector('.shift-hours');
-        const toggleBtn = shiftEl.querySelector('.shift-toggle-btn');
+        const hoursWrapper = shiftEl.querySelector('.shift-hours-wrapper');
 
         hoursInput.dataset.lastValue = savedShift.hours || shift.hours;
         checkbox.checked = savedShift.checked || false;
@@ -95,20 +96,32 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             if (isChecked) {
                 checkIcon.classList.remove('hidden');
                 indicatorRing.classList.add('border-amber-500', 'bg-amber-500/20');
+                // Restaura o lastValue ao ativar
                 hoursInput.value = hoursInput.dataset.lastValue;
             } else {
                 checkIcon.classList.add('hidden');
                 indicatorRing.classList.remove('border-amber-500', 'bg-amber-500/20');
-                hoursInput.value = 0;
+                // Mantém o lastValue visível (esmaecido pelo CSS) — não mostra zero ambíguo
+                hoursInput.value = hoursInput.dataset.lastValue;
             }
         };
 
-        // Clique no botão de toggle da pill
-        toggleBtn.addEventListener('click', (e) => {
+        // Clique em qualquer parte do row togla o turno,
+        // EXCETO se o alvo for o input de horas ou seu wrapper (usuário quer editar horas)
+        shiftEl.addEventListener('click', (e) => {
+            if (e.target.closest('.shift-hours-wrapper')) return;
             e.preventDefault();
             checkbox.checked = !checkbox.checked;
             setShiftState(checkbox.checked);
             notifyChange();
+        });
+
+        // Cursor correto no wrapper de horas (não é area de toggle)
+        hoursWrapper.style.cursor = 'default';
+
+        hoursInput.addEventListener('click', (e) => {
+            // Garante que clique no input não propague para o shiftEl e dispare toggle
+            e.stopPropagation();
         });
 
         hoursInput.addEventListener('input', () => {
@@ -125,6 +138,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         setShiftState(checkbox.checked);
     });
+
 
     // Pílula interativa da Dobradinha
     if (dobradinhaContainer) {

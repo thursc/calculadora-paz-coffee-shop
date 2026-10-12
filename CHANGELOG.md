@@ -4,6 +4,33 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.4.0] - 12/10/2026
+
+### 🎯 4 Ajustes Pontuais de Ergonomia, UX e Estabilidade Visual
+
+#### 1. Accordion do Card: Animação Precisa com `grid-template-rows` (Passo 1)
+- **Problema corrigido:** `max-height: 2500px` gerava timing errático (a transição percorria 2500px mas o conteúdo real tinha ~600px, causando abertura quase instantânea com travamento visual no final).
+- **Solução:** Substituída a técnica de `max-height` pela técnica moderna `grid-template-rows: 0fr → 1fr`, que usa a **altura real do conteúdo**. A curva de animação é agora linear e precisa, sem artefatos visuais.
+- **Bônus — `overflow: clip` no card raiz:** O `overflow: hidden` do card foi trocado por `overflow: clip` (inline style). A diferença: `clip` aplica o corte visual mas **não cria um stacking context** que bloquearia `box-shadow`, eliminando o bug de sombra cortada durante a abertura/fechamento do accordion.
+
+#### 2. Grid Desktop Nativo Permanente, Sem Toggle (Passo 2)
+- **Problema corrigido:** O toggle Grade/Esteira adicionava complexidade JS desnecessária, classes dinâmicas no DOM e `!important` em cascata para sobrepor Tailwind.
+- **Solução:** Removido completamente o seletor Grade ↔ Esteira do header. O Grid é agora o layout **permanente** no desktop, controlado exclusivamente por CSS via `@media (min-width: 768px)` diretamente no `#employee-container`. Mobile (`< 768px`) continua 100% intacto com a esteira Kanban horizontal com snap tátil.
+- **JS simplificado:** Removidas as funções `initDesktopView()`, `setDesktopViewMode()` e toda a lógica de `localStorage` de preferência de layout. `handleWheel` e o listener de setas de teclado agora verificam apenas `window.innerWidth >= 768` (sem depender de classes no DOM).
+- **Scroll de novo card adaptado:** No desktop, usa `card.scrollIntoView()` (grid vertical); no mobile, continua usando `scrollTo({ left })` (esteira horizontal).
+
+#### 3. Hitbox do Turno Expandida para o Row Inteiro (Passo 3)
+- **Problema corrigido:** O toggle do turno só respondia ao clique nos ~60% esquerdos da linha (`.shift-toggle-btn`), tornando a interação frustrante, especialmente em telas touch.
+- **Solução:** O listener de `click` foi movido do `.shift-toggle-btn` para o `shiftEl` completo (a linha inteira). Um filtro `e.target.closest('.shift-hours-wrapper')` impede que cliques diretos no input de horas ou no label "hrs" disparem o toggle acidentalmente.
+- **Proteção dupla no input:** `e.stopPropagation()` no próprio `hoursInput` garante que foco/clique no campo nunca altere o estado do turno. O cursor `default` é restaurado no wrapper de horas (evita o cursor pointer no input).
+
+#### 4. Feedback Visual Claro de Horas Inativas (Passo 4)
+- **Problema corrigido:** Quando um turno estava desmarcado, o input de horas aparecia visualmente idêntico ao ativo (dando a impressão de que o valor contava no cálculo) e exibia `0` — um valor ambíguo entre "horas zeradas" e "turno inativo".
+- **Solução — CSS:** O `.shift-hours-wrapper` esmaesce para `opacity: 0.38` com transição suave quando `.shift-pill:not(.is-active)`. O `pointer-events: none` bloqueia toda interação visualmente. Isso comunica claramente o estado inativo sem precisar alterar a lógica de dados.
+- **Solução — JS (`setShiftState`):** Ao desmarcar um turno, o input agora exibe o `lastValue` (as horas reais configuradas) em vez de `0`. O usuário vê "7 hrs" esmaecido, não um zero confuso, e sabe exatamente o que será reativado ao marcar o turno novamente.
+
+---
+
 ## [v1.3.0] - 12/10/2026
 
 ### 🖥️ Refatoração de Ergonomia e Responsividade Desktop (Mobile-First Estrito)

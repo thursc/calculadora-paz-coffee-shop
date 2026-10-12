@@ -121,69 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 2.5 Alternador de Visualização Desktop (Grade Fluida vs Kanban)
-    // ==========================================
-    const VIEW_MODE_KEY = 'pazCoffeeDesktopView';
-    const viewGridBtn = document.getElementById('view-mode-grid');
-    const viewKanbanBtn = document.getElementById('view-mode-kanban');
-
-    function setDesktopViewMode(mode) {
-        const isGrid = mode === 'grid';
-        if (employeeContainer) {
-            employeeContainer.classList.toggle('desktop-grid-view', isGrid);
-            employeeContainer.classList.toggle('desktop-kanban-view', !isGrid);
-        }
-
-        const activeClasses = ['bg-white', 'dark:bg-stone-800', 'text-stone-900', 'dark:text-stone-100', 'shadow-sm'];
-        const inactiveClasses = ['text-stone-500', 'hover:text-stone-800', 'dark:text-stone-400', 'dark:hover:text-stone-200'];
-
-        if (viewGridBtn && viewKanbanBtn) {
-            if (isGrid) {
-                viewGridBtn.classList.add(...activeClasses);
-                viewGridBtn.classList.remove(...inactiveClasses);
-                viewKanbanBtn.classList.remove(...activeClasses);
-                viewKanbanBtn.classList.add(...inactiveClasses);
-            } else {
-                viewKanbanBtn.classList.add(...activeClasses);
-                viewKanbanBtn.classList.remove(...inactiveClasses);
-                viewGridBtn.classList.remove(...activeClasses);
-                viewGridBtn.classList.add(...inactiveClasses);
-            }
-        }
-
-        try {
-            localStorage.setItem(VIEW_MODE_KEY, mode);
-        } catch (err) {
-            console.warn('Erro ao salvar preferência de layout:', err);
-        }
-    }
-
-    function initDesktopView() {
-        let savedView = null;
-        try {
-            savedView = localStorage.getItem(VIEW_MODE_KEY);
-        } catch (err) {
-            console.warn('Erro ao ler preferência de layout:', err);
-        }
-
-        // Padrão no desktop: grid fluido moderno
-        setDesktopViewMode(savedView || 'grid');
-
-        if (viewGridBtn) {
-            viewGridBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                setDesktopViewMode('grid');
-            });
-        }
-
-        if (viewKanbanBtn) {
-            viewKanbanBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                setDesktopViewMode('kanban');
-            });
-        }
-    }
 
     // ==========================================
     // 3. Recálculo Individual e Persistência
@@ -254,12 +191,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     nameInput.focus();
                 }
 
-                // Rola suavemente a esteira horizontal até o novo colaborador
+                // Desktop: usa scrollIntoView para o grid nativo da página
+                // Mobile: rola a esteira horizontal até o novo card
                 requestAnimationFrame(() => {
-                    employeeContainer.scrollTo({
-                        left: card.offsetLeft - 24,
-                        behavior: 'smooth'
-                    });
+                    if (window.innerWidth >= 768) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+                    } else {
+                        employeeContainer.scrollTo({
+                            left: card.offsetLeft - 16,
+                            behavior: 'smooth'
+                        });
+                    }
                 });
             }
 
@@ -296,33 +238,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. Navegação Desktop: Scroll do Mouse e Setas
+    // 6. Navegação Desktop: Scroll do Mouse e Setas (Mobile Kanban)
     // ==========================================
     function setupDesktopNavigation() {
-        // Scroll horizontal fluido e responsivo com a roda do mouse (wheel)
+        // Wheel: no desktop (≥ 768px) o grid nativo da página cuida do scroll vertical.
+        // No mobile (< 768px / esteira Kanban), converte deltaY em scrollLeft horizontal.
         function handleWheel(e) {
-            // Se algum modal estiver aberto ou o cursor estiver dentro de um modal, mantém o comportamento vertical nativo
+            // Modal aberto: comportamento nativo
             if (document.body.classList.contains('overflow-hidden') || e.target.closest('.modal')) {
                 return;
             }
 
-            // No modo Grade no Desktop (>= 768px), o scroll vertical da página deve ser 100% natural e nativo
-            if (employeeContainer && employeeContainer.classList.contains('desktop-grid-view') && window.innerWidth >= 768) {
+            // Desktop (≥ 768px): scroll vertical nativo da página — não interceptar
+            if (window.innerWidth >= 768) {
                 return;
             }
 
-            // Se o usuário estiver usando trackpad com rolagem horizontal nativa (deltaX), preserva o evento nativo
+            // Trackpad com scroll horizontal nativo: preservar
             if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
                 return;
             }
 
             if (e.deltaY === 0 || !employeeContainer) return;
 
-            // Normalização universal do deltaY (compatibilidade total Chrome, Firefox e Edge no Windows e Mac)
+            // Normalização universal do deltaY (Chrome, Firefox, Edge no Windows/Mac)
             let delta = e.deltaY;
-            if (e.deltaMode === 1) { // Firefox Windows deltaMode = 1 (lines)
+            if (e.deltaMode === 1) { // Firefox Windows: deltaMode = 1 (linhas)
                 delta *= 36;
-            } else if (e.deltaMode === 2) { // Pages
+            } else if (e.deltaMode === 2) { // Páginas
                 delta *= 360;
             }
 
@@ -333,26 +276,25 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('wheel', handleWheel, { passive: false });
         employeeContainer.addEventListener('wheel', handleWheel, { passive: false });
 
-        // Setas do teclado (Esquerda e Direita)
+        // Teclas de seta: apenas ativas no mobile / esteira Kanban
         window.addEventListener('keydown', (e) => {
-            // Ignora se algum modal estiver aberto
+            // Modal aberto: ignorar
             if (document.body.classList.contains('overflow-hidden') || document.querySelector('.modal:not(.opacity-0)')) {
                 return;
             }
 
-            // Se estiver no modo Grade no desktop, as setas horizontais não devem forçar rolagem de esteira
-            if (employeeContainer && employeeContainer.classList.contains('desktop-grid-view') && window.innerWidth >= 768) {
+            // Desktop: setas não controlam a esteira (grid nativo)
+            if (window.innerWidth >= 768) {
                 return;
             }
 
-            // Preserva as teclas caso o usuário esteja editando algum input, textarea ou select
+            // Editando um campo: preservar comportamento nativo das setas
             const activeEl = document.activeElement;
             const activeTag = activeEl ? activeEl.tagName.toLowerCase() : '';
             if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || activeEl?.isContentEditable) {
                 return;
             }
 
-            // Largura média de um card com espaçamento (~340px + gap 24px)
             const step = 360;
 
             if (e.key === 'ArrowRight') {
@@ -380,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         initTheme();
-        initDesktopView();
         setupDesktopNavigation();
 
         try {

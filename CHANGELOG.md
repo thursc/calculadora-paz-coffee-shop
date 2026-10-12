@@ -4,6 +4,39 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.5.0] - 12/10/2026
+
+### 🚀 Refinamentos de UX, Limpeza de Recursos e Feedback Visual
+
+#### 1. Remoção do Botão Recolher/Expandir Card
+- **Motivação:** Com a evolução da interface e densidade das informações, a funcionalidade de recolher o card tornou-se redundante e sem utilidade prática.
+- **Implementação:** Removido o botão `.minimize-btn` do template HTML e todo o código relacionado no JavaScript (`js/components/employeeCard.js`).
+- **Layout:** Removidas as regras de accordion/0fr do CSS; os cards de colaboradores agora mantêm seu conteúdo aberto e pronto para uso de forma contínua e estável.
+
+#### 2. Turnos Desmarcados Exibem 0 com Memória do Valor Anterior
+- **Comportamento visual:** Ao desmarcar um turno, o campo de horas exibe visualmente `0` para reforçar claramente que nenhuma hora está sendo computada.
+- **Preservação de memória:** O valor anterior (ex: 7 ou 8 horas) permanece salvo em `data-last-value` e no estado do colaborador. Ao reativar o turno, o valor anterior é imediatamente restaurado.
+
+#### 3. Proteção Completa no Campo de Horas de Turnos Inativos
+- **Problema corrigido:** Clicar no campo de horas de um turno inativo acabava ativando o turno indevidamente (devido ao `pointer-events: none` que deixava o clique vazar para o elemento pai).
+- **Correção:** O wrapper de horas agora mantém `pointer-events: auto` com `stopPropagation()`. Quando desmarcado, o input permanece desabilitado (`disabled`, `cursor: not-allowed`), impedindo digitação e garantindo que o clique no campo **não** ative o turno acidentalmente.
+
+#### 4. Renomeação de "Dobradinha Dom." para "Dobradinha de Domingo"
+- Atualizado o rótulo da pílula no template de colaboradores para texto completo e claro: **Dobradinha de Domingo**.
+
+#### 5. Correção do Contorno Verde da Dobradinha Selecionada
+- **Problema corrigido:** Apenas os cantos arredondados ficavam verdes por vazamento do `box-shadow`, enquanto as bordas retas eram sobrescritas pela classe de borda escura do modo noturno (`dark:border-stone-800`).
+- **Correção:** Adicionado seletor com `html.dark .dobradinha-pill.is-active` e `border-color: #10b981 !important;`, garantindo contorno verde nítido, contínuo e uniforme em todas as faces da célula.
+
+#### 6. Micro-animação de Feedback no Botão "Resetar Turnos e Eventos"
+- **Feedback tátil:** Ao clicar no botão de reset, ele executa uma micro-animação de pulso tátil acompanhada de rotação suave em sentido anti-horário (sentido correto da seta de restauração), além de realce âmbar instantâneo.
+
+#### 7. Animação Suave (FLIP) na Exclusão de Cards
+- **Problema corrigido:** Ao excluir um colaborador, especialmente no Desktop (CSS Grid), os cards restantes davam um salto abrupto e truncado.
+- **Solução FLIP (First, Last, Invert, Play):** Ao confirmar a exclusão, as posições dos cards irmãos são medidas antes da remoção e interpoladas com bezier suave `cubic-bezier(0.2, 0.8, 0.2, 1)`, fazendo com que os cards deslizem com total fluidez para o lado para preencher o espaço.
+
+---
+
 ## [v1.4.0] - 12/10/2026
 
 ### 🎯 4 Ajustes Pontuais de Ergonomia, UX e Estabilidade Visual

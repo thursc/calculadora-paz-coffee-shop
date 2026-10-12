@@ -152,12 +152,54 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalManager.openDeleteConfirm(
                         `Tem certeza que deseja excluir ${employeeName}?`,
                         () => {
-                            // Feedback visual animado de saída suave
+                            // 1. FLIP (First): Armazena as posições dos elementos irmãos antes da exclusão
+                            const siblings = Array.from(employeeContainer.children).filter(
+                                el => el !== cardElement && (el.classList.contains('kanban-col') || el.id === 'add-employee-card')
+                            );
+                            const firstPositions = siblings.map(el => {
+                                const rect = el.getBoundingClientRect();
+                                return { el, left: rect.left, top: rect.top };
+                            });
+
+                            // 2. Animação de saída sutil do card excluído
                             cardElement.classList.add('card-animate-delete');
+
                             setTimeout(() => {
+                                // 3. Remove o card do DOM e recalcula
                                 cardElement.remove();
                                 recalculateAndSave();
-                            }, 280);
+
+                                // 4. FLIP (Invert): Mede nova posição e inverte instantaneamente
+                                const movingElements = [];
+                                firstPositions.forEach(({ el, left, top }) => {
+                                    if (!el.isConnected) return;
+                                    const newRect = el.getBoundingClientRect();
+                                    const deltaX = left - newRect.left;
+                                    const deltaY = top - newRect.top;
+
+                                    if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
+                                        el.style.transition = 'none';
+                                        el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                                        movingElements.push(el);
+                                    }
+                                });
+
+                                // 5. FLIP (Play): No frame seguinte, desliza suavemente até a nova posição
+                                requestAnimationFrame(() => {
+                                    requestAnimationFrame(() => {
+                                        movingElements.forEach(el => {
+                                            el.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                                            el.style.transform = '';
+                                        });
+
+                                        setTimeout(() => {
+                                            movingElements.forEach(el => {
+                                                el.style.transition = '';
+                                            });
+                                        }, 380);
+                                    });
+                                });
+                            }, 200);
                         }
                     );
                 },

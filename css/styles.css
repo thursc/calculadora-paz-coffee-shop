@@ -139,14 +139,13 @@ html.dark .shift-pill.is-active {
 }
 
 /* --- Feedback Visual de Estado Inativo no Wrapper de Horas ---
- * Quando o turno está desmarcado (.shift-pill:not(.is-active)), o wrapper
- * de horas esmaesce visualmente, sinalizando claramente que o valor não
- * entra no cálculo. O valor (lastValue) é mantido — não mostra zero ambíguo.
- * pointer-events: none bloqueia interação sem precisar de :disabled puro.
+ * Quando o turno está desmarcado, o wrapper de horas esmaesce visualmente.
+ * pointer-events: auto garante que o clique no input desabilitado não
+ * passe direto para o container e ative o turno por engano.
  */
 .shift-pill:not(.is-active) .shift-hours-wrapper {
     opacity: 0.38;
-    pointer-events: none;
+    pointer-events: auto;
     transition: opacity 0.22s ease;
 }
 
@@ -161,15 +160,22 @@ html.dark .shift-pill.is-active {
     cursor: not-allowed;
 }
 
-/* --- Pílula de Dobradinha --- */
+/* --- Pílula de Dobradinha (Contorno Completo em Toda a Célula) --- */
 .dobradinha-pill {
     transition: all 0.25s ease;
 }
 
-.dobradinha-pill.is-active {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.1));
-    border-color: #10b981;
+.dobradinha-pill.is-active,
+html.dark .dobradinha-pill.is-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.08));
+    border-color: #10b981 !important;
     box-shadow: 0 0 0 1px #10b981, 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+html.dark .dobradinha-pill.is-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.15));
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 1px #10b981, 0 2px 10px rgba(16, 185, 129, 0.3);
 }
 
 /* --- Efeito de Inversão do Logotipo no Modo Escuro --- */
@@ -177,70 +183,57 @@ html.dark .logo-img {
     filter: brightness(0) invert(1);
 }
 
-/* --- Animações do Accordion do Card (grid-template-rows: préciso e suave) --- */
-/*
- * Técnica: grid-template-rows: 0fr → 1fr
- * Vantagem sobre max-height: usa a altura REAL do conteúdo,
- * garantindo timing uniforme e sem desalinhamento no grid desktop.
- * Compatível com Chrome 107+, Firefox 109+, Safari 16.0+.
- */
+/* --- Conteúdo do Card do Colaborador (Sempre Aberto) --- */
 .employee-content {
-    /* wrapper de grid para a técnica 0fr → 1fr */
-    display: grid;
-    grid-template-rows: 0fr;
-    transition:
-        grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity 0.28s ease,
-        padding 0.28s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-
-/* Filho direto precisa de overflow:hidden e min-height:0 para o 0fr funcionar */
-.employee-content > * {
-    overflow: hidden;
-    min-height: 0;
-}
-
-.employee-card-details.is-open > .employee-content {
-    grid-template-rows: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
-    opacity: 1;
-    pointer-events: auto;
 }
 
-/* Divisores dinâmicos sutis (visíveis apenas quando o card está expandido) */
-.employee-card-details.is-open .employee-summary {
+/* Divisores estruturais do card */
+.employee-summary {
     border-bottom: 1px solid rgba(229, 231, 235, 0.7);
 }
-html.dark .employee-card-details.is-open .employee-summary {
+html.dark .employee-summary {
     border-bottom: 1px solid rgba(41, 37, 36, 0.8);
 }
 
-.employee-card-details.is-open .employee-footer {
+.employee-footer {
     border-top: 1px solid rgba(229, 231, 235, 0.7);
 }
-html.dark .employee-card-details.is-open .employee-footer {
+html.dark .employee-footer {
     border-top: 1px solid rgba(41, 37, 36, 0.8);
 }
 
-.employee-card-details .minimize-btn svg {
-    transition: transform 0.25s ease;
+/* --- Feedback Visual do Botão Resetar --- */
+@keyframes resetBtnPulse {
+    0% { transform: scale(1); }
+    35% { transform: scale(0.88); }
+    70% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
-.employee-card-details.is-open .minimize-btn svg {
-    transform: rotate(-180deg);
-}
-
-/* --- Ícone de Reset Girando --- */
-@keyframes spin {
+@keyframes resetSpinCounterClockwise {
     from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    to { transform: rotate(-360deg); }
 }
 
-.is-resetting {
-    animation: spin 0.5s ease-in-out;
+.reset-btn.is-resetting {
+    animation: resetBtnPulse 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #d97706 !important;
+}
+
+html.dark .reset-btn.is-resetting {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+    color: #f59e0b !important;
+}
+
+.reset-btn.is-resetting svg {
+    animation: resetSpinCounterClockwise 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #f59e0b !important;
 }
 
 /* --- Botão de Cadeado Travado --- */
@@ -270,23 +263,10 @@ html.dark .employee-card-details.is-open .employee-footer {
 
 .card-animate-delete {
     opacity: 0 !important;
-    transform: scale(0.85) translateY(18px) !important;
-    max-width: 0 !important;
-    min-width: 0 !important;
-    width: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-right: -1.5rem !important; /* compensa o gap da esteira flex */
-    border-width: 0 !important;
-    overflow: hidden !important;
+    transform: scale(0.92) translateY(10px) !important;
     transition: 
-        opacity 0.22s ease,
-        transform 0.26s cubic-bezier(0.4, 0, 0.2, 1),
-        max-width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-        min-width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-        width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-        padding 0.28s cubic-bezier(0.4, 0, 0.2, 1),
-        margin 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        opacity 0.2s ease,
+        transform 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
     pointer-events: none !important;
 }
 
@@ -388,27 +368,15 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         scroll-snap-align: none;
     }
 
-    /* Cards de colaborador com estrutura flex-coluna para footer sempre ancorado */
+    /* Cards de colaborador ocupam toda a altura da célula do grid com footer ancorado */
     #employee-container .employee-card-details {
         display: flex;
         flex-direction: column;
-        /* Cards abertos ocupam toda a altura da célula do grid */
         height: 100%;
-    }
-
-    /* Cards recolhidos: alinham-se no topo sem esticar a célula */
-    #employee-container .employee-card-details:not(.is-open) {
-        height: auto;
     }
 
     .employee-card-details .employee-summary {
         flex-shrink: 0;
-    }
-
-    /* employee-content no desktop não precisa de flex-grow pois a técnica
-     * grid-template-rows já cuida do colapso/expansão corretamente */
-    .employee-card-details .employee-content {
-        /* mantém display:grid definido globalmente pela técnica de accordion */
     }
 
     /* Footer sempre ancorado na base do card */

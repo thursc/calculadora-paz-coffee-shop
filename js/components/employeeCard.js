@@ -44,9 +44,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     summary.setAttribute('aria-controls', contentId);
     cardContent.id = contentId;
 
-    const isOpen = data.open !== false;
-    cardDetails.classList.toggle('is-open', isOpen);
-    summary.setAttribute('aria-expanded', String(isOpen));
+    cardDetails.classList.add('is-open');
 
     nameInput.value = data.name || '';
     if (hourlyRateInput) {
@@ -96,18 +94,22 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             if (isChecked) {
                 checkIcon.classList.remove('hidden');
                 indicatorRing.classList.add('border-amber-500', 'bg-amber-500/20');
-                // Restaura o lastValue ao ativar
-                hoursInput.value = hoursInput.dataset.lastValue;
+                // Restaura o valor anterior da memória ao ativar
+                hoursInput.value = hoursInput.dataset.lastValue || shift.hours;
             } else {
                 checkIcon.classList.add('hidden');
                 indicatorRing.classList.remove('border-amber-500', 'bg-amber-500/20');
-                // Mantém o lastValue visível (esmaecido pelo CSS) — não mostra zero ambíguo
-                hoursInput.value = hoursInput.dataset.lastValue;
+                // Guarda o valor anterior na memória se for maior que 0
+                if (hoursInput.value && parseFloat(hoursInput.value) > 0) {
+                    hoursInput.dataset.lastValue = hoursInput.value;
+                }
+                // Visualmente exibe 0 quando não selecionado
+                hoursInput.value = '0';
             }
         };
 
-        // Clique em qualquer parte do row togla o turno,
-        // EXCETO se o alvo for o input de horas ou seu wrapper (usuário quer editar horas)
+        // Clique em qualquer parte da linha ativa/desativa o turno,
+        // EXCETO se o alvo for dentro do wrapper de horas
         shiftEl.addEventListener('click', (e) => {
             if (e.target.closest('.shift-hours-wrapper')) return;
             e.preventDefault();
@@ -116,16 +118,17 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             notifyChange();
         });
 
-        // Cursor correto no wrapper de horas (não é area de toggle)
-        hoursWrapper.style.cursor = 'default';
+        // Impede que qualquer clique no wrapper de horas borbulhe para a linha e ative o turno
+        hoursWrapper.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         hoursInput.addEventListener('click', (e) => {
-            // Garante que clique no input não propague para o shiftEl e dispare toggle
             e.stopPropagation();
         });
 
         hoursInput.addEventListener('input', () => {
-            if (hoursInput.value && !isNaN(parseFloat(hoursInput.value))) {
+            if (hoursInput.value && !isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) > 0) {
                 hoursInput.dataset.lastValue = hoursInput.value;
             }
             notifyChange();
@@ -175,25 +178,6 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
-    // Botão Minimizar / Expandir Accordion
-    const minimizeBtn = cardDetails.querySelector('.minimize-btn');
-    if (minimizeBtn) {
-        minimizeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const currentlyOpen = cardDetails.classList.contains('is-open');
-
-            if (currentlyOpen) {
-                cardDetails.classList.remove('is-open');
-                summary.setAttribute('aria-expanded', 'false');
-            } else {
-                cardDetails.classList.add('is-open');
-                summary.setAttribute('aria-expanded', 'true');
-            }
-
-            notifyChange();
-        });
-    }
-
     // Botão Excluir Funcionário
     const removeBtn = cardDetails.querySelector('.remove-employee');
     if (removeBtn) {
@@ -206,15 +190,14 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
-    // Botão Resetar Turnos e Eventos
+    // Botão Resetar Turnos e Eventos (feedback visual animado no botão e ícone)
     const resetBtn = cardDetails.querySelector('.reset-btn');
     if (resetBtn) {
         resetBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const icon = resetBtn.querySelector('svg');
-            if (icon && icon.classList.contains('is-resetting')) return;
+            if (resetBtn.classList.contains('is-resetting')) return;
 
-            if (icon) icon.classList.add('is-resetting');
+            resetBtn.classList.add('is-resetting');
 
             cardDetails.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {
                 cb.checked = false;
@@ -229,11 +212,9 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
             notifyChange();
 
-            if (icon) {
-                icon.addEventListener('animationend', () => {
-                    icon.classList.remove('is-resetting');
-                }, { once: true });
-            }
+            setTimeout(() => {
+                resetBtn.classList.remove('is-resetting');
+            }, 480);
         });
     }
 
@@ -291,7 +272,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             shifts,
             bonusDobradinha: dobradinhaCheckbox.checked,
             events,
-            open: cardDetails.classList.contains('is-open')
+            open: true
         };
     };
 

@@ -6,7 +6,7 @@ import { setupCurrencyHandlers } from '../utils/currency.js';
 
 export function createEventElement(data = {}, onChangeCallback) {
     const eventItem = document.createElement('div');
-    eventItem.className = 'event-item flex flex-col gap-2 p-2.5 border border-stone-200 dark:border-stone-800 rounded-xl bg-stone-50/60 dark:bg-stone-800/30 transition-colors';
+    eventItem.className = 'event-item event-item-animate-enter flex flex-col gap-2 p-2.5 border border-stone-200 dark:border-stone-800 rounded-xl bg-stone-50/60 dark:bg-stone-800/30 transition-colors';
 
     eventItem.innerHTML = `
         <!-- Linha 1: Checkbox, Nome do Adicional e Ações Rápidas -->
@@ -166,8 +166,13 @@ export function createEventElement(data = {}, onChangeCallback) {
     });
 
     removeBtn.addEventListener('click', () => {
-        eventItem.remove();
-        if (typeof onChangeCallback === 'function') onChangeCallback();
+        eventItem.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+        eventItem.style.opacity = '0';
+        eventItem.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            eventItem.remove();
+            if (typeof onChangeCallback === 'function') onChangeCallback();
+        }, 180);
     });
 
     // Helper de extração de dados compatível com o schema do localStorage

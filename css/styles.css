@@ -213,6 +213,64 @@ html.dark .employee-card-details.is-open .employee-footer {
     color: var(--accent-amber);
 }
 
+/* --- Animações Leves de Adição e Exclusão de Colaborador --- */
+@keyframes cardEnter {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    60% {
+        transform: scale(1.015) translateY(-3px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.card-animate-enter {
+    animation: cardEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.45), 0 10px 25px -5px rgba(245, 158, 11, 0.2) !important;
+}
+
+.card-animate-delete {
+    opacity: 0 !important;
+    transform: scale(0.85) translateY(18px) !important;
+    max-width: 0 !important;
+    min-width: 0 !important;
+    width: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-right: -1.5rem !important; /* compensa o gap da esteira flex */
+    border-width: 0 !important;
+    overflow: hidden !important;
+    transition: 
+        opacity 0.22s ease,
+        transform 0.26s cubic-bezier(0.4, 0, 0.2, 1),
+        max-width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        min-width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        padding 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+        margin 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none !important;
+}
+
+/* Animação suave para itens de adicionais/eventos */
+@keyframes eventItemEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.event-item-animate-enter {
+    animation: eventItemEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* --- Modais Centralizados na Viewport Ativa --- */
 .modal {
     position: fixed !important;

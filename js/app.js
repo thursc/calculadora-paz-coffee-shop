@@ -135,8 +135,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalManager.openDeleteConfirm(
                         `Tem certeza que deseja excluir ${employeeName}?`,
                         () => {
-                            cardElement.remove();
-                            recalculateAndSave();
+                            // Feedback visual animado de saída suave
+                            cardElement.classList.add('card-animate-delete');
+                            setTimeout(() => {
+                                cardElement.remove();
+                                recalculateAndSave();
+                            }, 280);
                         }
                     );
                 },
@@ -159,11 +163,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (shouldFocus) {
+                // Feedback visual animado de entrada suave
+                card.classList.add('card-animate-enter');
+                setTimeout(() => {
+                    card.classList.remove('card-animate-enter');
+                }, 500);
+
                 const nameInput = card.querySelector('.employee-name');
                 if (nameInput) {
                     nameInput.focus();
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
                 }
+
+                // Rola suavemente a esteira horizontal até o novo colaborador
+                requestAnimationFrame(() => {
+                    employeeContainer.scrollTo({
+                        left: card.offsetLeft - 24,
+                        behavior: 'smooth'
+                    });
+                });
             }
 
             recalculateAndSave();

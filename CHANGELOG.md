@@ -4,6 +4,23 @@ Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
 ---
 
+## [v1.2.8] - 12/10/2026
+
+### ✨ Animações Fluidas e Leves para Adicionar e Excluir Colaboradores
+- **Animação de Adição de Colaborador (`card-animate-enter`)**:
+  - Ao adicionar um novo colaborador, o card surge com uma animação de escala e elevação (`0.32s cubic-bezier`), acompanhada de um destaque luminoso âmbar que chama a atenção do usuário.
+  - A esteira Kanban rola horizontalmente de forma suave até o novo card criado e coloca o cursor no campo de nome sem alterar a rolagem vertical da página.
+- **Animação de Exclusão com Deslizamento dos Cards Vizinhos (`card-animate-delete`)**:
+  - Ao confirmar a exclusão no modal, o card desaparece suavemente reduzindo escala, opacidade e largura ao longo de 280ms.
+  - O espaço ocupado pelo card é contraído de forma contínua, fazendo com que os outros cards da esteira deslizem fluidamente para a esquerda para preencher o vazio antes da remoção definitiva do DOM.
+- **Micro-animações em Adicionais/Eventos**:
+  - Novos eventos entram com transição de opacidade e subida (`event-item-animate-enter`).
+  - Remoção de adicionais executa fade-out e escala suave antes de sair do DOM.
+- **Cache-Busting**:
+  - Versão dos assets elevada para `v=1.2.9`.
+
+---
+
 ## [v1.2.7] - 12/10/2026
 
 ### 🖱️ Fluidez Total no Scroll do Mouse, Ancoragem em (x=0, y=0) e Novo Card Compacto

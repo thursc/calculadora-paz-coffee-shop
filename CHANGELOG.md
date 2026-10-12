@@ -2,6 +2,27 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.8.0] - 12/10/2026
+
+### 🚀 Otimização Extrema de Fluidez para Displays de Alta Taxa de Atualização (120Hz, 144Hz, 240Hz, 320Hz+)
+
+#### 1. Aceleração por Hardware 3D e Promoção de Camadas no Compositor da GPU
+- **Eliminação de Jitter de Sub-Pixel:** Todas as transformações que utilizavam primitivas 2D (`translate`, `scale`, `rotate`) foram migradas para primitivas 3D (`translate3d(x, y, 0)`, `scale3d(x, y, 1)`, `rotate3d(0, 0, 1, deg)`). Isso força os motores de renderização a manter interpolação com precisão de ponto flutuante na GPU em cada intervalo de quadro (8.33ms em 120Hz, 4.16ms em 240Hz, ~3.12ms em 320Hz), sem arredondamentos discretos de pixels.
+- **Isolamento de Camadas (Composite Layer Promotion):** Aplicado `transform: translateZ(0)` e `backface-visibility: hidden` nos componentes interativos (`.employee-card-details`, `.shift-pill`, `.dobradinha-pill`, `.event-item`, `.reset-btn`, `.modal-container`). Animações de clique ou hover agora redesenham exclusivamente sua própria textura de GPU sem disparar repaints nas árvores DOM vizinhas.
+
+#### 2. Curvas Bézier Cinemáticas Contínuas (Liquid Motion)
+- **Substituição de Curvas Abruptas:** Substituídas curvas com desaceleração seca ou `ease` genérico por curvas cúbicas cinemáticas de alta continuidade (`cubic-bezier(0.16, 1, 0.3, 1)` e `cubic-bezier(0.22, 1, 0.36, 1)`), características de interfaces flagship de alto refresh rate (como Apple ProMotion).
+- **Remoção de `transition: all`:** Pílulas de turnos e dobradinha tiveram `transition: all` substituído por declarações estritas de propriedades (`background`, `border-color`, `box-shadow`, `transform`), eliminando o recálculo redundante de estilos computados em cada sub-frame.
+
+#### 3. Sincronização Precisa com o V-Sync do Monitor (`transitionend` e `animationend`)
+- **Fim do Descompasso por `setTimeout`:** Nas transições FLIP de reorganização de cards, na exclusão de colaboradores, na remoção de adicionais e no flash de reset, o ciclo de vida agora é controlado pelos eventos nativos `transitionend` e `animationend` (com fallback de segurança). Isso garante que o término da animação ocorra exatamente no ciclo de V-Sync do display, eliminando qualquer micro-stuttering no frame final.
+
+#### 4. Otimização de Renderização de Tipografia e Acessibilidade
+- **Antialiasing Sub-Pixel Estável:** Adicionado `-webkit-font-smoothing: antialiased` e `text-rendering: optimizeLegibility` globalmente, impedindo cintilações (text shimmer) durante animações de escala.
+- **Suporte a `prefers-reduced-motion`:** Usuários com preferências de redução de movimento recebem resposta instantânea sem transições desnecessárias.
+
+---
+
 ## [v1.7.0] - 12/10/2026
 
 ### 🎨 Padronização Visual de Eventos Adicionais e Feedback Tátil no Reset (Opção B)

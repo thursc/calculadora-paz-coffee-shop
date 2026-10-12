@@ -171,11 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             // 2. Animação de saída sutil do card excluído
                             cardElement.classList.add('card-animate-delete');
 
-                            setTimeout(() => {
+                            let deletionHandled = false;
+                            const proceedDeletion = () => {
+                                if (deletionHandled) return;
+                                deletionHandled = true;
+
                                 // 3. Remove o card do DOM sem executar reflows pesados
                                 cardElement.remove();
 
-                                // 4. FLIP (Invert): Mede nova posição e inverte instantaneamente
+                                // 4. FLIP (Invert): Mede nova posição e inverte instantaneamente com precisão 3D
                                 const movingElements = [];
                                 firstPositions.forEach(({ el, left, top }) => {
                                     if (!el.isConnected) return;
@@ -187,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     if (Math.abs(deltaX) > 0.5 || Math.abs(deltaY) > 0.5) {
                                         el.style.willChange = 'transform';
                                         el.style.transition = 'none';
-                                        el.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+                                        el.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0)`;
                                         movingElements.push(el);
                                     }
                                 });
@@ -196,17 +200,21 @@ document.addEventListener('DOMContentLoaded', () => {
                                 requestAnimationFrame(() => {
                                     requestAnimationFrame(() => {
                                         const transitionTiming = isMobile
-                                            ? 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)'
-                                            : 'transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                                            ? 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                                            : 'transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)';
 
                                         movingElements.forEach(el => {
                                             el.style.transition = transitionTiming;
-                                            el.style.transform = '';
+                                            el.style.transform = 'translate3d(0, 0, 0)';
                                         });
 
-                                        setTimeout(() => {
+                                        let cleaned = false;
+                                        const cleanup = () => {
+                                            if (cleaned) return;
+                                            cleaned = true;
                                             movingElements.forEach(el => {
                                                 el.style.transition = '';
+                                                el.style.transform = '';
                                                 el.style.willChange = '';
                                             });
                                             if (isMobile) {
@@ -214,10 +222,20 @@ document.addEventListener('DOMContentLoaded', () => {
                                             }
                                             // Persiste no storage de forma assíncrona após o término da animação
                                             recalculateAndSave();
-                                        }, isMobile ? 300 : 340);
+                                        };
+
+                                        if (movingElements.length > 0) {
+                                            movingElements[0].addEventListener('transitionend', cleanup, { once: true });
+                                            setTimeout(cleanup, isMobile ? 320 : 360);
+                                        } else {
+                                            cleanup();
+                                        }
                                     });
                                 });
-                            }, isMobile ? 160 : 180);
+                            };
+
+                            cardElement.addEventListener('transitionend', proceedDeletion, { once: true });
+                            setTimeout(proceedDeletion, isMobile ? 180 : 200);
                         }
                     );
                 },
@@ -240,11 +258,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (shouldFocus) {
-                // Feedback visual animado de entrada suave
+                // Feedback visual animado de entrada suave sincronizado via animationend
                 card.classList.add('card-animate-enter');
-                setTimeout(() => {
+                const onEnterEnd = () => {
                     card.classList.remove('card-animate-enter');
-                }, 500);
+                    card.removeEventListener('animationend', onEnterEnd);
+                };
+                card.addEventListener('animationend', onEnterEnd, { once: true });
+                setTimeout(onEnterEnd, 400);
 
                 const nameInput = card.querySelector('.employee-name');
                 if (nameInput) {

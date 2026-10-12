@@ -213,9 +213,15 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
             notifyChange();
 
-            setTimeout(() => {
+            let resetCleaned = false;
+            const onResetEnd = () => {
+                if (resetCleaned) return;
+                resetCleaned = true;
                 resetBtn.classList.remove('is-resetting');
-            }, 480);
+                resetBtn.removeEventListener('animationend', onResetEnd);
+            };
+            resetBtn.addEventListener('animationend', onResetEnd, { once: true });
+            setTimeout(onResetEnd, 490);
         });
     }
 

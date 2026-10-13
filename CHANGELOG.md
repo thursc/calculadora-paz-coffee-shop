@@ -2,6 +2,40 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.16] - 13/10/2026
+
+### ⚡ Fluidez de Animações (60/120 FPS), Curvas Orgânicas, Staggered Entrance e Padronização Visual de Fechamento
+
+#### 1. Design Tokens de Animação e Aceleração de Hardware (GPU Compositing)
+- **Variáveis de Easing Físico:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), definidos tokens de física e aceleração em `:root`:
+  - `--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1)`: Desaceleração exponencial suave para transições naturais.
+  - `--ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1)`: Efeito elástico sutil para ícones e rotações interativas.
+  - `--ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1.15)`: Dinâmica elástica para notificações e entradas de atenção.
+- **Escala Padronizada de Duração:** `--duration-fast` (150ms), `--duration-normal` (250ms), `--duration-slow` (350ms) e `--duration-emphasis` (400ms).
+- **Zero Jank e Zero Reflow:** Animações direcionadas exclusivamente a propriedades baratas da GPU (`transform` 3D e `opacity`), erradicando repaints e re-layouts contínuos de `top`, `left`, `margin` e `padding`.
+- **Acessibilidade Universal:** Mantido suporte completo e rigoroso à diretiva `@media (prefers-reduced-motion: reduce)`, preservando apenas fades suaves de opacidade para operadores sensíveis a movimento.
+
+#### 2. Entrada Escalonada (Staggered Entrance) e Sombra Dinâmica do Header
+- **Carregamento Inicial em Cascata:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), implementada a função `applyStaggeredEntrance()`. Cada card de colaborador e o botão de adicionar surgem sequencialmente com um delay progressivo de 60ms (limitado a 300ms), com transição suave de opacidade e translação vertical (`translate3d(0, 12px, 0)` para `(0, 0, 0)`). As classes transitórias são automaticamente desanexadas do DOM após o término da animação para manter o layout limpo.
+- **Sombra Fluida no Scroll:** Adicionada a função `setupHeaderScrollShadow()` em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), gerenciando a elevação do `<header>` via `requestAnimationFrame` passivo e classe `.is-scrolled`.
+
+#### 3. Microinterações Táteis e Feedback de Estado
+- **Elevação Tátil nos Cards:** Microinteração de hover em `.employee-card-details` com translação sutil de `-2px` no eixo Y e dispersão de sombra suave a 60/120 FPS.
+- **Glow Orgânico de Focus Ring:** Inputs numéricos e textuais (`.shift-hours`, `.event-hours`, `.event-name`, etc.) receberam transições suaves de `border-color`, `box-shadow` e `background-color`.
+- **Acordeão com Rotação Orgânica:** O elemento de detalhamento (`.calculation-details`) agora conta com rotação suave de 180° do ícone chevron via `--ease-out-back`.
+- **Pop-In Orgânico em Turnos e Eventos:** Os anéis de seleção (`.shift-check-indicator` e `.event-check-indicator`) expandem organicamente com escala de `1.05` e `--ease-out-back` ao serem ativados.
+- **Toast de Desfazer Exclusão (Spring Physics):** Redefinidas as animações com `@keyframes toastSlideIn` e `@keyframes toastSlideOut` no `#undo-toast`, conferindo sensação tátil elástica e responsiva.
+
+#### 4. Padronização Visual do Fechamento de Modais (Destaque Vermelho no Hover)
+- **Consistência Visual com Botão Excluir:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), o botão de fechar modal (ícone 'X' no topo) e o botão textual "Fechar" no rodapé do modal de holerite foram padronizados com o mesmo feedback visual do botão "Excluir Colaborador":
+  - **Tema Claro:** Texto/ícone em `#dc2626` (vermelho) com fundo `#fee2e2` (`bg-red-100`) e borda suave.
+  - **Tema Escuro:** Texto/ícone em `#f87171` (`text-red-400`), fundo translúcido `rgba(127, 29, 29, 0.3)` (`bg-red-900/30`) e borda sutil `rgba(239, 68, 68, 0.3)`.
+  - **Microinteração:** Compressão de clique com `active:scale-95` / `active:scale-90` e resposta rápida de 150ms.
+- **Modal de Confirmação de Exclusão:** Aplicada a mesma padronização no botão 'X' de fechamento do modal de exclusão.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.16.1`.
+
+---
+
 ## [v1.9.15] - 12/10/2026
 
 ### 🛡️ Eliminação de Borda Persistente de Foco e Preservação Universal de 0h em Todos os Turnos

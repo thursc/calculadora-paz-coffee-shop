@@ -611,6 +611,66 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
+    // 6.1 Header: Sombra Progressiva no Scroll
+    // ==========================================
+    function setupHeaderScrollShadow() {
+        const header = document.querySelector('header');
+        if (!header) return;
+
+        let ticking = false;
+        const onScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    header.classList.toggle('is-scrolled', window.scrollY > 8);
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        // Initial state
+        onScroll();
+    }
+
+    // ==========================================
+    // 6.2 Staggered Entrance Animation (Initial Load)
+    // ==========================================
+    function applyStaggeredEntrance() {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) return;
+
+        const cards = employeeContainer.querySelectorAll('.employee-card-details');
+        const addCard = document.getElementById('add-employee-card');
+
+        const allItems = [...cards];
+        if (addCard) allItems.push(addCard);
+
+        allItems.forEach((card, index) => {
+            card.classList.add('card-stagger-enter');
+        });
+
+        // Force layout flush then trigger staggered reveal
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                allItems.forEach((card, index) => {
+                    const delay = Math.min(index * 60, 300); // cap at 300ms
+                    setTimeout(() => {
+                        card.classList.add('card-stagger-visible');
+                        // Clean up after animation
+                        const cleanup = () => {
+                            card.classList.remove('card-stagger-enter', 'card-stagger-visible');
+                            card.removeEventListener('transitionend', cleanup);
+                        };
+                        card.addEventListener('transitionend', cleanup, { once: true });
+                        setTimeout(cleanup, 500);
+                    }, delay);
+                });
+            });
+        });
+    }
+
+    // ==========================================
     // 7. Inicialização da Aplicação
     // ==========================================
     function init() {
@@ -620,6 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initTheme();
         setupDesktopNavigation();
+        setupHeaderScrollShadow();
 
         try {
             const saved = loadStoredEmployees();
@@ -635,6 +696,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         recalculateAndSave(true);
+
+        // Staggered entrance animation: each card fades in sequentially
+        applyStaggeredEntrance();
 
         // Sempre posiciona no topo e no primeiro colaborador (x=0, y=0) ao iniciar
         resetScrollPosition();

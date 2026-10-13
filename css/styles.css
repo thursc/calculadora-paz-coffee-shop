@@ -110,7 +110,7 @@ html.dark ::-webkit-scrollbar-thumb {
 }
 
 .kanban-col {
-    scroll-snap-align: start;
+    scroll-snap-align: center;
 }
 
 /* Select customizado e consistente entre todos os navegadores mobile (Chrome, Firefox, Safari) */
@@ -1112,20 +1112,23 @@ html.dark #theme-toggle .moon-icon {
                 transform 0.08s var(--ease-out-expo);
 }
 
-.modal-close-btn:hover {
+.modal-close-btn:hover,
+.modal-close-btn.is-flashing {
     color: #dc2626 !important;
     background-color: #fee2e2 !important; /* red-100 */
     border-color: #fecaca !important;     /* red-200 */
 }
 
-html.dark .modal-close-btn:hover {
+html.dark .modal-close-btn:hover,
+html.dark .modal-close-btn.is-flashing {
     color: #f87171 !important;            /* red-400 */
-    background-color: rgba(127, 29, 29, 0.3) !important; /* red-900/30 */
-    border-color: rgba(239, 68, 68, 0.3) !important;
+    background-color: rgba(127, 29, 29, 0.4) !important; /* red-900/40 */
+    border-color: rgba(239, 68, 68, 0.4) !important;
 }
 
-.modal-close-btn:active {
-    transform: scale(0.95);
+.modal-close-btn:active,
+.modal-close-btn.is-flashing {
+    transform: scale(0.92) !important;
 }
 
 /* ==========================================================================
@@ -1165,10 +1168,12 @@ html.dark .modal-close-btn:hover {
 }
 
 /* ==========================================================================
-   Header: Sombra Progressiva no Scroll
+   Header: Sombra Progressiva no Scroll e Smart Responsive Auto-Hide
    ========================================================================== */
 header {
-    transition: box-shadow var(--duration-normal) var(--ease-out-expo);
+    transition: transform var(--duration-normal) var(--ease-out-expo),
+                box-shadow var(--duration-normal) var(--ease-out-expo);
+    will-change: transform;
 }
 
 header.is-scrolled {
@@ -1177,6 +1182,12 @@ header.is-scrolled {
 
 html.dark header.is-scrolled {
     box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 767px) {
+    header.header-hidden {
+        transform: translate3d(0, -100%, 0);
+    }
 }
 
 /* ==========================================================================

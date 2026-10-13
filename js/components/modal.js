@@ -28,9 +28,22 @@ export class ModalManager {
     }
 
     init() {
-        // Fechamento ao clicar em botões de fechar ou no overlay escuro
-        document.querySelectorAll('.modal-close-btn, .modal-overlay').forEach(el => {
-            el.addEventListener('click', () => {
+        // Fechamento com micro-flash tátil em vermelho para botões de fechar e cancelar (especialmente no mobile)
+        document.querySelectorAll('.modal-close-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (btn.classList.contains('is-flashing')) return;
+                btn.classList.add('is-flashing');
+                setTimeout(() => {
+                    btn.classList.remove('is-flashing');
+                    this.closeAll();
+                }, 110);
+            });
+        });
+
+        // Fechamento imediato no clique do overlay de fundo
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', () => {
                 this.closeAll();
             });
         });

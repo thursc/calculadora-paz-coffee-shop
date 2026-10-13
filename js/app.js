@@ -489,8 +489,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             nameInput.focus({ preventScroll: true });
                         }
                     } else {
+                        // Mobile: centraliza o card perfeitamente no centro da esteira
+                        const containerRect = employeeContainer.getBoundingClientRect();
+                        const cardRect = card.getBoundingClientRect();
+                        const targetLeft = employeeContainer.scrollLeft + cardRect.left - containerRect.left - (containerRect.width - cardRect.width) / 2;
+
                         employeeContainer.scrollTo({
-                            left: card.offsetLeft - 16,
+                            left: Math.max(0, targetLeft),
                             behavior: 'smooth'
                         });
                         setTimeout(() => {
@@ -613,15 +618,52 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 6.1 Header: Sombra Progressiva no Scroll
     // ==========================================
-    function setupHeaderScrollShadow() {
+    // 6.1 Smart Responsive Header (Opção B)
+    // Desktop: 100% sticky fixo no topo com sombra dinâmica
+    // Mobile: Auto-hide ao rolar para baixo, revelação instantânea ao subir
+    // ==========================================
+    function setupSmartHeader() {
         const header = document.querySelector('header');
         if (!header) return;
 
         let ticking = false;
+        let lastScrollY = window.scrollY;
+        let accumulatedUpScroll = 0;
+        const searchInput = document.getElementById('employee-search');
+
         const onScroll = () => {
             if (!ticking) {
                 requestAnimationFrame(() => {
-                    header.classList.toggle('is-scrolled', window.scrollY > 8);
+                    const currentScrollY = Math.max(0, window.scrollY);
+                    const isMobile = window.innerWidth < 768;
+
+                    // Sombra progressiva de elevação
+                    header.classList.toggle('is-scrolled', currentScrollY > 8);
+
+                    if (isMobile) {
+                        const isSearchFocused = searchInput && document.activeElement === searchInput;
+
+                        // Se a busca estiver em foco ou no topo da página (< 24px), sempre visível
+                        if (isSearchFocused || currentScrollY <= 24) {
+                            header.classList.remove('header-hidden');
+                            accumulatedUpScroll = 0;
+                        } else if (currentScrollY > lastScrollY && currentScrollY > 70) {
+                            // Rolando para baixo: recolhe o cabeçalho suavemente para maximizar a área útil
+                            header.classList.add('header-hidden');
+                            accumulatedUpScroll = 0;
+                        } else if (currentScrollY < lastScrollY) {
+                            // Rolando para cima: acumula deslocamento de subida para evitar disparo acidental
+                            accumulatedUpScroll += (lastScrollY - currentScrollY);
+                            if (accumulatedUpScroll > 8 || currentScrollY < 50) {
+                                header.classList.remove('header-hidden');
+                            }
+                        }
+                    } else {
+                        // Desktop: sempre visível
+                        header.classList.remove('header-hidden');
+                    }
+
+                    lastScrollY = currentScrollY;
                     ticking = false;
                 });
                 ticking = true;
@@ -629,7 +671,20 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         window.addEventListener('scroll', onScroll, { passive: true });
-        // Initial state
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                header.classList.remove('header-hidden');
+            }
+        }, { passive: true });
+
+        // Focar no campo de busca sempre revela o cabeçalho imediatamente
+        if (searchInput) {
+            searchInput.addEventListener('focus', () => {
+                header.classList.remove('header-hidden');
+            });
+        }
+
+        // Estado inicial
         onScroll();
     }
 
@@ -680,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initTheme();
         setupDesktopNavigation();
-        setupHeaderScrollShadow();
+        setupSmartHeader();
 
         try {
             const saved = loadStoredEmployees();

@@ -2,6 +2,27 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.20] - 13/10/2026
+
+### 📱 Feedback Tátil nos Modais, Centralização Mobile e Smart Responsive Header
+
+#### 1. Feedback Tátil Vermelho nos Botões de Fechar e Cancelar (Opção 2)
+- **Padronização Visual:** O botão "Cancelar" do modal de confirmação de exclusão agora possui o mesmo padrão vermelho executivo do botão "Fechar" do holerite (`hover:bg-red-100 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/30 dark:hover:text-red-400`).
+- **Micro-Flash Tátil no Mobile (110ms):** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), adicionada a classe `.is-flashing`. Ao clicar/tocar em qualquer botão de fechar (ícones 'X', botão 'Fechar' e botão 'Cancelar'), o botão pisca em vermelho com leve escala tátil por 110ms antes do fechamento do modal, proporcionando feedback visual perceptível e claro em dispositivos touch.
+
+#### 2. Centralização Geométrica dos Cards na Esteira Mobile (Opção 2)
+- **Snap Centrado no Mobile:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) e [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), atualizado `.kanban-col` para `scroll-snap-align: center` e classes `snap-center md:snap-none`.
+- **Scroll Centralizado com Precisão:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), a rolagem ao adicionar um novo colaborador agora calcula o posicionamento geométrico centralizado exato do viewport (`targetLeft`), eliminando o desalinhamento que colava o card à esquerda e deixando margens balanceadas em ambos os lados.
+
+#### 3. Smart Responsive Header (Opção B)
+- **Desktop Executivo:** Cabeçalho 100% fixo no topo (`sticky top-0 z-30`) com elevação dinâmica via sombra suave.
+- **Mobile Inteligente com Auto-Hide:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), implementado o `setupSmartHeader()`:
+  - Ao rolar a página verticalmente para baixo no celular, o cabeçalho é recolhido suavemente com `translate3d(0, -100%, 0)`, liberando espaço de tela precioso para os cards e o teclado virtual.
+  - Ao rolar minimamente para cima, ao alcançar o topo (< 24px) ou ao focar no campo de busca (`employee-search`), o cabeçalho ressurge instantaneamente.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.20`.
+
+---
+
 ## [v1.9.19] - 13/10/2026
 
 ### 🔄 Abordagem A: Reset Semanal Inteligente (Preservação de Cargas Horárias Habituais)

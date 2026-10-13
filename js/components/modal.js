@@ -229,15 +229,18 @@ export class ModalManager {
 
     openDeleteConfirm(employeeName, onConfirm) {
         if (this.deleteConfirmText) {
-            const name = (employeeName || '').trim() || 'este colaborador';
+            const rawName = (employeeName || '').trim();
             this.deleteConfirmText.textContent = 'Tem certeza que deseja excluir ';
 
-            const strong = document.createElement('strong');
-            strong.className = 'font-bold text-stone-900 dark:text-stone-50 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20';
-            strong.textContent = name;
-
-            this.deleteConfirmText.appendChild(strong);
-            this.deleteConfirmText.append('? Todos os turnos e adicionais desta escala serão removidos.');
+            if (rawName && rawName.toLowerCase() !== 'este colaborador') {
+                const strong = document.createElement('strong');
+                strong.className = 'font-bold text-amber-700 dark:text-amber-400';
+                strong.textContent = rawName;
+                this.deleteConfirmText.appendChild(strong);
+                this.deleteConfirmText.append('? Todos os turnos e adicionais desta escala serão removidos.');
+            } else {
+                this.deleteConfirmText.append('este colaborador? Todos os turnos e adicionais desta escala serão removidos.');
+            }
         }
         this.onConfirmDeleteCallback = onConfirm;
         const cancelBtn = this.deleteConfirmModal?.querySelector('.modal-close-btn');

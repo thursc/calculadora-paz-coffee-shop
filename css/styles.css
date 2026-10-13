@@ -234,21 +234,31 @@ html.dark .dobradinha-pill:active:not(.cursor-not-allowed) {
 }
 
 .dobradinha-pill.is-active {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12));
-    border-color: var(--accent-amber) !important;
-    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 8px var(--accent-amber-glow);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(5, 150, 105, 0.10));
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 1px #10b981, 0 2px 8px rgba(16, 185, 129, 0.20);
 }
 
 html.dark .dobradinha-pill.is-active {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.18));
-    border-color: var(--accent-amber) !important;
-    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 10px rgba(245, 158, 11, 0.25);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(4, 120, 87, 0.16));
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 1px #10b981, 0 2px 10px rgba(16, 185, 129, 0.25);
 }
 
 .dobradinha-pill.is-active .dobradinha-indicator {
-    border-color: var(--accent-amber) !important;
-    background-color: rgba(245, 158, 11, 0.2) !important;
+    border-color: #10b981 !important;
+    background-color: rgba(16, 185, 129, 0.2) !important;
     transform: scale(1.05);
+}
+
+.dobradinha-pill.is-active .dobradinha-badge {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: #059669 !important;
+}
+
+html.dark .dobradinha-pill.is-active .dobradinha-badge {
+    color: #34d399 !important;
 }
 
 /* --- Efeito de Inversão do Logotipo no Modo Escuro --- */
@@ -888,13 +898,18 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     }
 
     .dobradinha-pill:not(.is-active):not(.cursor-not-allowed):hover {
-        background-color: rgba(245, 158, 11, 0.06);
-        border-color: rgba(245, 158, 11, 0.3);
+        background-color: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.35);
     }
 
     html.dark .dobradinha-pill:not(.is-active):not(.cursor-not-allowed):hover {
-        background-color: rgba(245, 158, 11, 0.1);
-        border-color: rgba(245, 158, 11, 0.3);
+        background-color: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .dobradinha-pill.is-active:hover {
+        filter: brightness(1.04);
+        box-shadow: 0 0 0 1px #10b981, 0 3px 12px rgba(16, 185, 129, 0.3);
     }
 
     .generate-holerite-btn {
@@ -1250,10 +1265,15 @@ html.dark header.is-scrolled {
 }
 
 /* ==========================================================================
-   Details/Summary: Acordeão Suave com Ícone Rotativo
+   Details/Summary: Acordeão Suave com Ícone Rotativo e Animação de Entrada
    ========================================================================== */
 .calculation-details summary {
+    list-style: none;
     transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.calculation-details summary::-webkit-details-marker {
+    display: none;
 }
 
 .calculation-details summary svg {
@@ -1263,6 +1283,23 @@ html.dark header.is-scrolled {
 
 .calculation-details[open] summary svg {
     transform: rotate(180deg);
+}
+
+@keyframes detailsSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.calculation-details[open] .details-content {
+    animation: detailsSlideIn var(--duration-normal) var(--ease-out-expo) forwards;
+    transform-origin: top center;
+    will-change: opacity, transform;
 }
 
 /* ==========================================================================

@@ -2,6 +2,42 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.26] - 13/10/2026
+
+### 🌿 Restauração da Dobradinha Verde Esmeralda, Seleção Inteligente Automática, Correção Tipográfica do Modal e Harmonização de Cores
+
+#### 1. Restauração Completa da Dobradinha Verde Esmeralda (#10b981)
+- **Estado Ativo Positivo:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), o estado ativo `.dobradinha-pill.is-active` retornou à paleta verde esmeralda com gradiente suave (`rgba(16, 185, 129, 0.16)` no modo claro e `0.22` no escuro), contorno contínuo `#10b981`, anel `.dobradinha-indicator` e badge `+R$ 50,00` em tom verde esmeralda positivo (`#059669` / `#34d399`).
+- **Hover Verde Esmeralda Restaurado:** Corrigidas as regras de microinteração com mouse para a dobradinha inativa e ativa, aplicando tons esmeralda translúcidos (`rgba(16, 185, 129, 0.08)` / `0.12` no escuro) e realce sutil, eliminando o tom laranja/âmbar acidental.
+- **Ícone Vetorial Esmeralda:** O ícone de check SVG dentro do anel da dobradinha em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) foi alinhado para `text-emerald-600 dark:text-emerald-400`.
+
+#### 2. Automação Inteligente da Dobradinha com Respeito à Autonomia
+- **Gatilho Reativo de Seleção:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), implementado detector de transição de aplicabilidade: quando ambos os turnos de domingo (manhã e noite) passam a ter horas válidas (> 0), o bônus de R$ 50,00 é marcado e calculado automaticamente, prevenindo esquecimentos operacionais.
+- **Preservação de Decisão Manual:** Caso o operador opte por desmarcar a dobradinha voluntariamente, o sistema memoriza a escolha e não força a remarcação repetitiva em edições secundárias da escala.
+- **Reset Seguro:** Se qualquer turno de domingo for zerado ou desmarcado, a dobradinha é desmarcada e desabilitada (`disabled = true`) imediatamente.
+
+#### 3. Correção Tipográfica e Fim do Bug de Baseline no Modal de Exclusão
+- **Eliminação da Flutuação Vertical:** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), resolvido o bug da especificação W3C CSS 2.1 (§10.8.1) no qual a classe `truncate` (`overflow: hidden`) em elementos `inline-block` forçava a linha de base para a borda inferior externa, empurrando o nome do colaborador ~6px acima da linha do texto.
+- **Destaque Tipográfico Fluido:** Substituída a caixinha rígida por tipografia direta e harmoniosa (`font-bold text-amber-700 dark:text-amber-400`), repousando com perfeição micrométrica na mesma linha de base das palavras vizinhas e da pontuação `?`.
+- **Prevenção de Quebras Forçadas:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), ajustada a emissão de nome para string vazia quando não preenchido. O modal agora exibe texto corrido natural (*"Tem certeza que deseja excluir este colaborador?..."*), acabando com as quebras que jogavam a tag para a linha 2.
+
+#### 4. Harmonização Cromática da Taxa Horária (Modos Claro e Escuro)
+- **Container da Linha:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), atualizado o fundo de `dark:bg-stone-900` para `dark:bg-stone-800/30` com `border-stone-800`, eliminando a faixa preta destoante e unificando com a linguagem visual translúcida dos turnos.
+- **Caixa de Input (`R$ 20,00`):** Atualizada de `dark:bg-stone-800` para `dark:bg-stone-900` com `border-stone-700`, eliminando o cinza elevado destoante e espelhando com fidelidade a affordance e os recessos dos campos de horas dos turnos (`7 hrs`, `8 hrs`).
+
+#### 5. Toast de Desfazer Exclusão Elegante e Sem Ofuscamento Noturno
+- **Superfície Escura Elevada:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), eliminada a inversão crua para fundo branco brilhante no modo escuro. O pop-up opera agora com superfície grafite/carvão elevada (`bg-stone-900 dark:bg-[#24201d]`), borda sutil `border-stone-700/80` e botão "Desfazer" em acento âmbar consistente (`text-amber-400`).
+
+#### 6. Centralização Geométrica do Ícone "+" no Card de Adicionar
+- **Simetria Vetorial SVG:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), substituído o glifo tipográfico cru `+` por um SVG escalável de 24px (`stroke-width="2.5"`), perfeitamente centralizado no círculo de 48px e imune a distorções de baseline de fontes.
+
+#### 7. Animação Acelerada por GPU no "Ver Cálculo Detalhado"
+- **Entrada Suave:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), implementado `@keyframes detailsSlideIn` combinando fade-in (`opacity: 0 -> 1`) e micro-deslocamento vertical (`translateY: -8px -> 0px`) em 240ms com `--ease-out-expo` e `will-change: opacity, transform`.
+- **Chevron Rotativo Orgânico:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), adicionado ícone chevron SVG ao lado do link de detalhamento que gira suavemente 180° com `--ease-out-back` ao expandir, com ocultação cross-browser do marcador nativo do `<details>`.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.26` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+---
+
 ## [v1.9.25] - 13/10/2026
 
 ### ☕ Resolução do Bônus Dobradinha, Auditoria Técnica Completa e Testes Responsivos (Desktop & Poco X7 Pro)

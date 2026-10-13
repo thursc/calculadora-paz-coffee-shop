@@ -256,7 +256,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         removeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            const empName = nameInput.value?.trim() || 'este colaborador';
+            const empName = nameInput.value?.trim() || '';
             if (typeof onRequestDelete === 'function') {
                 onRequestDelete(cardDetails, empName);
             }
@@ -449,22 +449,41 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         };
     };
 
+    let prevDobradinhaApplicable = null;
+
     // Atualização visual do card a partir do resultado puro do cálculo
     cardDetails.updateCalculations = () => {
-        const empData = cardDetails.getEmployeeData();
-        const calculation = calculateEmployee(empData);
+        let empData = cardDetails.getEmployeeData();
+        let calculation = calculateEmployee(empData);
+        const isApplicable = calculation.isDobradinhaApplicable;
+
+        if (prevDobradinhaApplicable === null) {
+            // Carga inicial: sincroniza estado prévio e garante consistência
+            prevDobradinhaApplicable = isApplicable;
+            if (!isApplicable) {
+                dobradinhaCheckbox.checked = false;
+            }
+        } else {
+            // Transição em tempo de execução:
+            // Se tornou aplicável agora (false -> true), seleciona automaticamente
+            if (isApplicable && !prevDobradinhaApplicable) {
+                dobradinhaCheckbox.checked = true;
+                empData = cardDetails.getEmployeeData();
+                calculation = calculateEmployee(empData);
+            } else if (!isApplicable) {
+                dobradinhaCheckbox.checked = false;
+            }
+            prevDobradinhaApplicable = isApplicable;
+        }
 
         // Atualizar estado e trava da dobradinha
-        dobradinhaCheckbox.disabled = !calculation.isDobradinhaApplicable;
-        if (!calculation.isDobradinhaApplicable) {
-            dobradinhaCheckbox.checked = false;
-        }
+        dobradinhaCheckbox.disabled = !isApplicable;
 
         if (dobradinhaContainer) {
             dobradinhaContainer.classList.toggle('is-active', calculation.bonusDobradinhaChecked);
-            dobradinhaContainer.classList.toggle('opacity-50', !calculation.isDobradinhaApplicable);
-            dobradinhaContainer.classList.toggle('cursor-not-allowed', !calculation.isDobradinhaApplicable);
-            dobradinhaContainer.setAttribute('aria-disabled', String(!calculation.isDobradinhaApplicable));
+            dobradinhaContainer.classList.toggle('opacity-50', !isApplicable);
+            dobradinhaContainer.classList.toggle('cursor-not-allowed', !isApplicable);
+            dobradinhaContainer.setAttribute('aria-disabled', String(!isApplicable));
             dobradinhaContainer.setAttribute('aria-checked', String(calculation.bonusDobradinhaChecked));
         }
 
@@ -473,8 +492,8 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         }
 
         if (dobradinhaRing) {
-            dobradinhaRing.classList.toggle('border-amber-500', calculation.bonusDobradinhaChecked);
-            dobradinhaRing.classList.toggle('bg-amber-500/20', calculation.bonusDobradinhaChecked);
+            dobradinhaRing.classList.toggle('border-emerald-500', calculation.bonusDobradinhaChecked);
+            dobradinhaRing.classList.toggle('bg-emerald-500/20', calculation.bonusDobradinhaChecked);
         }
 
         // Atualizar valores parciais dos eventos na UI a partir do resultado oficial de calculator.js (SSOT)

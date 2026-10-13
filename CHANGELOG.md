@@ -2,6 +2,23 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.19] - 13/10/2026
+
+### 🔄 Abordagem A: Reset Semanal Inteligente (Preservação de Cargas Horárias Habituais)
+
+#### 1. Reset Semanal de Escala vs. Restauração de Fábrica
+- **Preservação de Hábitos de Escala:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), o botão de **"Resetar"** do card do colaborador agora atua como um fechamento/virada semanal inteligente:
+  - Desmarca todos os turnos da semana e a dobradinha.
+  - Zera o total a pagar e limpa adicionais variáveis.
+  - **Preserva as cargas horárias personalizadas habituais** de cada turno do colaborador (ex: `6h`, `4.5h`, inclusive `0h`). Os turnos desmarcados continuam exibindo suas horas habituais esmaecidas/apagadas.
+  - Ao reativar qualquer turno na semana seguinte, a carga horária habitual do profissional é reativada instantaneamente com 1 clique, sem a necessidade de redigitar valores toda semana.
+- **Restauração Rápida do Padrão Oficial da Casa:**
+  - Caso o operador deseje retornar um turno para o padrão de fábrica da cafeteria (`7h`, `7h`, `8h`, `5h`), basta apagar o campo de horas (deixando-o vazio) e desfocar (`blur`).
+  - O sistema limpa a personalização individual daquele turno e restaura o preset oficial da casa automaticamente.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.19` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+---
+
 ## [v1.9.18] - 13/10/2026
 
 ### 🧠 Memória Personalizada de Horas por Turno (Preservação de 0h e Valores Editados)

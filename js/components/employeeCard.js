@@ -182,10 +182,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         hoursInput.addEventListener('blur', () => {
             if (hoursInput.value.trim() === '') {
-                const hasUserEdited = hoursInput.dataset.userEdited === 'true';
-                const fallback = hasUserEdited ? (hoursInput.dataset.lastValue || '0') : (checkbox.checked ? '0' : defaultHours);
-                hoursInput.value = fallback;
-                hoursInput.dataset.lastValue = fallback;
+                // Ao apagar o campo e desfocar, remove personalização e restaura o padrão oficial da casa
+                delete hoursInput.dataset.userEdited;
+                hoursInput.value = defaultHours;
+                hoursInput.dataset.lastValue = defaultHours;
                 notifyChange();
             }
         });
@@ -290,16 +290,6 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                     resetBtn.classList.add('is-resetting');
                     cardDetails.classList.add('is-card-resetting');
                 });
-            });
-
-            cardDetails.querySelectorAll('.shift-item').forEach(shiftItem => {
-                const hoursInput = shiftItem.querySelector('.shift-hours');
-                const cb = shiftItem.querySelector('.shift-checkbox');
-                const shiftDef = SHIFTS.find(s => s.id === cb?.dataset.shift);
-                if (hoursInput && shiftDef) {
-                    delete hoursInput.dataset.userEdited;
-                    hoursInput.dataset.lastValue = String(shiftDef.hours);
-                }
             });
 
             cardDetails.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {

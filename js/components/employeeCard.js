@@ -103,16 +103,17 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const hoursWrapper = shiftEl.querySelector('.shift-hours-wrapper');
 
         const defaultHours = String(shift.hours);
-        let initialSavedHours;
-        if (savedShift.checked) {
-            initialSavedHours = savedShift.hours !== undefined ? String(savedShift.hours) : defaultHours;
+        const wasUserEdited = Boolean(savedShift.userEdited || (savedShift.checked && savedShift.hours !== undefined && String(savedShift.hours) !== defaultHours) || (!savedShift.checked && savedShift.userEdited));
+        let initialHours;
+
+        if (wasUserEdited && savedShift.hours !== undefined) {
+            initialHours = String(savedShift.hours);
+            hoursInput.dataset.userEdited = 'true';
         } else {
-            // Se estava desmarcado e salvo como '0', restaura o padrão original do turno (7, 7, 8, 5)
-            const parsed = parseFloat(savedShift.hours);
-            initialSavedHours = (!Number.isNaN(parsed) && parsed > 0) ? String(savedShift.hours) : defaultHours;
+            initialHours = defaultHours;
         }
 
-        hoursInput.dataset.lastValue = initialSavedHours;
+        hoursInput.dataset.lastValue = initialHours;
         checkbox.checked = savedShift.checked || false;
 
         const setShiftState = (isChecked, isUserAction = false) => {
@@ -120,27 +121,18 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             shiftEl.classList.toggle('is-active', isChecked);
             shiftEl.setAttribute('aria-checked', isChecked ? 'true' : 'false');
 
+            const hasUserEdited = hoursInput.dataset.userEdited === 'true';
+            const effectiveValue = hasUserEdited ? (hoursInput.dataset.lastValue ?? defaultHours) : defaultHours;
+
             if (isChecked) {
                 checkIcon.classList.remove('hidden');
                 indicatorRing.classList.add('border-amber-500', 'bg-amber-500/20');
-                if (isUserAction) {
-                    const lastVal = hoursInput.dataset.lastValue;
-                    hoursInput.value = (lastVal !== undefined && lastVal !== '' && !Number.isNaN(parseFloat(lastVal)) && parseFloat(lastVal) >= 0)
-                        ? lastVal
-                        : defaultHours;
-                } else if (!hoursInput.value) {
-                    hoursInput.value = hoursInput.dataset.lastValue || defaultHours;
-                }
+                hoursInput.value = effectiveValue;
             } else {
                 checkIcon.classList.add('hidden');
                 indicatorRing.classList.remove('border-amber-500', 'bg-amber-500/20');
-                if (hoursInput.value !== '' && !Number.isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) >= 0) {
-                    hoursInput.dataset.lastValue = hoursInput.value;
-                }
-                // Exibe o valor padrão do turno (ou último valor customizado > 0) esmaecido no input
-                const lastVal = hoursInput.dataset.lastValue;
-                const parsedLast = parseFloat(lastVal);
-                hoursInput.value = (!Number.isNaN(parsedLast) && parsedLast > 0) ? lastVal : defaultHours;
+                // Se o operador editou o valor (inclusive 0), guarda e exibe esse valor apagado; se nunca mexeu, exibe o padrão
+                hoursInput.value = effectiveValue;
             }
         };
 
@@ -182,6 +174,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 hoursInput.value = '0';
             }
             if (hoursInput.value !== '' && !Number.isNaN(raw) && raw >= 0) {
+                hoursInput.dataset.userEdited = 'true';
                 hoursInput.dataset.lastValue = hoursInput.value;
             }
             notifyChange();
@@ -189,8 +182,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         hoursInput.addEventListener('blur', () => {
             if (hoursInput.value.trim() === '') {
-                hoursInput.value = checkbox.checked ? '0' : defaultHours;
-                hoursInput.dataset.lastValue = hoursInput.value;
+                const hasUserEdited = hoursInput.dataset.userEdited === 'true';
+                const fallback = hasUserEdited ? (hoursInput.dataset.lastValue || '0') : (checkbox.checked ? '0' : defaultHours);
+                hoursInput.value = fallback;
+                hoursInput.dataset.lastValue = fallback;
                 notifyChange();
             }
         });
@@ -202,10 +197,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         // Inicialização de estado do turno
         if (checkbox.checked) {
-            hoursInput.value = initialSavedHours;
+            hoursInput.value = initialHours;
             setShiftState(true, false);
         } else {
-            hoursInput.value = initialSavedHours;
+            hoursInput.value = initialHours;
             setShiftState(false, false);
         }
     });
@@ -295,6 +290,16 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                     resetBtn.classList.add('is-resetting');
                     cardDetails.classList.add('is-card-resetting');
                 });
+            });
+
+            cardDetails.querySelectorAll('.shift-item').forEach(shiftItem => {
+                const hoursInput = shiftItem.querySelector('.shift-hours');
+                const cb = shiftItem.querySelector('.shift-checkbox');
+                const shiftDef = SHIFTS.find(s => s.id === cb?.dataset.shift);
+                if (hoursInput && shiftDef) {
+                    delete hoursInput.dataset.userEdited;
+                    hoursInput.dataset.lastValue = String(shiftDef.hours);
+                }
             });
 
             cardDetails.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {
@@ -429,14 +434,16 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             const currentVal = hoursInput.value.trim();
             const shiftDef = SHIFTS.find(s => s.id === cb.dataset.shift) || {};
             const defHours = String(shiftDef.hours || 0);
-            const resolvedHours = cb.checked
-                ? (currentVal !== '' ? currentVal : '0')
-                : ((hoursInput.dataset.lastValue && parseFloat(hoursInput.dataset.lastValue) > 0) ? hoursInput.dataset.lastValue : defHours);
+            const isEdited = hoursInput.dataset.userEdited === 'true';
+            const resolvedHours = isEdited
+                ? (cb.checked ? (currentVal !== '' ? currentVal : (hoursInput.dataset.lastValue || '0')) : (hoursInput.dataset.lastValue || '0'))
+                : (cb.checked ? (currentVal !== '' ? currentVal : defHours) : defHours);
 
             shifts.push({
                 id: cb.dataset.shift,
                 checked: cb.checked,
-                hours: resolvedHours
+                hours: resolvedHours,
+                userEdited: isEdited
             });
         });
 

@@ -2,6 +2,22 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.18] - 13/10/2026
+
+### 🧠 Memória Personalizada de Horas por Turno (Preservação de 0h e Valores Editados)
+
+#### 1. Persistência de Edição Customizada vs. Preset Padrão
+- **Memória de Entrada do Operador:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), implementado o rastreamento explícito de edição do usuário (`dataset.userEdited`).
+- **Comportamento ao Desmarcar e Reativar:**
+  - Se o operador editou o valor de horas de um turno para qualquer número (inclusive `0h`, `4.5h`, `6h`, etc.), ao desmarcar o turno, o sistema guarda e exibe exatamente aquele valor digitado apagado/esmaecido no input desabilitado.
+  - Ao reativar a pílula do turno, o valor digitado pelo operador é preservado intacto (se era 0, permanece 0).
+  - Se o operador nunca editou o turno, ele continua exibindo o valor padrão pré-configurado da cafeteria (`7h`, `8h`, `5h`) como guia visual da escala.
+- **Persistência no LocalStorage:** A propriedade `userEdited` é gravada no estado do colaborador, garantindo que o valor customizado (inclusive `0`) continue sendo exibido após recarregar a página (<kbd>F5</kbd>).
+- **Restauração no Botão Reset:** Ao acionar o botão de reset do card, as memórias personalizadas são redefinidas e os turnos retornam aos padrões de fábrica da casa.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.18`.
+
+---
+
 ## [v1.9.17] - 13/10/2026
 
 ### ⏱️ Restauração dos Valores Padrão Pré-configurados nos Turnos Desmarcados

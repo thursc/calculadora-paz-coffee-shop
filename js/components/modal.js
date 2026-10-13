@@ -45,7 +45,7 @@ export class ModalManager {
                 };
 
                 btn.addEventListener('animationend', finishClose, { once: true });
-                setTimeout(finishClose, 240);
+                setTimeout(finishClose, 140);
             });
         });
 

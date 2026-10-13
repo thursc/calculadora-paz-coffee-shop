@@ -476,12 +476,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.removeEventListener('animationend', onEnterEnd);
                 };
                 card.addEventListener('animationend', onEnterEnd, { once: true });
-                setTimeout(onEnterEnd, 450);
+                setTimeout(onEnterEnd, 240);
 
                 const nameInput = card.querySelector('.employee-name');
 
                 // Desktop: usa scrollIntoView para o grid nativo da página
-                // Mobile: rola a esteira horizontal suavemente até o novo card
+                // Mobile: rola a esteira horizontal centralizando o novo card e alinha Y = 0 instantaneamente
                 requestAnimationFrame(() => {
                     if (window.innerWidth >= 768) {
                         card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
@@ -489,6 +489,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             nameInput.focus({ preventScroll: true });
                         }
                     } else {
+                        // Alinhamento vertical simultâneo (Y = 0) para trazer o topo do card à vista
+                        if (window.scrollY > 0) {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+
                         // Mobile: cálculo exato de rolagem centralizada para o Poco X7 Pro e smartphones
                         const targetLeft = card.offsetLeft - (employeeContainer.clientWidth - card.clientWidth) / 2;
 
@@ -497,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             behavior: 'smooth'
                         });
 
-                        // Aguarda término da rolagem antes de focar o input para evitar que o teclado do Android force rolagem à esquerda
+                        // Foco ágil e sem arrasto no campo de nome (reduzido para 160ms)
                         setTimeout(() => {
                             if (nameInput && document.activeElement !== nameInput) {
                                 nameInput.focus({ preventScroll: true });
@@ -507,7 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     behavior: 'instant'
                                 });
                             }
-                        }, 350);
+                        }, 160);
                     }
                 });
             }

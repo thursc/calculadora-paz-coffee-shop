@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.23] - 13/10/2026
+
+### ⚡ Snappiness Tátil nos Botões, Correção de Glitch no PC e Alinhamento Vertical (Y = 0) ao Adicionar Card
+
+#### 1. Responsividade Ágil e Micro-Flash Ultra-Rápido (130ms)
+- **Eliminação de Lag nos Modais:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), reduzida a duração da animação `@keyframes modalCloseBtnFlash` para 130ms com curva rápida `cubic-bezier(0.16, 1, 0.3, 1)`.
+- **Fechamento Ágil:** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), o fechamento via `animationend` com fallback reduzido para 140ms entrega a sensação de feedback tátil e instantâneo (*snappy*), mantendo a piscada vermelha nítida sem qualquer lentidão ou travamento.
+
+#### 2. Correção do Bug Visual no Botão "Cancelar" (Desktop/PC)
+- **Desacoplamento de Conflitos CSS:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), removidas classes inline conflitantes de `transition-all` e `active:scale` dos botões `.modal-close-btn`.
+- **Isolamento de Hover:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), estados de `:hover` isolados com `@media (hover: hover)`. A classe `.is-flashing` agora possui `transition: none !important;` e `pointer-events: none !important;`, eliminando o conflito de transições e garantindo um fechamento 100% suave no mouse sem engasgos, tremulações ou glitches.
+
+#### 3. Alinhamento Vertical Simultâneo (Y = 0) ao Adicionar Colaborador
+- **Ancoragem Vertical ao Topo da Tela:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), na função `addEmployee`, ao adicionar um colaborador no mobile com a página rolada para baixo, é disparado simultaneamente `window.scrollTo({ top: 0, behavior: 'smooth' })` junto com o scroll horizontal da esteira (`employeeContainer.scrollTo`).
+- **Eliminação de Delays de Entrada:** Reduzida a duração de `.card-animate-enter` para 0.22s e o timeout de foco para 160ms, garantindo que o topo do novo card (nome, taxa e resumo) surja instantaneamente à vista do operador de maneira rápida, fluida e ergonômica.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.23`.
+
+---
+
 ## [v1.9.22] - 13/10/2026
 
 ### 📱 Otimização e Validação Estrita para Poco X7 Pro (393 x 873 px)

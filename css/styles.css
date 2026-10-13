@@ -545,7 +545,7 @@ html.dark .event-item.is-active .lock-badge {
 }
 
 .card-animate-enter {
-    animation: cardEnterMobile var(--duration-emphasis) var(--ease-spring) forwards;
+    animation: cardEnterMobile 0.22s var(--ease-out-expo) forwards;
     will-change: transform, opacity;
     backface-visibility: hidden;
     transform-style: preserve-3d;
@@ -1114,40 +1114,44 @@ html.dark #theme-toggle .moon-icon {
     transition: background-color var(--duration-fast) var(--ease-out-expo),
                 color var(--duration-fast) var(--ease-out-expo),
                 border-color var(--duration-fast) var(--ease-out-expo),
-                transform 0.08s var(--ease-out-expo);
+                box-shadow var(--duration-fast) var(--ease-out-expo),
+                transform var(--duration-fast) var(--ease-out-expo);
+    will-change: transform, background-color;
 }
 
-.modal-close-btn:hover {
-    color: #dc2626 !important;
-    background-color: #fee2e2 !important; /* red-100 */
-    border-color: #fecaca !important;     /* red-200 */
+@media (hover: hover) {
+    .modal-close-btn:hover {
+        color: #dc2626 !important;
+        background-color: #fee2e2 !important; /* red-100 */
+        border-color: #fecaca !important;     /* red-200 */
+    }
+
+    html.dark .modal-close-btn:hover {
+        color: #f87171 !important;            /* red-400 */
+        background-color: rgba(127, 29, 29, 0.4) !important; /* red-900/40 */
+        border-color: rgba(239, 68, 68, 0.4) !important;
+    }
 }
 
-html.dark .modal-close-btn:hover {
-    color: #f87171 !important;            /* red-400 */
-    background-color: rgba(127, 29, 29, 0.4) !important; /* red-900/40 */
-    border-color: rgba(239, 68, 68, 0.4) !important;
+.modal-close-btn:active:not(.is-flashing) {
+    transform: scale(0.95);
 }
 
-.modal-close-btn:active {
-    transform: scale(0.92) !important;
-}
-
-/* Flash de alta visibilidade ao clicar/tocar */
+/* Flash de alta visibilidade e resposta instantânea (130ms) */
 @keyframes modalCloseBtnFlash {
     0% {
         background-color: #ef4444 !important;
         color: #ffffff !important;
         border-color: #dc2626 !important;
-        transform: scale(0.92);
+        transform: scale(0.94);
         box-shadow: 0 0 14px rgba(239, 68, 68, 0.65) !important;
     }
     50% {
         background-color: #dc2626 !important;
         color: #ffffff !important;
         border-color: #b91c1c !important;
-        transform: scale(0.95);
-        box-shadow: 0 0 18px rgba(220, 38, 38, 0.8) !important;
+        transform: scale(0.96);
+        box-shadow: 0 0 16px rgba(220, 38, 38, 0.75) !important;
     }
     100% {
         background-color: #ef4444 !important;
@@ -1159,7 +1163,9 @@ html.dark .modal-close-btn:hover {
 }
 
 .modal-close-btn.is-flashing {
-    animation: modalCloseBtnFlash 0.22s ease-in-out forwards !important;
+    animation: modalCloseBtnFlash 0.13s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    transition: none !important;
+    pointer-events: none !important;
     background-color: #ef4444 !important;
     color: #ffffff !important;
     border-color: #dc2626 !important;

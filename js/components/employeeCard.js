@@ -102,9 +102,17 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const hoursInput = shiftEl.querySelector('.shift-hours');
         const hoursWrapper = shiftEl.querySelector('.shift-hours-wrapper');
 
-        const initialSavedHours = savedShift.hours !== undefined ? String(savedShift.hours) : String(shift.hours);
-        const parsedInitial = parseFloat(initialSavedHours);
-        hoursInput.dataset.lastValue = (!Number.isNaN(parsedInitial) && parsedInitial >= 0) ? initialSavedHours : String(shift.hours);
+        const defaultHours = String(shift.hours);
+        let initialSavedHours;
+        if (savedShift.checked) {
+            initialSavedHours = savedShift.hours !== undefined ? String(savedShift.hours) : defaultHours;
+        } else {
+            // Se estava desmarcado e salvo como '0', restaura o padrão original do turno (7, 7, 8, 5)
+            const parsed = parseFloat(savedShift.hours);
+            initialSavedHours = (!Number.isNaN(parsed) && parsed > 0) ? String(savedShift.hours) : defaultHours;
+        }
+
+        hoursInput.dataset.lastValue = initialSavedHours;
         checkbox.checked = savedShift.checked || false;
 
         const setShiftState = (isChecked, isUserAction = false) => {
@@ -119,7 +127,9 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                     const lastVal = hoursInput.dataset.lastValue;
                     hoursInput.value = (lastVal !== undefined && lastVal !== '' && !Number.isNaN(parseFloat(lastVal)) && parseFloat(lastVal) >= 0)
                         ? lastVal
-                        : String(shift.hours);
+                        : defaultHours;
+                } else if (!hoursInput.value) {
+                    hoursInput.value = hoursInput.dataset.lastValue || defaultHours;
                 }
             } else {
                 checkIcon.classList.add('hidden');
@@ -127,7 +137,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 if (hoursInput.value !== '' && !Number.isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) >= 0) {
                     hoursInput.dataset.lastValue = hoursInput.value;
                 }
-                hoursInput.value = '0';
+                // Exibe o valor padrão do turno (ou último valor customizado > 0) esmaecido no input
+                const lastVal = hoursInput.dataset.lastValue;
+                const parsedLast = parseFloat(lastVal);
+                hoursInput.value = (!Number.isNaN(parsedLast) && parsedLast > 0) ? lastVal : defaultHours;
             }
         };
 
@@ -176,8 +189,8 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         hoursInput.addEventListener('blur', () => {
             if (hoursInput.value.trim() === '') {
-                hoursInput.value = '0';
-                hoursInput.dataset.lastValue = '0';
+                hoursInput.value = checkbox.checked ? '0' : defaultHours;
+                hoursInput.dataset.lastValue = hoursInput.value;
                 notifyChange();
             }
         });
@@ -192,7 +205,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             hoursInput.value = initialSavedHours;
             setShiftState(true, false);
         } else {
-            hoursInput.value = '0';
+            hoursInput.value = initialSavedHours;
             setShiftState(false, false);
         }
     });
@@ -414,9 +427,11 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             const cb = shiftItem.querySelector('.shift-checkbox');
             const hoursInput = shiftItem.querySelector('.shift-hours');
             const currentVal = hoursInput.value.trim();
+            const shiftDef = SHIFTS.find(s => s.id === cb.dataset.shift) || {};
+            const defHours = String(shiftDef.hours || 0);
             const resolvedHours = cb.checked
                 ? (currentVal !== '' ? currentVal : '0')
-                : (hoursInput.dataset.lastValue || '0');
+                : ((hoursInput.dataset.lastValue && parseFloat(hoursInput.dataset.lastValue) > 0) ? hoursInput.dataset.lastValue : defHours);
 
             shifts.push({
                 id: cb.dataset.shift,

@@ -2,6 +2,27 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.17] - 13/10/2026
+
+### ⏱️ Restauração dos Valores Padrão Pré-configurados nos Turnos Desmarcados
+
+#### 1. Visibilidade e Retorno das Cargas Horárias Padrão
+- **Carga Horária Pré-configurada:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), turnos desmarcados voltam a exibir visualmente as horas de referência de cada período:
+  - **Sábado:** 7 hrs
+  - **Domingo (Manhã):** 7 hrs
+  - **Domingo (Noite):** 8 hrs
+  - **Segunda-feira:** 5 hrs
+- **Eliminação do Zero Visual Ambíguo:** Corrige o comportamento introduzido anteriormente onde turnos inativos exibiam `0 hrs` forçado por padrão, mesmo em colaboradores novos.
+- **Preservação Integral das Novas Funcionalidades:**
+  - Mantida a capacidade do operador de digitar `0` em turnos ativos com persistência fiel e cômputo financeiro de R$ 0,00 (sem restaurar indevidamente o valor padrão).
+  - Mantida a pílula clicável por completo (inclusive bordas extremas) e isolamento da área de horas.
+  - Mantida a auto-seleção de texto em todos os campos numéricos ao clicar ou focar.
+  - Mantido o destaque vermelho padronizado nos botões de fechar modal (ícone 'X' e botão 'Fechar').
+  - Mantido o sistema de animações e transições a 60/120 FPS com aceleração por GPU.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.17`.
+
+---
+
 ## [v1.9.16] - 13/10/2026
 
 ### ⚡ Fluidez de Animações (60/120 FPS), Curvas Orgânicas, Staggered Entrance e Padronização Visual de Fechamento

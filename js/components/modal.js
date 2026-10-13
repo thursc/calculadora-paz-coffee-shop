@@ -28,16 +28,24 @@ export class ModalManager {
     }
 
     init() {
-        // Fechamento com flash tátil vibrante em vermelho (220ms) para botões de fechar e cancelar
+        // Fechamento com flash tátil vibrante em vermelho para botões de fechar e cancelar
         document.querySelectorAll('.modal-close-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (btn.classList.contains('is-flashing')) return;
                 btn.classList.add('is-flashing');
-                setTimeout(() => {
+
+                let finished = false;
+                const finishClose = () => {
+                    if (finished) return;
+                    finished = true;
                     btn.classList.remove('is-flashing');
+                    btn.removeEventListener('animationend', finishClose);
                     this.closeAll();
-                }, 220);
+                };
+
+                btn.addEventListener('animationend', finishClose, { once: true });
+                setTimeout(finishClose, 240);
             });
         });
 

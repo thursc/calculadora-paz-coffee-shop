@@ -2,6 +2,31 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.22] - 13/10/2026
+
+### 📱 Otimização e Validação Estrita para Poco X7 Pro (393 x 873 px)
+
+#### 1. Centralização Matemática dos Cards no Poco X7 Pro (393px)
+- **Geometria Precisa da Esteira (`.kanban-track`):**
+  - Aplicado `position: relative` para garantir que `card.offsetLeft` seja sempre relativo à esteira.
+  - Padding lateral dinâmico rigoroso: `padding-left: calc((100vw - min(85vw, 360px)) / 2) !important` e `padding-right` idêntico, garantindo margens perfeitamente simétricas de 29.5px em telas de 393px de largura.
+- **Isolamento de Deslocamento na Animação de Entrada:**
+  - Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), removido o `translate3d(24px, 0, 0)` de `@keyframes cardEnterMobile`, preservando transição centrada no lugar via escala e opacidade e evitando distorção no cálculo de bounding box.
+- **Rolagem e Proteção contra Desvio de Foco do Teclado Android:**
+  - Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), o cálculo de rolagem `targetLeft = card.offsetLeft - (employeeContainer.clientWidth - card.clientWidth) / 2` posiciona o card no centro exato.
+  - Após a chamada de `nameInput.focus({ preventScroll: true })`, uma re-ancoragem instantânea é disparada para anular qualquer tentativa do navegador do Android de deslocar a esteira para a esquerda ao abrir o teclado virtual.
+- **Validação Numérica Confirmada:**
+  - Card inicial: `left = 29.5px`, `right = 29.5px`, `width = 334px` (erro de 0px).
+  - Novo card adicionado: `left = 29.5px`, `right = 29.5px`, `width = 334px` (erro de 0px).
+
+#### 2. Feedback Visual Vibrante dos Modais via `animationend`
+- **Sincronização com Término de Animação:**
+  - Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), os botões `.modal-close-btn` agora aguardam a conclusão da animação `@keyframes modalCloseBtnFlash` via evento `animationend` (com fallback de segurança de 240ms) antes de invocar `closeAll()`.
+  - O usuário no Poco X7 Pro visualiza nitidamente a piscada vermelha vibrante com texto e ícones brancos em alto contraste antes do fechamento do modal.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.22` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+---
+
 ## [v1.9.21] - 13/10/2026
 
 ### 🎯 Correção e Validação dos 3 Pontos: Cabeçalho Sempre Fixo, Centralização da Esteira e Flash Vermelho Vibrante

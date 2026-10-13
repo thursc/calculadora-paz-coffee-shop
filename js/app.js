@@ -489,13 +489,25 @@ document.addEventListener('DOMContentLoaded', () => {
                             nameInput.focus({ preventScroll: true });
                         }
                     } else {
-                        // Mobile: centraliza o card perfeitamente no centro da esteira
-                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                        // Mobile: cálculo exato de rolagem centralizada para o Poco X7 Pro e smartphones
+                        const targetLeft = card.offsetLeft - (employeeContainer.clientWidth - card.clientWidth) / 2;
+
+                        employeeContainer.scrollTo({
+                            left: Math.max(0, targetLeft),
+                            behavior: 'smooth'
+                        });
+
+                        // Aguarda término da rolagem antes de focar o input para evitar que o teclado do Android force rolagem à esquerda
                         setTimeout(() => {
                             if (nameInput && document.activeElement !== nameInput) {
                                 nameInput.focus({ preventScroll: true });
+                                // Re-ancora no centro exato para anular qualquer deslocamento indesejado do navegador mobile
+                                employeeContainer.scrollTo({
+                                    left: Math.max(0, targetLeft),
+                                    behavior: 'instant'
+                                });
                             }
-                        }, 320);
+                        }, 350);
                     }
                 });
             }

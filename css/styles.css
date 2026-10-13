@@ -990,5 +990,18 @@ html.dark #theme-toggle .moon-icon {
     pointer-events: auto;
 }
 
+/* ==========================================================================
+   Modal Holerite: Botões de Ação e WhatsApp (Ergonomia UI/UX)
+   ========================================================================== */
+#send-whatsapp-btn {
+    padding-left: 1.25rem !important;
+    padding-right: 1.25rem !important;
+}
+
+#copy-holerite-btn {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
 
 

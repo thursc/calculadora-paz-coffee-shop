@@ -2,6 +2,25 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.12] - 12/10/2026
+
+### 🎨 Refinamento Ergonômico de UI/UX no Modal de Holerite (WhatsApp & Ações)
+
+#### 1. Respiro e Espaçamento Lateral do Botão "Enviar no WhatsApp" (Desktop & Mobile)
+- **Correção de Classe Utilitária Inexistente:** Substituído o seletor inválido `px-4.5` (que removia todo o padding horizontal do botão) por `px-5 py-2.5` e espaçamento entre ícone e texto `gap-2.5`.
+- **CSS Defensivo e Respiro Amplo:** Adicionada regra explícita em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) para `#send-whatsapp-btn` com `padding-left: 1.25rem !important; padding-right: 1.25rem !important;`, garantindo respiro confortável de 20px de cada borda para o logo do WhatsApp e a terminação do texto, tanto no desktop quanto no mobile.
+- **Largura Expandida do Modal no Desktop:** Ajustada a classe do container em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) de `max-w-lg` (512px) para `max-w-xl` (576px), proporcionando 64px a mais de conforto horizontal para a leitura do holerite e a disposição em linha dos botões.
+
+#### 2. Formatação Ergonômica Mobile (Hierarquia Visual e Padrões Modernos de UI/UX)
+- **Ação Primária em Destaque (Full-Width CTA):** No mobile, o botão "Enviar no WhatsApp" agora ocupa a primeira posição com largura total (`w-full`), servindo como a principal chamada de ação (Call-To-Action) confortável para toque com o polegar.
+- **Simetria Perfeita nas Ações Secundárias:** Os botões "Fechar" e "Copiar Texto" agora ficam organizados logo abaixo, lado a lado em duas colunas de proporção idêntica (50% cada, `flex-1`), com alturas e bordas harmonizadas, eliminando a antiga quebra assimétrica com botões órfãos e cantos vazios.
+- **Linha Única no Desktop:** Em visualizações desktop (`sm:`), o layout se transforma fluidamente em uma única linha horizontal no canto direito (`Fechar` | `Copiar Texto` | `Enviar no WhatsApp`).
+
+#### 3. Estabilidade & Higiene de Inicialização
+- **Correção de Temporal Dead Zone (TDZ):** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), a inicialização de `eventsEmptyPlaceholder` e da função `notifyChange()` foi movida para o escopo superior da criação do card, prevenindo erros de referência cruzada na renderização de turnos e adicionais.
+
+---
+
 ## [v1.9.11] - 12/10/2026
 
 ### 🚀 Melhorias de UI, UX e Quality of Life (QoL)

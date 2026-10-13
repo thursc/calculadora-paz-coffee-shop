@@ -29,7 +29,7 @@
             }
         } catch (_) {}
     </script>
-    <link rel="stylesheet" href="css/styles.css?v=1.9.11">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.12">
 </head>
 
 <body
@@ -205,7 +205,7 @@
         role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="holerite-title">
         <div class="modal-overlay fixed inset-0 bg-black/65 backdrop-blur-md"></div>
         <div
-            class="modal-container relative bg-white dark:bg-[#1a1715] w-full max-w-lg mx-auto rounded-2xl shadow-2xl z-10 overflow-hidden border border-stone-200 dark:border-stone-800 max-h-[90vh] flex flex-col">
+            class="modal-container relative bg-white dark:bg-[#1a1715] w-full max-w-xl mx-auto rounded-2xl shadow-2xl z-10 border border-stone-200 dark:border-stone-800 max-h-[90vh] flex flex-col">
             <div class="modal-content p-5 sm:p-6 flex flex-col flex-grow overflow-y-auto text-left">
                 <div class="flex justify-between items-center pb-3 border-b border-stone-200 dark:border-stone-800">
                     <div>
@@ -225,35 +225,37 @@
 
                 <div class="my-4 flex-grow">
                     <textarea id="holerite-text"
-                        class="w-full h-64 p-3.5 border border-stone-200 dark:border-stone-700 rounded-xl bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 font-mono text-xs sm:text-sm leading-relaxed focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
+                        class="w-full h-56 sm:h-64 p-3.5 border border-stone-200 dark:border-stone-700 rounded-xl bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-100 font-mono text-xs sm:text-sm leading-relaxed focus:ring-2 focus:ring-amber-500 focus:outline-none resize-none"
                         readonly></textarea>
                 </div>
 
-                <div class="flex flex-wrap sm:flex-nowrap justify-end gap-2 pt-2 border-t border-stone-200 dark:border-stone-800">
-                    <button type="button"
-                        class="modal-close-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer">
-                        Fechar
-                    </button>
-                    <button type="button" id="copy-holerite-btn"
-                        class="flex items-center gap-1.5 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-bold rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm transition-all active:scale-95 text-xs sm:text-sm cursor-pointer"
-                        title="Copiar texto do holerite">
-                        <span class="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
-                            <!-- Ícone Clipboard (Prancheta) -->
-                            <svg class="clipboard-icon absolute inset-0 w-full h-full transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                            </svg>
-                            <!-- Ícone Check (Verde Sucesso) -->
-                            <svg class="check-icon absolute inset-0 w-full h-full text-emerald-500 transition-all duration-300 opacity-0 scale-0 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                        </span>
-                        <span class="copy-btn-text">Copiar Texto</span>
-                    </button>
+                <div class="pt-3 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-2">
+                    <div class="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-1">
+                        <button type="button"
+                            class="modal-close-btn flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white bg-stone-100/70 hover:bg-stone-200/70 dark:bg-stone-800/60 dark:hover:bg-stone-800 border border-stone-200/80 dark:border-stone-700/80 sm:border-transparent sm:bg-transparent sm:hover:bg-stone-100 sm:dark:hover:bg-stone-800 transition-all cursor-pointer text-center justify-center flex items-center">
+                            Fechar
+                        </button>
+                        <button type="button" id="copy-holerite-btn"
+                            class="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 py-2.5 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-800 dark:text-stone-100 font-bold rounded-xl border border-stone-200 dark:border-stone-700 shadow-sm transition-all active:scale-95 text-xs sm:text-sm cursor-pointer whitespace-nowrap"
+                            title="Copiar texto do holerite">
+                            <span class="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
+                                <!-- Ícone Clipboard (Prancheta) -->
+                                <svg class="clipboard-icon absolute inset-0 w-full h-full transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                </svg>
+                                <!-- Ícone Check (Verde Sucesso) -->
+                                <svg class="check-icon absolute inset-0 w-full h-full text-emerald-500 transition-all duration-300 opacity-0 scale-0 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </span>
+                            <span class="copy-btn-text">Copiar Texto</span>
+                        </button>
+                    </div>
                     <button type="button" id="send-whatsapp-btn"
-                        class="flex items-center gap-1.5 px-4.5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-md transition-all active:scale-95 text-xs sm:text-sm cursor-pointer"
+                        class="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 text-xs sm:text-sm cursor-pointer whitespace-nowrap flex-shrink-0"
                         title="Abrir no WhatsApp com mensagem preenchida">
-                        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.972.587 1.96.95 3.016.95 3.181 0 5.768-2.587 5.768-5.766.001-3.187-2.575-5.771-5.988-6.137zm3.376 8.212c-.144.405-.837.774-1.17.824-.312.045-.697.072-2.029-.481-1.611-.669-2.639-2.316-2.72-2.424-.08-.108-.654-.87-.654-1.659 0-.788.413-1.177.559-1.336.145-.159.317-.199.423-.199.106 0 .212.002.304.007.098.005.228-.037.357.272.133.319.455 1.109.495 1.19.04.082.067.177.013.285-.053.108-.08.176-.159.269-.079.092-.167.206-.239.277-.08.079-.163.165-.07.325.093.16.413.682.886 1.104.609.544 1.122.712 1.282.792.16.08.253.067.347-.04.093-.108.4-.467.507-.627.106-.16.213-.133.359-.08.146.053.931.439 1.09.519.16.08.266.12.306.186.039.067.039.387-.105.792z"/>
                             <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.176L2 22l4.985-1.408C8.455 21.498 10.173 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.628 0-3.136-.5-4.391-1.356l-.314-.213-2.929.827.827-2.929-.213-.314C4.128 14.757 3.628 13.435 3.628 12c0-4.617 3.755-8.372 8.372-8.372s8.372 3.755 8.372 8.372c0 4.617-3.755 8.372-8.372 8.372z" clip-rule="evenodd"/>
                         </svg>
@@ -499,7 +501,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.11"></script>
+    <script type="module" src="js/app.js?v=1.9.12"></script>
 </body>
 
 </html>

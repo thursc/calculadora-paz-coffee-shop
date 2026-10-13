@@ -36,6 +36,22 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     const eventsListEl = cardDetails.querySelector('.events-breakdown-list');
     const bonusListEl = cardDetails.querySelector('.bonus-breakdown-list');
     const emptyBreakdownMessage = cardDetails.querySelector('.empty-breakdown-message');
+    const eventsEmptyPlaceholder = cardContent.querySelector('.events-empty-placeholder');
+
+    function updateEventsEmptyState() {
+        if (eventsEmptyPlaceholder) {
+            const hasEvents = eventList.querySelectorAll('.event-item').length > 0;
+            eventsEmptyPlaceholder.classList.toggle('hidden', hasEvents);
+        }
+    }
+
+    // Função de notificação para a aplicação principal
+    function notifyChange() {
+        updateEventsEmptyState();
+        if (typeof onStateChange === 'function') {
+            onStateChange();
+        }
+    }
 
     const uniqueId = data.id || `employee-${Date.now()}`;
     cardDetails.dataset.id = uniqueId;
@@ -204,23 +220,8 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
-    // Gerenciador do estado vazio da seção de adicionais
-    const eventsEmptyPlaceholder = cardContent.querySelector('.events-empty-placeholder');
-    function updateEventsEmptyState() {
-        if (eventsEmptyPlaceholder) {
-            const hasEvents = eventList.querySelectorAll('.event-item').length > 0;
-            eventsEmptyPlaceholder.classList.toggle('hidden', hasEvents);
-        }
-    }
+    // Atualiza estado visual inicial da seção de adicionais
     updateEventsEmptyState();
-
-    // Função de notificação para a aplicação principal
-    function notifyChange() {
-        updateEventsEmptyState();
-        if (typeof onStateChange === 'function') {
-            onStateChange();
-        }
-    }
 
     // Botão Adicionar Evento
     const addEventBtn = cardContent.querySelector('.add-event-btn');

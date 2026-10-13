@@ -28,7 +28,7 @@ export class ModalManager {
     }
 
     init() {
-        // Fechamento com micro-flash tátil em vermelho para botões de fechar e cancelar (especialmente no mobile)
+        // Fechamento com flash tátil vibrante em vermelho (220ms) para botões de fechar e cancelar
         document.querySelectorAll('.modal-close-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -37,7 +37,7 @@ export class ModalManager {
                 setTimeout(() => {
                     btn.classList.remove('is-flashing');
                     this.closeAll();
-                }, 110);
+                }, 220);
             });
         });
 

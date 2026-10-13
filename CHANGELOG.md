@@ -2,24 +2,23 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
-## [v1.9.20] - 13/10/2026
+## [v1.9.21] - 13/10/2026
 
-### 📱 Feedback Tátil nos Modais, Centralização Mobile e Smart Responsive Header
+### 🎯 Correção e Validação dos 3 Pontos: Cabeçalho Sempre Fixo, Centralização da Esteira e Flash Vermelho Vibrante
 
-#### 1. Feedback Tátil Vermelho nos Botões de Fechar e Cancelar (Opção 2)
-- **Padronização Visual:** O botão "Cancelar" do modal de confirmação de exclusão agora possui o mesmo padrão vermelho executivo do botão "Fechar" do holerite (`hover:bg-red-100 hover:text-red-600 hover:border-red-200 dark:hover:bg-red-900/30 dark:hover:text-red-400`).
-- **Micro-Flash Tátil no Mobile (110ms):** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), adicionada a classe `.is-flashing`. Ao clicar/tocar em qualquer botão de fechar (ícones 'X', botão 'Fechar' e botão 'Cancelar'), o botão pisca em vermelho com leve escala tátil por 110ms antes do fechamento do modal, proporcionando feedback visual perceptível e claro em dispositivos touch.
+#### 1. Cabeçalho Sempre Fixo no Topo (Eliminação do Problema de Sticky e Auto-Hide)
+- **Eliminação do Bug de Sticky com `overflow-x: clip`:** No `html, body` em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) e [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), substituído `overflow-x: hidden` por `overflow-x: clip`. O `overflow-x: hidden` criava um contexto de rolagem implícito que quebrava o `position: sticky` no mobile e desktop, fazendo o cabeçalho rolar para fora da tela.
+- **Acesso Contínuo a Todo Momento:** Removido o recolhimento automático (`auto-hide`). O cabeçalho agora permanece fixo no topo (`sticky top-0 z-40`) em qualquer posição de rolagem, tanto no PC quanto no smartphone, garantindo acesso imediato aos botões "Adicionar", modo escuro e busca.
 
-#### 2. Centralização Geométrica dos Cards na Esteira Mobile (Opção 2)
-- **Snap Centrado no Mobile:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) e [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), atualizado `.kanban-col` para `scroll-snap-align: center` e classes `snap-center md:snap-none`.
-- **Scroll Centralizado com Precisão:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), a rolagem ao adicionar um novo colaborador agora calcula o posicionamento geométrico centralizado exato do viewport (`targetLeft`), eliminando o desalinhamento que colava o card à esquerda e deixando margens balanceadas em ambos os lados.
+#### 2. Centralização Geométrica dos Cards na Esteira Mobile
+- **Padding Balanceado na Esteira:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), adicionado padding dinâmico `.kanban-track` com `padding-left: max(1rem, calc((100vw - min(85vw, 360px)) / 2))` e `padding-right: max(1rem, calc((100vw - min(85vw, 360px)) / 2))`.
+- **Fim do Limite Físico de Rolagem:** Anteriormente, o primeiro card (ou card único) ficava colado à esquerda porque `scrollLeft` não podia ser negativo. Com o padding lateral balanceado, qualquer card (inclusive o inicial) posiciona-se rigorosamente no centro exato da tela.
+- **Scroll Suave com `inline: 'center'`:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), a inclusão de um colaborador centraliza o novo card nativamente com `card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })`.
 
-#### 3. Smart Responsive Header (Opção B)
-- **Desktop Executivo:** Cabeçalho 100% fixo no topo (`sticky top-0 z-30`) com elevação dinâmica via sombra suave.
-- **Mobile Inteligente com Auto-Hide:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), implementado o `setupSmartHeader()`:
-  - Ao rolar a página verticalmente para baixo no celular, o cabeçalho é recolhido suavemente com `translate3d(0, -100%, 0)`, liberando espaço de tela precioso para os cards e o teclado virtual.
-  - Ao rolar minimamente para cima, ao alcançar o topo (< 24px) ou ao focar no campo de busca (`employee-search`), o cabeçalho ressurge instantaneamente.
-- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.20`.
+#### 3. Flash Vermelho Vibrante de Alta Visibilidade nos Modais (220ms)
+- **Animação `@keyframes modalCloseBtnFlash`:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), implementada animação pulsante em vermelho intenso (`#ef4444` / `#dc2626`), texto e ícones em branco puro (`#ffffff`) e brilho avermelhado (`box-shadow: 0 0 16px rgba(239, 68, 68, 0.65)`).
+- **Tempo Perceptivo Ideal (220ms):** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), ajustado o intervalo de fechamento para 220ms, permitindo que a retina registre a confirmação tátil do clique antes do desaparecimento do modal.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.21`.
 
 ---
 

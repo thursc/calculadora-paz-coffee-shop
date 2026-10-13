@@ -29,11 +29,11 @@
             }
         } catch (_) { }
     </script>
-    <link rel="stylesheet" href="css/styles.css?v=1.9.20">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.21">
 </head>
 
 <body
-    class="min-h-screen flex flex-col text-stone-900 dark:text-stone-100 bg-[#faf7f2] dark:bg-[#100f0e] font-sans overflow-x-hidden w-full max-w-full relative">
+    class="min-h-screen flex flex-col text-stone-900 dark:text-stone-100 bg-[#faf7f2] dark:bg-[#100f0e] font-sans overflow-x-clip w-full max-w-full relative">
 
     <!-- Alerta de Quota / Falha no LocalStorage (Item #14 - WCAG role="alert") -->
     <div id="storage-alert-banner"
@@ -63,7 +63,7 @@
          CABEÇALHO / BARRA DE COMANDOS EXECUTIVA
          ======================================================== -->
     <header
-        class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm">
+        class="sticky top-0 z-40 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm">
         <div
             class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
             <!-- Marca: Logo + Paz Coffee Shop sempre por extenso -->
@@ -514,7 +514,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.20"></script>
+    <script type="module" src="js/app.js?v=1.9.21"></script>
 </body>
 
 </html>

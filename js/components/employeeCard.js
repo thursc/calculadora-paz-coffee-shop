@@ -291,7 +291,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 cb.dispatchEvent(new Event('change'));
             });
 
-            // Remove eventos não fixados com animação FLIP suave (Proposta 1)
+            // Remove eventos não fixados com dissolução no lugar (Vanish) e FLIP em lote
             const unlockedEvents = Array.from(cardDetails.querySelectorAll('.event-item')).filter(
                 el => el.dataset.locked !== 'true'
             );

@@ -2,6 +2,37 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.27] - 13/10/2026
+
+### ☕ Favicon Adaptativo, Feedback Tátil de Reset, Animações FLIP e Harmonização de UI
+
+#### 1. Identidade Visual e Favicon Vetorial Dinâmico (SVG)
+- **Suporte Nativo a Temas Claro/Escuro:** Criado e integrado o favicon oficial em [assets/favicon.svg](file:///d:/dev/calculadora-paz-coffee-shop/assets/favicon.svg), utilizando media query `@media (prefers-color-scheme: dark)` direto no SVG: cor Café Espresso (`#78350f`) em abas com tema claro e Dourado Âmbar Vibrante (`#fbbf24`) em abas escuras.
+- **Link Semântico:** Adicionado `<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">` no `<head>` de [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+#### 2. Feedback Tátil e Luminoso no Reset do Card (Amber Glow & Pulse)
+- **Pulso de Borda Âmbar:** Implementado `@keyframes cardResetBorderPulse` em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), acionado pela classe `.is-card-resetting` no container `.employee-card-details` durante 0.85s com curva cúbica `cubic-bezier(0.22, 1, 0.36, 1)`, gerando feedback de varredura e clareza de estado.
+- **Glow no Ícone Giratório:** A animação `resetSnapSpin` agora projeta realce de cor âmbar e filtro luminoso (`drop-shadow`) em 360°, comunicando a conclusão da redefinição de turnos de maneira orgânica.
+- **Varredura de Luz Líquida Suave:** A esteira de brilho (`cardSweepWave`) foi otimizada com z-index calibrado (`z-index: 10`) para fluir harmoniosamente sob itens ancorados.
+
+#### 3. Preservação e Ancoragem Visual de Adicionais Fixados
+- **Elevação e Borda Âmbar:** Elementos de adicionais travados (`.event-item.is-locked`) agora recebem `border-left: 3.5px solid var(--accent-amber)`, elevação de camada (`z-index: 15`) e plano de fundo contrastante (`#fcfbf9` no modo claro e `#1c1917` no escuro), com preservação nítida durante a varredura do reset.
+- **Limpeza de Ruído Visual:** Removida a badge de texto redundante ("Fixado") em [js/components/eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), mantendo o cabeçalho do item leve, focado e com affordance imediata no botão do cadeado.
+- **Acessibilidade e Tooltips:** Textos e atributos ARIA do cadeado ajustados para *"Manter ao resetar"* e *"Desfixar adicional (mantido ao resetar)"*.
+
+#### 4. Remoção Suave por Dissolução (Vanish) e Transição FLIP
+- **Vanish sem Colapso Prematuro:** A classe `.event-item-animate-leave` em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css) agora executa um fade-out acelerado no lugar (150ms) mantendo a geometria intacta, evitando quebras visuais e saltos de borda durante a exclusão.
+- **Deslizamento Orgânico em Lote:** A remoção de itens não fixados no reset em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js) e a exclusão individual em [js/components/eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js) reposicionam suavemente os elementos abaixo através do algoritmo FLIP (*First-Last-Invert-Play*) em 280ms.
+
+#### 5. Harmonização do Toast de Desfazer Exclusão e Botão de Holerite
+- **Toast Glassmorphism no Modo Claro:** Atualizado `#undo-toast` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) para superfície translúcida `bg-white/95 text-stone-800 border-stone-200/90 shadow-xl backdrop-blur-md`, botão de ação em tom âmbar suave e ícone de lixeira contextualizado.
+- **Affordance do Holerite:** Botão `.generate-holerite-btn` no modo claro ajustado para `bg-amber-600 hover:bg-amber-700 text-white font-bold`, estabelecendo hierarquia primária consistente e contraste imediato com o rodapé.
+
+#### 6. Atualização de Cache dos Assets
+- **Cache-Busting:** Bump de versão dos scripts e folhas de estilo para `?v=1.9.27` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+---
+
 ## [v1.9.26] - 13/10/2026
 
 ### 🌿 Restauração da Dobradinha Verde Esmeralda, Seleção Inteligente Automática, Correção Tipográfica do Modal e Harmonização de Cores

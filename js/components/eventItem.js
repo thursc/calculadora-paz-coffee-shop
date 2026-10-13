@@ -23,9 +23,6 @@ export function createEventElement(data = {}, onChangeCallback) {
                 <input type="text" placeholder="Nome do Adicional" class="event-name w-full px-2 py-1 text-xs sm:text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 placeholder-stone-400 focus:ring-1 focus:ring-amber-500">
             </div>
             <div class="flex items-center gap-1 flex-shrink-0">
-                <span class="lock-badge hidden items-center text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md select-none">
-                    Fixado
-                </span>
                 <button type="button" class="lock-event-btn p-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-400 hover:text-amber-500 transition-colors" title="Manter ao resetar" aria-label="Travar evento para não apagar ao resetar">
                     <svg class="lock-icon-unlocked w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M14,15c0,1.1-0.9,2-2,2s-2-0.9-2-2s0.9-2,2-2S14,13.9,14,15z"/>
@@ -98,7 +95,6 @@ export function createEventElement(data = {}, onChangeCallback) {
     const specificWrapper = eventItem.querySelector('.event-specific-rate-wrapper');
 
     const lockBtn = eventItem.querySelector('.lock-event-btn');
-    const lockBadge = eventItem.querySelector('.lock-badge');
     const unlockedIcon = lockBtn.querySelector('.lock-icon-unlocked');
     const lockedIcon = lockBtn.querySelector('.lock-icon-locked');
     const removeBtn = eventItem.querySelector('.remove-event-btn');
@@ -108,12 +104,11 @@ export function createEventElement(data = {}, onChangeCallback) {
             eventItem.dataset.locked = 'true';
             eventItem.classList.add('is-locked');
             lockBtn.classList.add('locked');
-            lockBtn.setAttribute('title', 'Desfixar adicional (fixado)');
-            lockBtn.setAttribute('aria-label', 'Desfixar adicional (fixado)');
+            lockBtn.setAttribute('title', 'Desfixar adicional (mantido ao resetar)');
+            lockBtn.setAttribute('aria-label', 'Desfixar adicional (mantido ao resetar)');
             lockBtn.setAttribute('aria-pressed', 'true');
             unlockedIcon.classList.add('hidden');
             lockedIcon.classList.remove('hidden');
-            if (lockBadge) lockBadge.classList.remove('hidden');
         } else {
             delete eventItem.dataset.locked;
             eventItem.classList.remove('is-locked');
@@ -123,7 +118,6 @@ export function createEventElement(data = {}, onChangeCallback) {
             lockBtn.setAttribute('aria-pressed', 'false');
             unlockedIcon.classList.remove('hidden');
             lockedIcon.classList.add('hidden');
-            if (lockBadge) lockBadge.classList.add('hidden');
         }
     };
 
@@ -212,7 +206,7 @@ export function createEventElement(data = {}, onChangeCallback) {
         });
     });
 
-    // Remoção suave com animação padronizada do site (Proposta 1: Dissolução no lugar + FLIP nos irmãos)
+    // Remoção por dissolução no lugar (Vanish em 150ms + deslizamento dos irmãos inferiores via FLIP)
     eventItem.removeWithAnimation = (callback, options = {}) => {
         const { skipFlip = false } = options;
         const cardDetails = eventItem.closest('.employee-card-details');
@@ -243,6 +237,7 @@ export function createEventElement(data = {}, onChangeCallback) {
             }));
         }
 
+        // Dissolve no lugar mantendo geometria (sem colapso de altura/borda)
         eventItem.classList.add('event-item-animate-leave');
 
         let cleaned = false;
@@ -252,7 +247,7 @@ export function createEventElement(data = {}, onChangeCallback) {
             eventItem.removeEventListener('transitionend', onEnd);
             eventItem.remove();
 
-            // FLIP (Invert & Play) para os elementos que estavam abaixo
+            // FLIP (Invert & Play) para os elementos que estavam abaixo subirem suavemente
             if (!skipFlip && targetsToAnimate.length > 0) {
                 const movingElements = [];
                 firstPositions.forEach(({ el, top }) => {
@@ -293,7 +288,7 @@ export function createEventElement(data = {}, onChangeCallback) {
         };
 
         eventItem.addEventListener('transitionend', onEnd, { once: true });
-        setTimeout(onEnd, 200);
+        setTimeout(onEnd, 170); // 150ms fade + 20ms buffer
     };
 
     removeBtn.addEventListener('click', () => {

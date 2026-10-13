@@ -324,30 +324,31 @@ html.dark .employee-footer {
     border-top: 1px solid rgba(41, 37, 36, 0.8);
 }
 
-/* --- Opção B: Feedback Visual do Botão Resetar (Flash Macio e Suave + Rotação Horária - 0.8s) --- */
+/* --- Feedback Visual do Botão Resetar (Âmbar Vibrante no Giro 360° + Fade Suave no Final) --- */
 @keyframes resetFlashPulse {
     0% {
         transform: scale3d(0.96, 0.96, 1);
-        background-color: rgba(245, 158, 11, 0.85);
-        color: #1c1917;
+        background-color: rgba(245, 158, 11, 0.22);
         box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.45);
     }
-    28% {
-        transform: scale3d(1.05, 1.05, 1);
-        background-color: #f59e0b;
-        color: #1c1917;
-        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25);
+    30% {
+        transform: scale3d(1.08, 1.08, 1);
+        background-color: rgba(245, 158, 11, 0.28);
+        box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.25);
     }
-    65% {
-        transform: scale3d(1.01, 1.01, 1);
-        background-color: rgba(245, 158, 11, 0.6);
-        color: #1c1917;
-        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.1);
+    75% {
+        transform: scale3d(1.02, 1.02, 1);
+        background-color: rgba(245, 158, 11, 0.20);
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.15);
+    }
+    90% {
+        transform: scale3d(1, 1, 1);
+        background-color: rgba(245, 158, 11, 0.10);
+        box-shadow: none;
     }
     100% {
         transform: scale3d(1, 1, 1);
         background-color: transparent;
-        color: inherit;
         box-shadow: none;
     }
 }
@@ -355,15 +356,33 @@ html.dark .employee-footer {
 @keyframes resetSnapSpin {
     0% {
         transform: rotate3d(0, 0, 1, 0deg);
+        color: #f59e0b;
+        stroke: #f59e0b;
+        filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
     }
     48% {
         transform: rotate3d(0, 0, 1, 210deg);
+        color: #f59e0b;
+        stroke: #f59e0b;
+        filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
     }
     82% {
         transform: rotate3d(0, 0, 1, 368deg);
+        color: #f59e0b;
+        stroke: #f59e0b;
+        filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5));
+    }
+    92% {
+        transform: rotate3d(0, 0, 1, 360deg);
+        color: #f59e0b;
+        stroke: #f59e0b;
+        filter: drop-shadow(0 0 2px rgba(245, 158, 11, 0.3));
     }
     100% {
         transform: rotate3d(0, 0, 1, 360deg);
+        color: inherit;
+        stroke: inherit;
+        filter: none;
     }
 }
 
@@ -376,17 +395,34 @@ html.dark .employee-footer {
 
 .reset-btn.is-resetting svg {
     animation: resetSnapSpin 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
-    will-change: transform;
+    will-change: transform, color, filter;
     transform-origin: 50% 50%;
-    color: #1c1917 !important;
-    stroke: #1c1917 !important;
     backface-visibility: hidden;
 }
 
-/* --- Opção 1: Sweep Wave (Varredura de Luz Líquida Suave e Cadenciada - 0.85s) --- */
+/* --- Feedback do Card Resetado (Pulso de Borda Âmbar + Varredura de Luz Líquida - 0.85s) --- */
 .employee-card-details {
     position: relative;
     overflow: hidden;
+}
+
+@keyframes cardResetBorderPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+    25% {
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35), 0 4px 16px rgba(245, 158, 11, 0.12);
+    }
+    70% {
+        box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.2), 0 2px 8px rgba(245, 158, 11, 0.06);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.employee-card-details.is-card-resetting {
+    animation: cardResetBorderPulse 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
 }
 
 @keyframes cardSweepWave {
@@ -411,20 +447,20 @@ html.dark .employee-footer {
     position: absolute;
     top: 0;
     left: 0;
-    width: 75%;
+    width: 80%;
     height: 100%;
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(245, 158, 11, 0.04) 20%,
-        rgba(245, 158, 11, 0.18) 50%,
-        rgba(245, 158, 11, 0.04) 80%,
+        rgba(245, 158, 11, 0.05) 20%,
+        rgba(245, 158, 11, 0.22) 50%,
+        rgba(245, 158, 11, 0.05) 80%,
         transparent 100%
     );
     transform: translate3d(-150%, 0, 0) skewX(-20deg);
     animation: cardSweepWave 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
     pointer-events: none;
-    z-index: 20;
+    z-index: 10;
     will-change: transform, opacity;
 }
 
@@ -432,9 +468,9 @@ html.dark .employee-card-details.is-card-resetting::after {
     background: linear-gradient(
         90deg,
         transparent 0%,
-        rgba(245, 158, 11, 0.06) 20%,
-        rgba(245, 158, 11, 0.22) 50%,
-        rgba(245, 158, 11, 0.06) 80%,
+        rgba(245, 158, 11, 0.08) 20%,
+        rgba(245, 158, 11, 0.26) 50%,
+        rgba(245, 158, 11, 0.08) 80%,
         transparent 100%
     );
 }
@@ -486,59 +522,56 @@ html.dark .event-item.is-active {
     opacity: 1;
 }
 
-/* --- Estado Fixado (Desacoplado - Preservação no Reset sem Falso Destaque de Ativo) --- */
-.lock-event-btn.locked {
-    transition: background-color var(--duration-fast) var(--ease-out-expo),
-                color var(--duration-fast) var(--ease-out-expo);
+/* --- Preservação Visual no Reset (Itens Fixados Ancorados com z-index Acima da Varredura) --- */
+.event-item.is-locked {
+    position: relative !important;
+    z-index: 15 !important;
+    border-left: 3.5px solid var(--accent-amber) !important;
+    background-color: #fcfbf9 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* Botão Fixado quando Inativo: tom neutro discreto */
+html.dark .event-item.is-locked {
+    background-color: #1c1917 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.event-item.is-locked.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12)), #fcfbf9 !important;
+}
+
+html.dark .event-item.is-locked.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.18)), #1c1917 !important;
+}
+
+.lock-event-btn.locked {
+    transition: background-color var(--duration-fast) var(--ease-out-expo),
+                color var(--duration-fast) var(--ease-out-expo),
+                box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+
+/* Botão Fixado quando Inativo */
 .event-item:not(.is-active) .lock-event-btn.locked {
-    background-color: rgba(0, 0, 0, 0.06) !important;
-    color: #78716c !important;
+    background-color: rgba(245, 158, 11, 0.14) !important;
+    color: #b45309 !important;
 }
 
 html.dark .event-item:not(.is-active) .lock-event-btn.locked {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    color: #a8a29e !important;
-}
-
-/* Botão Fixado quando Ativo: tom âmbar vibrante integrado ao card */
-.event-item.is-active .lock-event-btn.locked {
     background-color: rgba(245, 158, 11, 0.18) !important;
-    color: var(--accent-amber) !important;
+    color: #fbbf24 !important;
 }
 
-/* Badge "Fixado" */
-.event-item .lock-badge {
-    transition: opacity var(--duration-fast) var(--ease-out-expo),
-                transform var(--duration-fast) var(--ease-out-expo);
+/* Botão Fixado quando Ativo */
+.event-item.is-active .lock-event-btn.locked {
+    background-color: rgba(245, 158, 11, 0.22) !important;
+    color: #b45309 !important;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.3) !important;
 }
 
-/* Badge quando Inativo: Neutro discreto */
-.event-item:not(.is-active) .lock-badge {
-    background-color: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    color: #57534e;
-}
-
-html.dark .event-item:not(.is-active) .lock-badge {
-    background-color: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    color: #d6d3d1;
-}
-
-/* Badge quando Ativo: Âmbar harmonizado com card */
-.event-item.is-active .lock-badge {
-    background-color: rgba(245, 158, 11, 0.2);
-    border: 1px solid rgba(245, 158, 11, 0.35);
-    color: #b45309;
-}
-
-html.dark .event-item.is-active .lock-badge {
-    background-color: rgba(245, 158, 11, 0.25);
-    border: 1px solid rgba(245, 158, 11, 0.45);
-    color: #fbbf24;
+html.dark .event-item.is-active .lock-event-btn.locked {
+    background-color: rgba(245, 158, 11, 0.28) !important;
+    color: #fbbf24 !important;
+    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.4) !important;
 }
 
 /* --- Animações de Adição e Exclusão de Colaborador (120Hz/240Hz+) --- */
@@ -626,18 +659,13 @@ html.dark .event-item.is-active .lock-badge {
     backface-visibility: hidden;
 }
 
-/* Animação refinada de saída para adicionais/eventos (Proposta 1: Dissolução no lugar + FLIP) */
+/* Animação de saída por dissolução no lugar (Vanish sem encolhimento de altura ou colapso de borda) */
 .event-item-animate-leave {
     opacity: 0 !important;
-    transform: scale3d(0.94, 0.94, 1) !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    background-color: transparent !important;
-    transition: opacity var(--duration-fast) cubic-bezier(0.4, 0, 0.2, 1),
-                transform var(--duration-fast) var(--ease-out-expo),
-                border-color var(--duration-instant) ease,
-                box-shadow var(--duration-instant) ease !important;
+    transform: scale3d(0.95, 0.95, 1) !important;
     pointer-events: none !important;
+    transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.15s var(--ease-out-expo) !important;
     will-change: opacity, transform;
     backface-visibility: hidden;
 }

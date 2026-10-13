@@ -16,9 +16,15 @@ export function parseCurrency(value) {
 
     let str = String(value).replace(/R\$/g, '').trim();
 
-    // Trata separadores pt-BR: pontos são milhares e vírgula é separador decimal
+    // Trata separadores pt-BR vs internacional:
     if (str.includes(',')) {
         str = str.replace(/\./g, '').replace(',', '.');
+    } else if (str.includes('.')) {
+        const parts = str.split('.');
+        // Se tiver mais de um ponto (ex: 1.000.000) ou padrão milhar com 3 zeros (ex: 1.000), remove ponto
+        if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3 && parts[1] === '000')) {
+            str = str.replace(/\./g, '');
+        }
     }
 
     const parsed = parseFloat(str);

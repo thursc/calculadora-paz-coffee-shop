@@ -10,9 +10,9 @@ import { formatCurrency } from '../utils/currency.js';
  * @param {Object} calculationResult
  * @returns {string}
  */
-export function generateHoleriteText(employeeName, calculationResult) {
+export function generateHoleriteText(employeeName, calculationResult = {}) {
     const name = employeeName?.trim() || 'Freelancer';
-    const totalFormatted = formatCurrency(calculationResult.totalPay);
+    const totalFormatted = formatCurrency(calculationResult?.totalPay ?? 0);
 
     let text = `Olá, ${name}! Tudo bem?\n\n`;
     text += `Segue o demonstrativo dos seus pagamentos para esta semana.\n\n`;

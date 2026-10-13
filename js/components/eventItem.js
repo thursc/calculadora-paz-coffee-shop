@@ -108,6 +108,9 @@ export function createEventElement(data = {}, onChangeCallback) {
             eventItem.dataset.locked = 'true';
             eventItem.classList.add('is-locked');
             lockBtn.classList.add('locked');
+            lockBtn.setAttribute('title', 'Desfixar adicional (fixado)');
+            lockBtn.setAttribute('aria-label', 'Desfixar adicional (fixado)');
+            lockBtn.setAttribute('aria-pressed', 'true');
             unlockedIcon.classList.add('hidden');
             lockedIcon.classList.remove('hidden');
             if (lockBadge) lockBadge.classList.remove('hidden');
@@ -115,6 +118,9 @@ export function createEventElement(data = {}, onChangeCallback) {
             delete eventItem.dataset.locked;
             eventItem.classList.remove('is-locked');
             lockBtn.classList.remove('locked');
+            lockBtn.setAttribute('title', 'Manter ao resetar');
+            lockBtn.setAttribute('aria-label', 'Travar evento para não apagar ao resetar');
+            lockBtn.setAttribute('aria-pressed', 'false');
             unlockedIcon.classList.remove('hidden');
             lockedIcon.classList.add('hidden');
             if (lockBadge) lockBadge.classList.add('hidden');
@@ -179,15 +185,11 @@ export function createEventElement(data = {}, onChangeCallback) {
         if (!Number.isNaN(raw) && raw < 0) {
             hoursInput.value = '0';
         }
+        if (typeof onChangeCallback === 'function') onChangeCallback();
     });
 
-    eventItem.querySelectorAll('input:not([data-type="currency"]), select').forEach(input => {
-        input.addEventListener('input', () => {
-            if (typeof onChangeCallback === 'function') onChangeCallback();
-        });
-        input.addEventListener('change', () => {
-            if (typeof onChangeCallback === 'function') onChangeCallback();
-        });
+    eventNameInput.addEventListener('input', () => {
+        if (typeof onChangeCallback === 'function') onChangeCallback();
     });
 
     eventItem.querySelectorAll('input[data-type="currency"]').forEach(input => {

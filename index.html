@@ -27,9 +27,9 @@
             if (savedTheme === 'light') {
                 document.documentElement.classList.remove('dark');
             }
-        } catch (_) {}
+        } catch (_) { }
     </script>
-    <link rel="stylesheet" href="css/styles.css?v=1.9.12">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.13">
 </head>
 
 <body
@@ -64,7 +64,8 @@
          ======================================================== -->
     <header
         class="sticky top-0 z-30 backdrop-blur-md bg-white/95 dark:bg-[#141211]/95 border-b border-stone-200/80 dark:border-stone-800/80 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex flex-wrap md:flex-nowrap items-center justify-between gap-3">
             <!-- Marca: Logo + Paz Coffee Shop sempre por extenso -->
             <div class="flex items-center gap-2.5 min-w-0 order-1">
                 <img src="assets/logo.svg" alt="Paz Coffee Shop Logo" class="logo-img h-8 sm:h-9 w-auto flex-shrink-0">
@@ -73,7 +74,8 @@
                         class="font-black text-base sm:text-lg tracking-tight text-stone-900 dark:text-stone-50 whitespace-nowrap">
                         Paz Coffee Shop
                     </h1>
-                    <span class="hidden xl:inline-block text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    <span
+                        class="hidden xl:inline-block text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                         Equipe
                     </span>
                 </div>
@@ -93,7 +95,9 @@
                         class="w-full pl-9 pr-10 md:pr-14 py-2 bg-stone-100/80 dark:bg-stone-900/90 border border-stone-200 dark:border-stone-800 rounded-xl text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all shadow-sm">
                     <!-- Atalho visual de teclado no desktop -->
                     <div class="hidden md:flex absolute inset-y-0 right-0 pr-2.5 items-center pointer-events-none">
-                        <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-stone-400 dark:text-stone-500 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-md shadow-sm">Ctrl K</kbd>
+                        <kbd
+                            class="px-1.5 py-0.5 text-[10px] font-semibold text-stone-400 dark:text-stone-500 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-md shadow-sm">Ctrl
+                            K</kbd>
                     </div>
                     <button type="button" id="clear-search-btn"
                         class="absolute inset-y-0 right-0 md:right-11 pr-2.5 flex items-center text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hidden cursor-pointer"
@@ -114,14 +118,14 @@
                     title="Alternar Modo Claro/Escuro" aria-label="Alternar tema">
                     <span class="relative block w-4 h-4 sm:w-5 sm:h-5 pointer-events-none">
                         <!-- Sol (visível no modo escuro) -->
-                        <svg class="sun-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg class="sun-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                         <!-- Lua (visível no modo claro) -->
-                        <svg class="moon-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <svg class="moon-icon absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
                         </svg>
@@ -150,14 +154,15 @@
         <div id="search-empty-state"
             class="hidden flex flex-col items-center justify-center p-5 sm:p-7 text-center mx-4 sm:mx-auto my-3 sm:my-6 max-w-sm sm:max-w-md w-full bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm self-center"
             role="status" aria-live="polite">
-            <div
-                class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg mb-2.5 border border-amber-500/20"
+            <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg mb-2.5 border border-amber-500/20"
                 aria-hidden="true">
                 🔍
             </div>
-            <h3 class="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100">Nenhum colaborador encontrado</h3>
+            <h3 class="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100">Nenhum colaborador encontrado
+            </h3>
             <p class="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 mb-3.5">
-                Não encontramos resultados para <span id="search-empty-term" class="font-semibold text-stone-800 dark:text-stone-200"></span>.
+                Não encontramos resultados para <span id="search-empty-term"
+                    class="font-semibold text-stone-800 dark:text-stone-200"></span>.
             </p>
             <button type="button" id="search-empty-clear-btn"
                 class="px-4 py-2 bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs sm:text-sm font-semibold rounded-xl border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer active:scale-95">
@@ -209,7 +214,8 @@
             <div class="modal-content p-5 sm:p-6 flex flex-col flex-grow overflow-y-auto text-left">
                 <div class="flex justify-between items-center pb-3 border-b border-stone-200 dark:border-stone-800">
                     <div>
-                        <h3 id="holerite-title" class="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">Holerite de
+                        <h3 id="holerite-title" class="text-lg sm:text-xl font-bold text-stone-900 dark:text-stone-100">
+                            Holerite de
                             Pagamento</h3>
                         <p class="text-xs text-stone-500 dark:text-stone-400">Texto pronto para enviar no WhatsApp do
                             colaborador</p>
@@ -229,7 +235,8 @@
                         readonly></textarea>
                 </div>
 
-                <div class="pt-3 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-2">
+                <div
+                    class="pt-3 border-t border-stone-200 dark:border-stone-800 flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-2">
                     <div class="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-1">
                         <button type="button"
                             class="modal-close-btn flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:hover:text-white bg-stone-100/70 hover:bg-stone-200/70 dark:bg-stone-800/60 dark:hover:bg-stone-800 border border-stone-200/80 dark:border-stone-700/80 sm:border-transparent sm:bg-transparent sm:hover:bg-stone-100 sm:dark:hover:bg-stone-800 transition-all cursor-pointer text-center justify-center flex items-center">
@@ -240,12 +247,14 @@
                             title="Copiar texto do holerite">
                             <span class="relative w-4 h-4 flex items-center justify-center flex-shrink-0">
                                 <!-- Ícone Clipboard (Prancheta) -->
-                                <svg class="clipboard-icon absolute inset-0 w-full h-full transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <svg class="clipboard-icon absolute inset-0 w-full h-full transition-all duration-300"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                                 </svg>
                                 <!-- Ícone Check (Verde Sucesso) -->
-                                <svg class="check-icon absolute inset-0 w-full h-full text-emerald-500 transition-all duration-300 opacity-0 scale-0 rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <svg class="check-icon absolute inset-0 w-full h-full text-emerald-500 transition-all duration-300 opacity-0 scale-0 rotate-90"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
                             </span>
@@ -256,8 +265,11 @@
                         class="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 text-xs sm:text-sm cursor-pointer whitespace-nowrap flex-shrink-0"
                         title="Abrir no WhatsApp com mensagem preenchida">
                         <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.972.587 1.96.95 3.016.95 3.181 0 5.768-2.587 5.768-5.766.001-3.187-2.575-5.771-5.988-6.137zm3.376 8.212c-.144.405-.837.774-1.17.824-.312.045-.697.072-2.029-.481-1.611-.669-2.639-2.316-2.72-2.424-.08-.108-.654-.87-.654-1.659 0-.788.413-1.177.559-1.336.145-.159.317-.199.423-.199.106 0 .212.002.304.007.098.005.228-.037.357.272.133.319.455 1.109.495 1.19.04.082.067.177.013.285-.053.108-.08.176-.159.269-.079.092-.167.206-.239.277-.08.079-.163.165-.07.325.093.16.413.682.886 1.104.609.544 1.122.712 1.282.792.16.08.253.067.347-.04.093-.108.4-.467.507-.627.106-.16.213-.133.359-.08.146.053.931.439 1.09.519.16.08.266.12.306.186.039.067.039.387-.105.792z"/>
-                            <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.176L2 22l4.985-1.408C8.455 21.498 10.173 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.628 0-3.136-.5-4.391-1.356l-.314-.213-2.929.827.827-2.929-.213-.314C4.128 14.757 3.628 13.435 3.628 12c0-4.617 3.755-8.372 8.372-8.372s8.372 3.755 8.372 8.372c0 4.617-3.755 8.372-8.372 8.372z" clip-rule="evenodd"/>
+                            <path
+                                d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.972.587 1.96.95 3.016.95 3.181 0 5.768-2.587 5.768-5.766.001-3.187-2.575-5.771-5.988-6.137zm3.376 8.212c-.144.405-.837.774-1.17.824-.312.045-.697.072-2.029-.481-1.611-.669-2.639-2.316-2.72-2.424-.08-.108-.654-.87-.654-1.659 0-.788.413-1.177.559-1.336.145-.159.317-.199.423-.199.106 0 .212.002.304.007.098.005.228-.037.357.272.133.319.455 1.109.495 1.19.04.082.067.177.013.285-.053.108-.08.176-.159.269-.079.092-.167.206-.239.277-.08.079-.163.165-.07.325.093.16.413.682.886 1.104.609.544 1.122.712 1.282.792.16.08.253.067.347-.04.093-.108.4-.467.507-.627.106-.16.213-.133.359-.08.146.053.931.439 1.09.519.16.08.266.12.306.186.039.067.039.387-.105.792z" />
+                            <path fill-rule="evenodd"
+                                d="M12 2C6.477 2 2 6.477 2 12c0 1.891.524 3.662 1.435 5.176L2 22l4.985-1.408C8.455 21.498 10.173 22 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.628 0-3.136-.5-4.391-1.356l-.314-.213-2.929.827.827-2.929-.213-.314C4.128 14.757 3.628 13.435 3.628 12c0-4.617 3.755-8.372 8.372-8.372s8.372 3.755 8.372 8.372c0 4.617-3.755 8.372-8.372 8.372z"
+                                clip-rule="evenodd" />
                         </svg>
                         <span>Enviar no WhatsApp</span>
                     </button>
@@ -271,13 +283,15 @@
          ======================================================== -->
     <div id="delete-confirm-modal"
         class="modal pointer-events-none fixed inset-0 flex items-center justify-center opacity-0 z-50 p-4"
-        role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="delete-confirm-title" aria-describedby="delete-confirm-text">
+        role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="delete-confirm-title"
+        aria-describedby="delete-confirm-text">
         <div class="modal-overlay fixed inset-0 bg-black/65"></div>
         <div
             class="modal-container relative bg-white dark:bg-[#1a1715] w-full max-w-sm mx-auto rounded-2xl shadow-2xl z-10 overflow-hidden border border-stone-200 dark:border-stone-800">
             <div class="modal-content p-5 sm:p-6 text-left">
                 <div class="flex justify-between items-center pb-3 border-b border-stone-200 dark:border-stone-800">
-                    <h3 id="delete-confirm-title" class="text-lg font-bold text-stone-900 dark:text-stone-100">Confirmar Exclusão</h3>
+                    <h3 id="delete-confirm-title" class="text-lg font-bold text-stone-900 dark:text-stone-100">Confirmar
+                        Exclusão</h3>
                     <button type="button"
                         class="modal-close-btn p-1.5 rounded-lg text-stone-400 hover:text-stone-800 dark:hover:text-stone-100 hover:bg-stone-100 dark:hover:bg-stone-800 active:scale-90 transition-all cursor-pointer"
                         aria-label="Fechar modal">
@@ -328,11 +342,9 @@
          TEMPLATE DO CARD DE FUNCIONÁRIO (COLUNA KANBAN)
          ======================================================== -->
     <template id="employee-template">
-        <div
-            class="kanban-col employee-card-details w-[85vw] sm:w-[340px] min-w-[310px] max-w-[360px] flex-shrink-0 snap-start bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm transition-all flex flex-col justify-between" style="overflow:clip">
+        <div class="kanban-col employee-card-details w-[85vw] sm:w-[340px] min-w-[310px] max-w-[360px] flex-shrink-0 snap-start bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm transition-all flex flex-col justify-between">
             <!-- Cabeçalho do Card (Resumo e Ações) -->
-            <div
-                class="employee-summary p-3.5 sm:p-4 bg-stone-50/70 dark:bg-stone-900/40 flex flex-col gap-2.5">
+            <div class="employee-summary p-3.5 sm:p-4 bg-stone-50/70 dark:bg-stone-900/40 flex flex-col gap-2.5">
                 <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2 flex-grow min-w-0">
                         <span
@@ -397,7 +409,8 @@
                     <div class="dobradinha-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-800/30 cursor-pointer select-none"
                         data-bonus="dobradinha" title="Adiciona R$ 50,00 quando escalado manhã e noite no domingo">
                         <div class="flex items-center gap-2">
-                            <input type="checkbox" class="bonus-dobradinha-checkbox sr-only" disabled aria-label="Bônus Dobradinha de Domingo (+R$ 50,00)">
+                            <input type="checkbox" class="bonus-dobradinha-checkbox sr-only" disabled
+                                aria-label="Bônus Dobradinha de Domingo (+R$ 50,00)">
                             <span
                                 class="dobradinha-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-2.5 h-2.5 hidden text-emerald-500" viewBox="0 0 20 20"
@@ -435,7 +448,8 @@
                         <!-- Itens de adicionais inseridos via JS -->
                     </div>
                     <!-- Placeholder quando vazio -->
-                    <div class="events-empty-placeholder border border-dashed border-stone-200 dark:border-stone-800/80 rounded-xl py-2 px-3 text-center text-stone-400 dark:text-stone-500 text-[11px] select-none transition-all mt-2">
+                    <div
+                        class="events-empty-placeholder border border-dashed border-stone-200 dark:border-stone-800/80 rounded-xl py-2 px-3 text-center text-stone-400 dark:text-stone-500 text-[11px] select-none transition-all mt-2">
                         Nenhum adicional ou taxa extra nesta semana.
                     </div>
                 </div>
@@ -444,8 +458,7 @@
             <!-- Rodapé Sempre Visível: Total Individual, Botão Gerar Holerite e Detalhamento -->
             <div class="employee-footer p-3.5 sm:p-4 mt-auto flex flex-col gap-2.5">
                 <div class="flex items-center justify-between">
-                    <span
-                        class="text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider">Total
+                    <span class="text-xs font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider">Total
                         a Pagar:</span>
                     <span
                         class="employee-total text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight">R$
@@ -501,7 +514,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.12"></script>
+    <script type="module" src="js/app.js?v=1.9.13"></script>
 </body>
 
 </html>

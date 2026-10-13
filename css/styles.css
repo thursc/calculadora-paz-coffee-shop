@@ -1003,5 +1003,9 @@ html.dark #theme-toggle .moon-icon {
     padding-right: 1rem !important;
 }
 
-
-
+/* ==========================================================================
+   Card de Colaborador (Base)
+   ========================================================================== */
+.employee-card-details {
+    overflow: clip;
+}

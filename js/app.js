@@ -310,15 +310,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return employeesData;
     }
 
-    function recalculateAndSave(immediate = false) {
-        const cards = employeeContainer.querySelectorAll('.employee-card-details');
+    function recalculateAndSave(options = false) {
+        let immediate = false;
+        let sourceCard = null;
 
-        // Atualização visual imediata em cada card na UI (zero lag perceptível)
-        cards.forEach(card => {
-            if (typeof card.updateCalculations === 'function') {
-                card.updateCalculations();
-            }
-        });
+        if (typeof options === 'boolean') {
+            immediate = options;
+        } else if (options && typeof options === 'object') {
+            immediate = Boolean(options.immediate);
+            sourceCard = options.sourceCard || null;
+        }
+
+        // Se a alteração partiu de um card específico, atualiza apenas ele na UI (O(1)).
+        // Se for ação estrutural (adicionar, excluir, carga inicial), atualiza todos (O(N)).
+        if (sourceCard && typeof sourceCard.updateCalculations === 'function') {
+            sourceCard.updateCalculations();
+        } else {
+            const cards = employeeContainer.querySelectorAll('.employee-card-details');
+            cards.forEach(card => {
+                if (typeof card.updateCalculations === 'function') {
+                    card.updateCalculations();
+                }
+            });
+        }
 
         const employeesData = collectEmployeesData();
 

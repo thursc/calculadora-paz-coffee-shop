@@ -15,21 +15,23 @@ export function loadStoredEmployees() {
         const parsed = JSON.parse(raw);
         if (!Array.isArray(parsed)) return [];
 
-        return parsed.map((emp, index) => {
-            const rawRate = emp.hourlyRate;
-            const hourlyRate = (rawRate === null || rawRate === undefined || rawRate === '')
-                ? DEFAULT_HOURLY_RATE
-                : rawRate;
-            return {
-                id: emp.id || `employee-${Date.now()}-${index}`,
-                name: typeof emp.name === 'string' ? emp.name : '',
-                hourlyRate,
-                shifts: Array.isArray(emp.shifts) ? emp.shifts : [],
-                bonusDobradinha: Boolean(emp.bonusDobradinha),
-                events: Array.isArray(emp.events) ? emp.events : [],
-                open: emp.open !== false
-            };
-        });
+        return parsed
+            .filter(emp => emp && typeof emp === 'object')
+            .map((emp, index) => {
+                const rawRate = emp.hourlyRate;
+                const hourlyRate = (rawRate === null || rawRate === undefined || rawRate === '')
+                    ? DEFAULT_HOURLY_RATE
+                    : rawRate;
+                return {
+                    id: typeof emp.id === 'string' && emp.id ? emp.id : `employee-${Date.now()}-${index}`,
+                    name: typeof emp.name === 'string' ? emp.name : '',
+                    hourlyRate,
+                    shifts: Array.isArray(emp.shifts) ? emp.shifts.filter(s => s && typeof s === 'object') : [],
+                    bonusDobradinha: Boolean(emp.bonusDobradinha),
+                    events: Array.isArray(emp.events) ? emp.events.filter(e => e && typeof e === 'object') : [],
+                    open: emp.open !== false
+                };
+            });
     } catch (err) {
         console.error('Erro ao ler dados do localStorage:', err);
         return [];

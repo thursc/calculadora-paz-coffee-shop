@@ -45,11 +45,11 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         }
     }
 
-    // Função de notificação para a aplicação principal
-    function notifyChange() {
+    // Função de notificação para a aplicação principal (passando o card de origem para recálculo O(1))
+    function notifyChange(options = {}) {
         updateEventsEmptyState();
         if (typeof onStateChange === 'function') {
-            onStateChange();
+            onStateChange({ sourceCard: cardDetails, ...options });
         }
     }
 
@@ -107,6 +107,8 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const setShiftState = (isChecked) => {
             hoursInput.disabled = !isChecked;
             shiftEl.classList.toggle('is-active', isChecked);
+            shiftEl.setAttribute('role', 'checkbox');
+            shiftEl.setAttribute('aria-checked', isChecked ? 'true' : 'false');
 
             if (isChecked) {
                 checkIcon.classList.remove('hidden');
@@ -260,14 +262,15 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             if (btnResetTimer) clearTimeout(btnResetTimer);
             if (cardResetTimer) clearTimeout(cardResetTimer);
 
-            // Reinicia classes e força reflow para que a animação recomece do frame 0 a cada clique
+            // Reinicia classes via rAF duplo sem forçar reflow síncrono (eliminando Layout Thrashing)
             resetBtn.classList.remove('is-resetting');
             cardDetails.classList.remove('is-card-resetting');
-            void resetBtn.offsetWidth;
-            void cardDetails.offsetWidth;
-
-            resetBtn.classList.add('is-resetting');
-            cardDetails.classList.add('is-card-resetting');
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    resetBtn.classList.add('is-resetting');
+                    cardDetails.classList.add('is-card-resetting');
+                });
+            });
 
             cardDetails.querySelectorAll('.shift-checkbox, .bonus-dobradinha-checkbox').forEach(cb => {
                 cb.checked = false;
@@ -379,17 +382,17 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         });
     }
 
-    // Event listeners dos inputs e detalhes
-    cardDetails.querySelectorAll('input:not([data-type="currency"]), select, details').forEach(el => {
-        el.addEventListener('input', notifyChange);
-        el.addEventListener('change', notifyChange);
-        if (el.tagName === 'DETAILS') {
-            el.addEventListener('toggle', notifyChange);
-        }
-    });
+    // Nome do funcionário e detalhes do cálculo (evita listeners duplicados nos turnos e dobradinha que já possuem handlers dedicados)
+    if (nameInput) {
+        nameInput.addEventListener('input', () => notifyChange());
+    }
+    const calcDetails = cardDetails.querySelector('.calculation-details');
+    if (calcDetails) {
+        calcDetails.addEventListener('toggle', () => notifyChange());
+    }
 
     if (hourlyRateInput) {
-        setupCurrencyHandlers(hourlyRateInput, notifyChange, notifyChange);
+        setupCurrencyHandlers(hourlyRateInput, () => notifyChange(), () => notifyChange());
     }
 
     // Extração estruturada de dados compatível com o schema do localStorage
@@ -435,6 +438,9 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         }
 
         if (dobradinhaContainer) {
+            dobradinhaContainer.setAttribute('role', 'checkbox');
+            dobradinhaContainer.setAttribute('aria-checked', calculation.bonusDobradinhaChecked ? 'true' : 'false');
+            dobradinhaContainer.setAttribute('aria-disabled', !calculation.isDobradinhaApplicable ? 'true' : 'false');
             dobradinhaContainer.classList.toggle('is-active', calculation.bonusDobradinhaChecked);
             dobradinhaContainer.classList.toggle('opacity-50', !calculation.isDobradinhaApplicable);
             dobradinhaContainer.classList.toggle('cursor-not-allowed', !calculation.isDobradinhaApplicable);

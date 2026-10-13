@@ -2,6 +2,29 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.13] - 12/10/2026
+
+### 🛡️ Execução de Auditoria Técnica: Resiliência Financeira, Desempenho e Acessibilidade
+
+#### 1. Integridade de Cálculos e Lógica de Negócio (Fase 1 - Crítico)
+- **Eliminação de Falso Positivo na Dobradinha:** Em [js/services/calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js), corrigida a checagem dos turnos de domingo para exigir estritamente carga horária positiva (`hours > 0`). Previne concessão indevida do bônus de R$ 50,00 caso o usuário marque turnos de domingo com 0 horas.
+- **Normalização de Ponto Flutuante (Floating Point Drift):** Adicionada função de arredondamento financeiro `roundCurrency` para cada subtotal de turno e adicional (`Math.round((val + Number.EPSILON) * 100) / 100`), garantindo que o somatório final bata centavo por centavo com a soma dos subtotais exibidos.
+- **Defensividade no Demonstrativo (Holerite):** Em [js/services/holerite.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/holerite.js), adicionado fallback defensivo com parâmetro padrão (`calculationResult = {}`) e encadeamento opcional (`calculationResult?.totalPay ?? 0`), eliminando risco de `TypeError` em caso de dados parciais.
+- **Resiliência do LocalStorage contra Dados Corrompidos:** Em [js/state/storage.js](file:///d:/dev/calculadora-paz-coffee-shop/js/state/storage.js), adicionado filtro protetor `.filter(emp => emp && typeof emp === 'object')` antes da iteração de leitura, impedindo que elementos nulos ou malformados lancem exceções e descartem colaboradores válidos salvos.
+- **Heurística Aprimorada de Moeda:** Em [js/utils/currency.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/currency.js), o conversor monetário agora diferencia adequadamente notações com separador de milhar (ex.: `1.000` / `1.000.000`) de notações decimais sem vírgula (`25.50`).
+
+#### 2. Desempenho e Gestão de Eventos (Fase 2 - Médio)
+- **Recálculo Direcionado $O(1)$ na Esteira:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js) e [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), a função `recalculateAndSave` agora aceita `{ sourceCard }`. Alterações em um cartão individual atualizam apenas a sua própria árvore DOM, eliminando a cascata $O(N)$ que re-renderizava todos os outros cartões a cada tecla digitada.
+- **Eliminação de Listeners Duplicados:** Removida a atribuição repetitiva de eventos `input` e `change` em turnos, checkboxes e seletores de adicionais em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js) e [js/components/eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js), reduzindo pela metade as emissões desnecessárias de recálculo.
+- **Acessibilidade Completa (WCAG 2.1 AA):** Adicionados atributos `role="checkbox"`, `aria-checked` e `aria-disabled` nos chips táteis de turnos e no container da Dobradinha de Domingo. O botão de bloqueio de adicional (`lock-event-btn`) agora atualiza dinamicamente seu `aria-label`, `title` e `aria-pressed`.
+
+#### 3. Refinamento de Renderização e Higiene (Fase 3 - Baixo)
+- **Mitigação de Layout Thrashing no Reset:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), o reinício das classes de animação do botão de reset foi migrado para `requestAnimationFrame` duplo, eliminando leituras forçadas de geometria (`void offsetWidth`).
+- **Remoção de Estilo Inline e Centralização de CSS:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), removido `style="overflow:clip"` do template e centralizado na classe `.employee-card-details` em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css).
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.13`.
+
+---
+
 ## [v1.9.12] - 12/10/2026
 
 ### 🎨 Refinamento Ergonômico de UI/UX no Modal de Holerite (WhatsApp & Ações)

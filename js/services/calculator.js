@@ -16,6 +16,8 @@ export function calculateEmployee(employee) {
         : parseCurrency(employee.hourlyRate);
     const hourlyRate = Math.max(0, rawHourlyRate || 0);
 
+    const roundCurrency = (val) => Math.round((Number(val || 0) + Number.EPSILON) * 100) / 100;
+
     let salaryFromShifts = 0;
     let workedSundayMorning = false;
     let workedSundayNight = false;
@@ -30,12 +32,13 @@ export function calculateEmployee(employee) {
         const label = shiftItem.label || shiftDef.label || shiftItem.id;
         const rawHours = parseFloat(shiftItem.hours);
         const hours = (!Number.isNaN(rawHours) && rawHours > 0) ? rawHours : 0;
-        const shiftValue = Math.max(0, hours * hourlyRate);
+        const shiftValue = Math.max(0, roundCurrency(hours * hourlyRate));
 
         salaryFromShifts += shiftValue;
 
-        if (shiftItem.id === 'domingo_manha') workedSundayMorning = true;
-        if (shiftItem.id === 'domingo_noite') workedSundayNight = true;
+        // Dobradinha só é aplicável se o colaborador trabalhou de fato horas > 0 em ambos os turnos de domingo
+        if (shiftItem.id === 'domingo_manha' && hours > 0) workedSundayMorning = true;
+        if (shiftItem.id === 'domingo_noite' && hours > 0) workedSundayNight = true;
 
         shiftsBreakdown.push({
             id: shiftItem.id,
@@ -71,12 +74,12 @@ export function calculateEmployee(employee) {
 
         if (eventItem.checked) {
             if (eventItem.type === 'hours') {
-                eventValue = Math.max(0, eventHours * hourlyRate);
+                eventValue = Math.max(0, roundCurrency(eventHours * hourlyRate));
             } else if (eventItem.type === 'fixed') {
-                eventValue = Math.max(0, parseCurrency(eventItem.fixedValue));
+                eventValue = Math.max(0, roundCurrency(parseCurrency(eventItem.fixedValue)));
             } else if (eventItem.type === 'hours_specific') {
-                specificRate = Math.max(0, parseCurrency(eventItem.specificRate));
-                eventValue = Math.max(0, eventHours * specificRate);
+                specificRate = Math.max(0, roundCurrency(parseCurrency(eventItem.specificRate)));
+                eventValue = Math.max(0, roundCurrency(eventHours * specificRate));
             }
 
             eventsTotal += eventValue;
@@ -112,7 +115,7 @@ export function calculateEmployee(employee) {
         };
     });
 
-    const totalPay = Math.max(0, salaryFromShifts + bonusDobradinha + eventsTotal);
+    const totalPay = Math.max(0, roundCurrency(salaryFromShifts + bonusDobradinha + eventsTotal));
 
     // Horas acumuladas da equipe
     const shiftHours = shiftsBreakdown.reduce((acc, s) => acc + (s.hours || 0), 0);

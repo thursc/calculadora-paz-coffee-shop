@@ -127,13 +127,16 @@ input[type=number] {
     transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-                transform 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+                filter 0.16s cubic-bezier(0.16, 1, 0.3, 1);
     transform: translateZ(0);
     backface-visibility: hidden;
 }
 
 .shift-pill:active {
-    transform: scale3d(0.98, 0.98, 1);
+    filter: brightness(0.95);
+}
+html.dark .shift-pill:active {
+    filter: brightness(1.08);
 }
 
 /* Estado Inativo */
@@ -192,7 +195,10 @@ html.dark .shift-pill.is-active {
 }
 
 .dobradinha-pill:active {
-    transform: scale3d(0.98, 0.98, 1);
+    filter: brightness(0.95);
+}
+html.dark .dobradinha-pill:active {
+    filter: brightness(1.08);
 }
 
 .dobradinha-pill.is-active,

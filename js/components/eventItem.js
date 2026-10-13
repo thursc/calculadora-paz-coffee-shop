@@ -2,7 +2,7 @@
  * Componente do item de Evento / Adicional
  */
 
-import { setupCurrencyHandlers } from '../utils/currency.js';
+import { setupCurrencyHandlers, enableAutoSelect } from '../utils/currency.js';
 
 export function createEventElement(data = {}, onChangeCallback) {
     const eventItem = document.createElement('div');
@@ -179,6 +179,9 @@ export function createEventElement(data = {}, onChangeCallback) {
         if (typeof onChangeCallback === 'function') onChangeCallback();
     });
     typeSelector.dispatchEvent(new Event('change'));
+
+    // Habilita auto-seleção imediata do texto ao focar ou clicar no campo de horas do adicional
+    enableAutoSelect(hoursInput);
 
     hoursInput.addEventListener('input', () => {
         const raw = parseFloat(hoursInput.value);

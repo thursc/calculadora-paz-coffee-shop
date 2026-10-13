@@ -2,6 +2,33 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.14] - 12/10/2026
+
+### 🎯 Auto-seleção em Entradas Numéricas, Hitbox Contínua dos Turnos e Resiliência de Horas Zeradas
+
+#### 1. Auto-seleção Instantânea em Entradas Numéricas (Quality of Life)
+- **Função Universal `enableAutoSelect`:** Criada em [js/utils/currency.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/currency.js) com seleção via `requestAnimationFrame(() => input.select())` nos eventos `focus` e `click`.
+- **Cobertura Completa dos Inputs Numéricos:**
+  - Taxa horária do colaborador (`.hourly-rate`).
+  - Horas trabalhadas nos turnos da semana (`.shift-hours`).
+  - Horas dos adicionais e eventos especiais (`.event-hours`).
+  - Taxa específica por hora nos adicionais (`.event-specific-rate`).
+  - Valor fixo em reais nos adicionais (`.event-fixed-value`).
+- **Eliminação de Atrito:** Ao clicar ou tabular em qualquer um desses campos, o valor existente é 100% selecionado de imediato, permitindo que o operador digite o novo número diretamente sem precisar apertar Backspace, Delete ou Ctrl+A.
+
+#### 2. Pílula de Turno Clicável por Inteiro (Inclusive Bordas e Cantos)
+- **Desativação de Retração de Hitbox no `:active`:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), substituído o `transform: scale3d(0.98, 0.98, 1)` por transição tátil de brilho (`filter: brightness(0.95)` / `filter: brightness(1.08)`). Isso impede que a geometria física da pílula encolha 2% para dentro durante o clique, eliminando falhas de registro do evento `click` quando o ponteiro do mouse está posicionado nas bordas extremas ou cantos.
+- **Passagem Direta de Eventos (`pointer-events: none`):** No template de [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), a área de texto e o anel indicador foram configurados com `pointer-events-none`, direcionando 100% dos cliques uniformemente para o container da pílula (`.shift-pill`).
+- **Isolamento Estrito das Horas:** O container `.shift-hours-wrapper` mantém `pointer-events: auto` com `stopPropagation()`, garantindo que foco ou cliques no input de horas nunca alterem o estado de ativação do turno acidentalmente.
+- **Acessibilidade Completa:** Mantidos atributos `role="checkbox"`, `aria-checked`, `aria-label` e alternância com teclado via `Space` e `Enter` na pílula inteira.
+
+#### 3. Eliminação do Bug de Horas Zeradas (`0h` no Turno)
+- **Correção da Extração em `getEmployeeData`:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), corrigida a propriedade `hours`. Anteriormente, `hoursInput.dataset.lastValue || hoursInput.value` avaliava para o valor de memória antigo (ex.: `7`) sempre que o usuário digitava `0`. Agora, quando o turno está ativo, a função lê rigorosamente o valor digitado no input (`hoursInput.value !== '' ? hoursInput.value : '0'`).
+- **Sincronização de Memória e Recálculo:** Ao digitar `0` no campo de horas, o sistema calcula imediatamente R$ 0,00 para o turno (sem herdar o valor antigo), persiste 0 no estado e não dispara indevidamente o bônus de Dobradinha de Domingo. Ao desmarcar o turno, a memória padrão é preservada para permitir reativação rápida no futuro.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.14`.
+
+---
+
 ## [v1.9.13] - 12/10/2026
 
 ### 🛡️ Execução de Auditoria Técnica: Resiliência Financeira, Desempenho e Acessibilidade

@@ -4,7 +4,7 @@
  */
 
 import { SHIFTS, DEFAULT_HOURLY_RATE } from '../config.js';
-import { setupCurrencyHandlers, formatCurrency } from '../utils/currency.js';
+import { setupCurrencyHandlers, formatCurrency, enableAutoSelect } from '../utils/currency.js';
 import { calculateEmployee } from '../services/calculator.js';
 import { generateHoleriteText } from '../services/holerite.js';
 import { createEventElement } from './eventItem.js';
@@ -73,24 +73,26 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     SHIFTS.forEach(shift => {
         const savedShift = savedShifts.find(s => s.id === shift.id) || {};
         const shiftEl = document.createElement('div');
-        // cursor-pointer no container inteiro — toda a linha é clicável
         const shiftInputId = `shift-${uniqueId}-${shift.id}`;
         shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none cursor-pointer';
+        shiftEl.setAttribute('role', 'checkbox');
+        shiftEl.setAttribute('tabindex', '0');
+        shiftEl.setAttribute('aria-label', shift.label);
         shiftEl.innerHTML = `
-            <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2">
-                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}">
+            <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2 pointer-events-none">
+                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}" tabindex="-1">
                 <span class="shift-check-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0 transition-colors">
                     <svg class="w-2.5 h-2.5 hidden text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
                     </svg>
                 </span>
-                <label for="${shiftInputId}" class="shift-label-text text-sm font-semibold text-stone-800 dark:text-stone-200 whitespace-nowrap cursor-pointer">
+                <span class="shift-label-text text-sm font-semibold text-stone-800 dark:text-stone-200 whitespace-nowrap">
                     ${shift.label}
-                </label>
+                </span>
             </div>
             <div class="flex items-center gap-1.5 flex-shrink-0 shift-hours-wrapper">
                 <input type="number" class="shift-hours w-16 py-1 px-2 text-right text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-stone-800 dark:text-stone-100 font-bold focus:ring-1 focus:ring-amber-500 transition-opacity" step="0.5" min="0" aria-label="Horas de ${shift.label}">
-                <span class="text-xs text-stone-400 font-medium">hrs</span>
+                <span class="text-xs text-stone-400 font-medium pointer-events-none">hrs</span>
             </div>
         `;
         shiftsContainer.appendChild(shiftEl);
@@ -101,58 +103,54 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const hoursInput = shiftEl.querySelector('.shift-hours');
         const hoursWrapper = shiftEl.querySelector('.shift-hours-wrapper');
 
-        hoursInput.dataset.lastValue = savedShift.hours || shift.hours;
+        const initialSavedHours = savedShift.hours !== undefined ? String(savedShift.hours) : String(shift.hours);
+        const parsedInitial = parseFloat(initialSavedHours);
+        hoursInput.dataset.lastValue = (!Number.isNaN(parsedInitial) && parsedInitial > 0) ? initialSavedHours : String(shift.hours);
         checkbox.checked = savedShift.checked || false;
 
-        const setShiftState = (isChecked) => {
+        const setShiftState = (isChecked, isUserAction = false) => {
             hoursInput.disabled = !isChecked;
             shiftEl.classList.toggle('is-active', isChecked);
-            shiftEl.setAttribute('role', 'checkbox');
             shiftEl.setAttribute('aria-checked', isChecked ? 'true' : 'false');
 
             if (isChecked) {
                 checkIcon.classList.remove('hidden');
                 indicatorRing.classList.add('border-amber-500', 'bg-amber-500/20');
-                // Restaura o valor anterior da memória ao ativar
-                hoursInput.value = hoursInput.dataset.lastValue || shift.hours;
+                if (isUserAction) {
+                    const lastVal = hoursInput.dataset.lastValue;
+                    hoursInput.value = (lastVal && parseFloat(lastVal) > 0) ? lastVal : String(shift.hours);
+                }
             } else {
                 checkIcon.classList.add('hidden');
                 indicatorRing.classList.remove('border-amber-500', 'bg-amber-500/20');
-                // Guarda o valor anterior na memória se for maior que 0
-                if (hoursInput.value && parseFloat(hoursInput.value) > 0) {
+                if (hoursInput.value !== '' && parseFloat(hoursInput.value) > 0) {
                     hoursInput.dataset.lastValue = hoursInput.value;
                 }
-                // Visualmente exibe 0 quando não selecionado
                 hoursInput.value = '0';
             }
         };
 
         // Foco acessível via teclado
-        checkbox.addEventListener('focus', () => shiftEl.classList.add('is-focused'));
-        checkbox.addEventListener('blur', () => shiftEl.classList.remove('is-focused'));
+        shiftEl.addEventListener('focus', () => shiftEl.classList.add('is-focused'));
+        shiftEl.addEventListener('blur', () => shiftEl.classList.remove('is-focused'));
 
-        // Clique em qualquer parte da linha ativa/desativa o turno,
+        // Clique em qualquer parte da pílula (inclusive bordas e texto) ativa/desativa o turno,
         // EXCETO se o alvo for dentro do wrapper de horas
         shiftEl.addEventListener('click', (e) => {
             if (e.target.closest('.shift-hours-wrapper')) return;
-            // Se o clique foi acionado diretamente no checkbox (ex: ativado por teclado com Espaço), não reinverter
-            if (e.target === checkbox) {
-                setShiftState(checkbox.checked);
-                notifyChange();
-                return;
-            }
             e.preventDefault();
             checkbox.checked = !checkbox.checked;
-            setShiftState(checkbox.checked);
+            setShiftState(checkbox.checked, true);
             notifyChange();
         });
 
-        // Suporte à tecla Enter quando focado no checkbox
-        checkbox.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
+        // Suporte ao teclado (Espaço ou Enter) na pílula inteira
+        shiftEl.addEventListener('keydown', (e) => {
+            if (e.target.closest('.shift-hours-wrapper')) return;
+            if (e.key === ' ' || e.key === 'Enter') {
                 e.preventDefault();
                 checkbox.checked = !checkbox.checked;
-                setShiftState(checkbox.checked);
+                setShiftState(checkbox.checked, true);
                 notifyChange();
             }
         });
@@ -166,23 +164,40 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             e.stopPropagation();
         });
 
+        // Habilita auto-seleção imediata do texto ao focar ou clicar no campo de horas
+        enableAutoSelect(hoursInput);
+
         hoursInput.addEventListener('input', () => {
             const raw = parseFloat(hoursInput.value);
             if (!Number.isNaN(raw) && raw < 0) {
                 hoursInput.value = '0';
             }
-            if (hoursInput.value && !isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) > 0) {
+            if (hoursInput.value !== '' && !Number.isNaN(raw) && raw > 0) {
                 hoursInput.dataset.lastValue = hoursInput.value;
             }
             notifyChange();
         });
 
+        hoursInput.addEventListener('blur', () => {
+            if (hoursInput.value.trim() === '') {
+                hoursInput.value = '0';
+                notifyChange();
+            }
+        });
+
         checkbox.addEventListener('change', () => {
-            setShiftState(checkbox.checked);
+            setShiftState(checkbox.checked, false);
             notifyChange();
         });
 
-        setShiftState(checkbox.checked);
+        // Inicialização de estado do turno
+        if (checkbox.checked) {
+            hoursInput.value = initialSavedHours;
+            setShiftState(true, false);
+        } else {
+            hoursInput.value = '0';
+            setShiftState(false, false);
+        }
     });
 
 
@@ -401,10 +416,15 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         cardDetails.querySelectorAll('.shift-item').forEach(shiftItem => {
             const cb = shiftItem.querySelector('.shift-checkbox');
             const hoursInput = shiftItem.querySelector('.shift-hours');
+            const currentVal = hoursInput.value.trim();
+            const resolvedHours = cb.checked
+                ? (currentVal !== '' ? currentVal : '0')
+                : (hoursInput.dataset.lastValue || '0');
+
             shifts.push({
                 id: cb.dataset.shift,
                 checked: cb.checked,
-                hours: hoursInput.dataset.lastValue || hoursInput.value
+                hours: resolvedHours
             });
         });
 

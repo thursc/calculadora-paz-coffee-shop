@@ -33,6 +33,25 @@ export function parseCurrency(value) {
 }
 
 /**
+ * Habilita seleção automática de todo o texto ao focar ou clicar em um campo numérico
+ * @param {HTMLInputElement} input
+ */
+export function enableAutoSelect(input) {
+    if (!input) return;
+
+    const selectAll = () => {
+        requestAnimationFrame(() => {
+            if (typeof input.select === 'function') {
+                input.select();
+            }
+        });
+    };
+
+    input.addEventListener('focus', selectAll);
+    input.addEventListener('click', selectAll);
+}
+
+/**
  * Vincula comportamento de máscara/foco amigável para campos monetários
  * @param {HTMLInputElement} input
  * @param {Function} [onBlurCallback]
@@ -49,6 +68,15 @@ export function setupCurrencyHandlers(input, onBlurCallback, onInputCallback) {
         } else {
             e.target.value = '';
         }
+        requestAnimationFrame(() => {
+            input.select();
+        });
+    });
+
+    input.addEventListener('click', () => {
+        requestAnimationFrame(() => {
+            input.select();
+        });
     });
 
     input.addEventListener('input', (e) => {

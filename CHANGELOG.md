@@ -2,6 +2,24 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.15] - 12/10/2026
+
+### 🛡️ Eliminação de Borda Persistente de Foco e Preservação Universal de 0h em Todos os Turnos
+
+#### 1. Eliminação Completa da Borda Dupla e Persistente nos Turnos
+- **Remoção de Foco no Container:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), removido o atributo `tabindex="0"` do container da pílula (`.shift-pill`) e os listeners de `focus`/`blur` que injetavam a classe `.is-focused`.
+- **Eliminação de Outline por Clique de Mouse:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), removidas as regras `.shift-pill.is-focused` e adicionado `outline: none !important;` em `.shift-pill:focus` e `.shift-item:focus`.
+- **Resultado:** Clicar com o mouse em qualquer turno (Sábado, Domingo, Segunda) ativa ou desativa o turno sem criar nenhuma borda externa duplicada e sem reter bordas residuais quando o turno é desselecionado. O foco visível de acessibilidade permanece restrito estritamente à navegação por teclado (`:has(.shift-checkbox:focus-visible)`).
+
+#### 2. Preservação Universal de 0 Horas em Sábado, Segunda-feira e Todos os Turnos
+- **Fim da Restauração Indevida do Valor Anterior:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), corrigidas as condições que utilizavam `parseFloat(...) > 0` para `parseFloat(...) >= 0`. Agora o sistema aceita `0` como valor intencional de memória em `dataset.lastValue`.
+- **Persistência e Reativação:**
+  - Ao digitar `0` em Sábado, Segunda-feira ou turnos de Domingo, o valor digitado permanece `0` e o cálculo financeiro computa exatamente R$ 0,00.
+  - Ao desmarcar e remarcar o turno, ou ao recarregar a página (<kbd>F5</kbd>), o valor `0` não é mais sobrescrito com as horas padrão (7h ou 5h).
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.15`.
+
+---
+
 ## [v1.9.14] - 12/10/2026
 
 ### 🎯 Auto-seleção em Entradas Numéricas, Hitbox Contínua dos Turnos e Resiliência de Horas Zeradas

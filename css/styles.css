@@ -124,6 +124,7 @@ input[type=number] {
 /* --- Chips Interativos Táteis para Turnos (Toggle Pills - Otimizados para 120Hz/240Hz+) --- */
 .shift-pill {
     user-select: none;
+    outline: none;
     transition: background 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                 border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1),
                 box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
@@ -657,19 +658,26 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45);
 }
 
-/* Foco evidente nos Chips Táteis de Turnos, Dobradinha e Adicionais (com inputs sr-only) */
-.shift-pill.is-focused,
+/* Foco evidente nos Chips Táteis de Turnos, Dobradinha e Adicionais (apenas por teclado via :focus-visible) */
 .shift-pill:has(.shift-checkbox:focus-visible) {
     outline: 2px solid var(--accent-amber);
     outline-offset: 2px;
     box-shadow: 0 0 0 4px var(--accent-amber-glow);
 }
 
-.dobradinha-pill.is-focused,
+.shift-pill:focus,
+.shift-item:focus {
+    outline: none !important;
+}
+
 .dobradinha-pill:has(.bonus-dobradinha-checkbox:focus-visible) {
     outline: 2px solid #059669;
     outline-offset: 2px;
     box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.25);
+}
+
+.dobradinha-pill:focus {
+    outline: none !important;
 }
 
 .event-item.is-focused,

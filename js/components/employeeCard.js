@@ -76,11 +76,10 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const shiftInputId = `shift-${uniqueId}-${shift.id}`;
         shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none cursor-pointer';
         shiftEl.setAttribute('role', 'checkbox');
-        shiftEl.setAttribute('tabindex', '0');
         shiftEl.setAttribute('aria-label', shift.label);
         shiftEl.innerHTML = `
             <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2 pointer-events-none">
-                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}" tabindex="-1">
+                <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}">
                 <span class="shift-check-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0 transition-colors">
                     <svg class="w-2.5 h-2.5 hidden text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -105,7 +104,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
 
         const initialSavedHours = savedShift.hours !== undefined ? String(savedShift.hours) : String(shift.hours);
         const parsedInitial = parseFloat(initialSavedHours);
-        hoursInput.dataset.lastValue = (!Number.isNaN(parsedInitial) && parsedInitial > 0) ? initialSavedHours : String(shift.hours);
+        hoursInput.dataset.lastValue = (!Number.isNaN(parsedInitial) && parsedInitial >= 0) ? initialSavedHours : String(shift.hours);
         checkbox.checked = savedShift.checked || false;
 
         const setShiftState = (isChecked, isUserAction = false) => {
@@ -118,21 +117,19 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
                 indicatorRing.classList.add('border-amber-500', 'bg-amber-500/20');
                 if (isUserAction) {
                     const lastVal = hoursInput.dataset.lastValue;
-                    hoursInput.value = (lastVal && parseFloat(lastVal) > 0) ? lastVal : String(shift.hours);
+                    hoursInput.value = (lastVal !== undefined && lastVal !== '' && !Number.isNaN(parseFloat(lastVal)) && parseFloat(lastVal) >= 0)
+                        ? lastVal
+                        : String(shift.hours);
                 }
             } else {
                 checkIcon.classList.add('hidden');
                 indicatorRing.classList.remove('border-amber-500', 'bg-amber-500/20');
-                if (hoursInput.value !== '' && parseFloat(hoursInput.value) > 0) {
+                if (hoursInput.value !== '' && !Number.isNaN(parseFloat(hoursInput.value)) && parseFloat(hoursInput.value) >= 0) {
                     hoursInput.dataset.lastValue = hoursInput.value;
                 }
                 hoursInput.value = '0';
             }
         };
-
-        // Foco acessível via teclado
-        shiftEl.addEventListener('focus', () => shiftEl.classList.add('is-focused'));
-        shiftEl.addEventListener('blur', () => shiftEl.classList.remove('is-focused'));
 
         // Clique em qualquer parte da pílula (inclusive bordas e texto) ativa/desativa o turno,
         // EXCETO se o alvo for dentro do wrapper de horas
@@ -144,10 +141,9 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             notifyChange();
         });
 
-        // Suporte ao teclado (Espaço ou Enter) na pílula inteira
-        shiftEl.addEventListener('keydown', (e) => {
-            if (e.target.closest('.shift-hours-wrapper')) return;
-            if (e.key === ' ' || e.key === 'Enter') {
+        // Suporte acessível via teclado no checkbox
+        checkbox.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
                 e.preventDefault();
                 checkbox.checked = !checkbox.checked;
                 setShiftState(checkbox.checked, true);
@@ -172,7 +168,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             if (!Number.isNaN(raw) && raw < 0) {
                 hoursInput.value = '0';
             }
-            if (hoursInput.value !== '' && !Number.isNaN(raw) && raw > 0) {
+            if (hoursInput.value !== '' && !Number.isNaN(raw) && raw >= 0) {
                 hoursInput.dataset.lastValue = hoursInput.value;
             }
             notifyChange();
@@ -181,6 +177,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         hoursInput.addEventListener('blur', () => {
             if (hoursInput.value.trim() === '') {
                 hoursInput.value = '0';
+                hoursInput.dataset.lastValue = '0';
                 notifyChange();
             }
         });

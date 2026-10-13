@@ -162,6 +162,15 @@ export function createEventElement(data = {}, onChangeCallback) {
 
     setEventState(eventCheckbox.checked);
 
+    eventCheckbox.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            eventCheckbox.checked = !eventCheckbox.checked;
+            setEventState(eventCheckbox.checked);
+            if (typeof onChangeCallback === 'function') onChangeCallback();
+        }
+    });
+
     eventCheckbox.addEventListener('change', () => {
         setEventState(eventCheckbox.checked);
         if (typeof onChangeCallback === 'function') onChangeCallback();
@@ -184,7 +193,7 @@ export function createEventElement(data = {}, onChangeCallback) {
     enableAutoSelect(hoursInput);
 
     hoursInput.addEventListener('input', () => {
-        const raw = parseFloat(hoursInput.value);
+        const raw = parseFloat(String(hoursInput.value).replace(',', '.'));
         if (!Number.isNaN(raw) && raw < 0) {
             hoursInput.value = '0';
         }

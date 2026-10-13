@@ -43,6 +43,9 @@ html.dark {
 *, *::before, *::after {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
     text-rendering: optimizeLegibility;
 }
 
@@ -70,7 +73,15 @@ body {
     color: var(--text-primary);
 }
 
-/* --- Scrollbars Personalizadas (Sutis e Modernas) --- */
+/* --- Scrollbars Personalizadas (Sutis e Modernas - WebKit & Firefox) --- */
+html, body, .kanban-track {
+    scrollbar-width: thin;
+    scrollbar-color: #d6cebe transparent;
+}
+html.dark, html.dark body, html.dark .kanban-track {
+    scrollbar-color: #3a332d transparent;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -215,24 +226,29 @@ html.dark .shift-pill.is-active {
     backface-visibility: hidden;
 }
 
-.dobradinha-pill:active {
+.dobradinha-pill:active:not(.cursor-not-allowed) {
     filter: brightness(0.95);
 }
-html.dark .dobradinha-pill:active {
+html.dark .dobradinha-pill:active:not(.cursor-not-allowed) {
     filter: brightness(1.08);
 }
 
-.dobradinha-pill.is-active,
-html.dark .dobradinha-pill.is-active {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(5, 150, 105, 0.08));
-    border-color: #10b981 !important;
-    box-shadow: 0 0 0 1px #10b981, 0 2px 8px rgba(16, 185, 129, 0.2);
+.dobradinha-pill.is-active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(217, 119, 6, 0.12));
+    border-color: var(--accent-amber) !important;
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 8px var(--accent-amber-glow);
 }
 
 html.dark .dobradinha-pill.is-active {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.15));
-    border-color: #10b981 !important;
-    box-shadow: 0 0 0 1px #10b981, 0 2px 10px rgba(16, 185, 129, 0.3);
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(180, 83, 9, 0.18));
+    border-color: var(--accent-amber) !important;
+    box-shadow: 0 0 0 1px var(--accent-amber), 0 2px 10px rgba(245, 158, 11, 0.25);
+}
+
+.dobradinha-pill.is-active .dobradinha-indicator {
+    border-color: var(--accent-amber) !important;
+    background-color: rgba(245, 158, 11, 0.2) !important;
+    transform: scale(1.05);
 }
 
 /* --- Efeito de Inversão do Logotipo no Modo Escuro --- */
@@ -428,13 +444,13 @@ html.dark .employee-card-details.is-card-resetting::after {
 .event-item:not(.is-active) {
     background-color: rgba(0, 0, 0, 0.02) !important;
     border-color: rgba(0, 0, 0, 0.08) !important;
-    opacity: 0.72;
+    opacity: 0.85;
 }
 
 html.dark .event-item:not(.is-active) {
     background-color: rgba(255, 255, 255, 0.03) !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
-    opacity: 0.72;
+    opacity: 0.85;
 }
 
 .event-item:not(.is-active) .event-calculated-value {
@@ -871,14 +887,14 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
         border-color: rgba(245, 158, 11, 0.3);
     }
 
-    .dobradinha-pill:not(.is-active):hover {
-        background-color: rgba(16, 185, 129, 0.06);
-        border-color: rgba(16, 185, 129, 0.3);
+    .dobradinha-pill:not(.is-active):not(.cursor-not-allowed):hover {
+        background-color: rgba(245, 158, 11, 0.06);
+        border-color: rgba(245, 158, 11, 0.3);
     }
 
-    html.dark .dobradinha-pill:not(.is-active):hover {
-        background-color: rgba(16, 185, 129, 0.1);
-        border-color: rgba(16, 185, 129, 0.3);
+    html.dark .dobradinha-pill:not(.is-active):not(.cursor-not-allowed):hover {
+        background-color: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.3);
     }
 
     .generate-holerite-btn {
@@ -963,14 +979,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 
 /* Fallback sincronizado para navegadores sem View Transitions API */
 html.is-theme-transitioning,
-html.is-theme-transitioning *,
-html.is-theme-transitioning *::before,
-html.is-theme-transitioning *::after {
+html.is-theme-transitioning body,
+html.is-theme-transitioning header,
+html.is-theme-transitioning .kanban-col,
+html.is-theme-transitioning .shift-pill,
+html.is-theme-transitioning .event-item,
+html.is-theme-transitioning .modal-container,
+html.is-theme-transitioning input,
+html.is-theme-transitioning button {
     transition: background-color var(--duration-normal) var(--ease-out-expo),
                 border-color var(--duration-normal) var(--ease-out-expo),
                 color var(--duration-normal) var(--ease-out-expo),
-                fill var(--duration-normal) var(--ease-out-expo),
-                stroke var(--duration-normal) var(--ease-out-expo),
                 box-shadow var(--duration-normal) var(--ease-out-expo) !important;
     transition-delay: 0s !important;
 }
@@ -1250,6 +1269,7 @@ html.dark header.is-scrolled {
    Animação do Indicador de Check em Turnos e Eventos (Pop-In Orgânico)
    ========================================================================== */
 .shift-check-indicator,
+.dobradinha-indicator,
 .event-check-indicator {
     transition: border-color var(--duration-fast) var(--ease-out-expo),
                 background-color var(--duration-fast) var(--ease-out-expo),
@@ -1257,6 +1277,7 @@ html.dark header.is-scrolled {
 }
 
 .shift-pill.is-active .shift-check-indicator,
+.dobradinha-pill.is-active .dobradinha-indicator,
 .event-item.is-active .event-check-indicator {
     transform: scale(1.05);
 }

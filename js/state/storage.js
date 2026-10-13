@@ -22,8 +22,10 @@ export function loadStoredEmployees() {
                 const hourlyRate = (rawRate === null || rawRate === undefined || rawRate === '')
                     ? DEFAULT_HOURLY_RATE
                     : rawRate;
+                const rawId = emp.id !== null && emp.id !== undefined ? String(emp.id).trim() : '';
+                const id = rawId ? rawId : `employee-${Date.now()}-${index}`;
                 return {
-                    id: typeof emp.id === 'string' && emp.id ? emp.id : `employee-${Date.now()}-${index}`,
+                    id,
                     name: typeof emp.name === 'string' ? emp.name : '',
                     hourlyRate,
                     shifts: Array.isArray(emp.shifts) ? emp.shifts.filter(s => s && typeof s === 'object') : [],

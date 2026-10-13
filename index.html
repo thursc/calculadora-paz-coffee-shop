@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Calculadora de escala e pagamentos para a equipe da Paz Coffee Shop.">
     <title>Paz Coffee Shop - Calculadora de Equipe</title>
     <!-- Tailwind CSS com suporte a Dark Mode via classe -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,6 +20,8 @@
             }
         }
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <script>
@@ -29,7 +32,7 @@
             }
         } catch (_) { }
     </script>
-    <link rel="stylesheet" href="css/styles.css?v=1.9.23">
+    <link rel="stylesheet" href="css/styles.css?v=1.9.25">
 </head>
 
 <body
@@ -150,6 +153,7 @@
          ÁREA PRINCIPAL: ESTEIRA MÓVEL (MOBILE) | GRADE (DESKTOP)
          ======================================================== -->
     <main class="flex-grow flex flex-col pt-2 md:pt-4 w-full max-w-full overflow-hidden md:overflow-visible min-w-0">
+        <h2 class="sr-only">Escala Semanal de Colaboradores</h2>
         <!-- Feedback de Busca Vazia (Item #13 - Acessibilidade aria-live polite) -->
         <div id="search-empty-state"
             class="hidden flex flex-col items-center justify-center p-5 sm:p-7 text-center mx-4 sm:mx-auto my-3 sm:my-6 max-w-sm sm:max-w-md w-full bg-white dark:bg-[#1a1715] border border-stone-200 dark:border-stone-800 rounded-2xl shadow-sm self-center"
@@ -198,7 +202,7 @@
 
     <!-- Rodapé Discreto -->
     <footer
-        class="py-4 text-center text-stone-400 dark:text-stone-600 text-xs border-t border-stone-200/50 dark:border-stone-900/50">
+        class="py-4 text-center text-stone-500 dark:text-stone-400 text-xs border-t border-stone-200/50 dark:border-stone-900/50">
         <p>Paz Coffee Shop &bull; Desenvolvido por Arthur Campos</p>
     </footer>
 
@@ -264,7 +268,7 @@
                     <button type="button" id="send-whatsapp-btn"
                         class="w-full sm:w-auto order-1 sm:order-2 flex items-center justify-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 text-xs sm:text-sm cursor-pointer whitespace-nowrap flex-shrink-0"
                         title="Abrir no WhatsApp com mensagem preenchida">
-                        <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4 h-4 sm:w-[18px] sm:h-[18px] flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path
                                 d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.698c.972.587 1.96.95 3.016.95 3.181 0 5.768-2.587 5.768-5.766.001-3.187-2.575-5.771-5.988-6.137zm3.376 8.212c-.144.405-.837.774-1.17.824-.312.045-.697.072-2.029-.481-1.611-.669-2.639-2.316-2.72-2.424-.08-.108-.654-.87-.654-1.659 0-.788.413-1.177.559-1.336.145-.159.317-.199.423-.199.106 0 .212.002.304.007.098.005.228-.037.357.272.133.319.455 1.109.495 1.19.04.082.067.177.013.285-.053.108-.08.176-.159.269-.079.092-.167.206-.239.277-.08.079-.163.165-.07.325.093.16.413.682.886 1.104.609.544 1.122.712 1.282.792.16.08.253.067.347-.04.093-.108.4-.467.507-.627.106-.16.213-.133.359-.08.146.053.931.439 1.09.519.16.08.266.12.306.186.039.067.039.387-.105.792z" />
                             <path fill-rule="evenodd"
@@ -382,7 +386,7 @@
             </div>
 
             <!-- Conteúdo do Card (Taxa Horária, Turnos, Dobradinha, Adicionais) -->
-            <div class="employee-content px-3.5 sm:px-4 flex flex-col gap-4 flex-grow" role="region">
+            <div class="employee-content px-3.5 sm:px-4 flex flex-col gap-4 flex-grow" role="region" aria-label="Escala e adicionais do colaborador">
                 <!-- Campo de Valor/Hora Compacto -->
                 <div
                     class="flex items-center justify-between bg-stone-100/70 dark:bg-stone-900 px-3 py-1.5 rounded-xl border border-stone-200 dark:border-stone-800">
@@ -407,13 +411,14 @@
                 <!-- Seção 2: Bônus Dobradinha Domingo -->
                 <div>
                     <div class="dobradinha-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-800/30 cursor-pointer select-none"
-                        data-bonus="dobradinha" title="Adiciona R$ 50,00 quando escalado manhã e noite no domingo">
-                        <div class="flex items-center gap-2">
+                        data-bonus="dobradinha" title="Adiciona R$ 50,00 quando escalado manhã e noite no domingo"
+                        role="checkbox" aria-checked="false">
+                        <div class="flex items-center gap-2 pointer-events-none">
                             <input type="checkbox" class="bonus-dobradinha-checkbox sr-only" disabled
                                 aria-label="Bônus Dobradinha de Domingo (+R$ 50,00)">
                             <span
-                                class="dobradinha-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-2.5 h-2.5 hidden text-emerald-500" viewBox="0 0 20 20"
+                                class="dobradinha-indicator w-4 h-4 rounded-full border border-stone-300 dark:border-stone-600 flex items-center justify-center flex-shrink-0 transition-colors">
+                                <svg class="w-2.5 h-2.5 hidden text-amber-600 dark:text-amber-400" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -424,11 +429,11 @@
                                 <span
                                     class="text-xs font-semibold text-stone-800 dark:text-stone-200 leading-tight">Dobradinha
                                     de Domingo</span>
-                                <span class="text-[10px] text-stone-400">Manhã + Noite</span>
+                                <span class="text-[10px] text-stone-500 dark:text-stone-400">Manhã + Noite</span>
                             </div>
                         </div>
                         <span
-                            class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">+R$
+                            class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 pointer-events-none">+R$
                             50,00</span>
                     </div>
                 </div>
@@ -514,7 +519,7 @@
     </template>
 
     <!-- Script Principal Modular (ES Module) -->
-    <script type="module" src="js/app.js?v=1.9.23"></script>
+    <script type="module" src="js/app.js?v=1.9.25"></script>
 </body>
 
 </html>

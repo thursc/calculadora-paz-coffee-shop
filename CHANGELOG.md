@@ -2,6 +2,60 @@
 
 Todas as alterações notáveis deste projeto serão documentadas neste arquivo.
 
+## [v1.9.25] - 13/10/2026
+
+### ☕ Resolução do Bônus Dobradinha, Auditoria Técnica Completa e Testes Responsivos (Desktop & Poco X7 Pro)
+
+#### 1. Resolução Imediata da Pílula "Dobradinha Domingo" (+R$ 50,00)
+- **Causa Raiz Identificada:** O elemento `.dobradinha-pill` no template de [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) era renderizado como `<label>` contendo um `<input type="checkbox" class="sr-only">`. O listener de `click` em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js) invertia manualmente o estado `dobradinhaCheckbox.checked = !dobradinhaCheckbox.checked` sem invocar `e.preventDefault()`. Subsequentemente, o comportamento nativo de ativação do `<label>` do navegador disparava um segundo toggle sintético no checkbox, revertendo imediatamente seu valor para o estado anterior no mesmo frame e impedindo a ativação.
+- **Transição de Elemento e Isolamento de Cliques:** Convertido `.dobradinha-pill` de `<label>` para `<div role="checkbox">` e adicionado `pointer-events-none` aos wrappers de texto internos e badges. Cliques em qualquer área da pílula agora acionam previsivelmente o evento uma única vez.
+- **Harmonização Visual Âmbar/Caramelo:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), substituído o gradiente verde isolado por gradiente e borda em tom âmbar/caramelo (`var(--accent-amber)`), alinhando o contraste e feedback visual com o Design System da cafeteria e com os demais chips de turnos.
+- **Sincronização de Indicador e Anel:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), o anel `.dobradinha-indicator` e o ícone SVG são destacados dinamicamente com as classes `border-amber-500` e `bg-amber-500/20`, e sincronizados com `aria-checked` e `aria-disabled`.
+- **Acessibilidade por Teclado:** Suporte robusto às teclas `Espaço` e `Enter` diretamente na pílula quando focada, respeitando a trava de desabilitação.
+
+#### 2. Bateria de Testes Funcionais e Responsivos
+- **Desktop Primário (1920x1080):** Grade fluida CSS Grid validada sem cortes, esteira ampla, modais perfeitamente centralizados com `backdrop-blur`, rolagem vertical nativa sem interferências.
+- **Mobile Específico - Poco X7 Pro (1220 x 2712 px | Viewport 412 x 915 px):** Rolagem horizontal suave com snap tátil centrado no card ativo, áreas de toque confortáveis (>44px), adaptação vertical do modal de holerite com rolagem interna suave e fechamento ágil.
+- **Trava Inteligente Validada:** Dobradinha permanece bloqueada e opaca (`opacity-50 cursor-not-allowed`) quando Domingo Manhã ou Domingo Noite não estão marcados (ou com 0 horas); desbloqueia instantaneamente quando ambos os turnos são ativados com horas válidas; desativa-se e zera o bônus reativamente caso qualquer um dos domingos seja desmarcado.
+- **Demonstrativo & Clipboard:** Geração precisa da linha de Bônus Dobradinha no holerite, formatação monetária em BRL e cópia para área de transferência com feedback tátil de sucesso.
+- **Persistência Total:** Validação de recarga de página comprovando que turnos, adicionais, taxas e o estado do bônus dobradinha são preservados sem perdas no `localStorage`.
+- **Console Limpo:** 0 erros de JavaScript, 0 advertências de referência nula ou falhas não tratadas.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.25` em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html).
+
+---
+
+## [v1.9.24] - 13/10/2026
+
+### 🛡️ Auditoria Técnica Completa: Correções Críticas de Cálculos, Segurança XSS, Acessibilidade (WCAG) e Performance
+
+#### 1. Integridade de Cálculos e Edge Cases Financeiros
+- **Parser de Moeda Resiliente:** Em [js/utils/currency.js](file:///d:/dev/calculadora-paz-coffee-shop/js/utils/currency.js), corrigida a função `parseCurrency` para reconhecer separadores de milhar pt-BR sem vírgula (ex.: `1.500` e `2.250`), evitando conversões errôneas para `1.50`.
+- **Preservação de Decimais em Horas com Vírgula:** Em [js/services/calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js) e [js/components/eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js), implementado o helper `parseHours` que normaliza vírgulas para pontos antes do parsing, prevenindo perda de horas fracionadas (ex.: `7,5` horas não mais truncadas para `7`).
+- **Arredondamento Exponencial sem Drift de EPSILON:** Em [js/services/calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js), substituída a fórmula de arredondamento por notação exponencial (`Number(Math.round(Number(`${num}e2`)) + 'e-2')`), eliminando underflow de `Number.EPSILON` em somas financeiras maiores.
+- **Fallback Confiável de Horas do Turno:** Em [js/services/calculator.js](file:///d:/dev/calculadora-paz-coffee-shop/js/services/calculator.js), turnos salvos sem a propriedade explícita `hours` utilizam com segurança a carga horária padrão definida em `shiftDef.hours`.
+- **Preservação de Taxa Horária Zerada:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), corrigida a inicialização e extração de `hourlyRate` para não substituir taxas `0` ou `'R$ 0,00'` pelo valor padrão da cafeteria.
+
+#### 2. Segurança e Persistência no LocalStorage
+- **Eliminação de Vulnerabilidade DOM XSS:** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), a mensagem de confirmação de exclusão em `openDeleteConfirm` constrói os nós do DOM com `textContent` e elementos seguros, impedindo injeção de HTML e falhas com caracteres especiais como `<`.
+- **Normalização de IDs Estáveis:** Em [js/state/storage.js](file:///d:/dev/calculadora-paz-coffee-shop/js/state/storage.js), garantido que IDs numéricos ou legados sejam convertidos em string sem serem descartados ou regenerados a cada recarga da página.
+
+#### 3. Acessibilidade (WCAG 2.1 AA) e Semântica
+- **Eliminação de Controles Interativos Aninhados (axe-core):** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js) e [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), removidos atributos redundantes `role="checkbox"` dos wrappers de turnos e dobradinha, preservando a semântica nativa limpa nos inputs internos.
+- **Suporte Abrangente à Tecla Enter:** Em [js/components/eventItem.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/eventItem.js), adicionado suporte à ativação/desativação de adicionais via tecla `Enter`.
+- **Hierarquia de Cabeçalhos e Região Acessível:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), incluído `<h2>` com `sr-only` para restabelecer a ordem semântica (H1 -> H2 -> H3/H4) e adicionado `aria-label` descritivo no contêiner com `role="region"`.
+- **Elevação de Contraste:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html) e [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), elevados os contrastes do rodapé em Dark Mode e dos subtítulos e itens inativos para conformidade com a taxa mínima de 4.5:1.
+
+#### 4. Otimização de Performance, CSS e Assets
+- **Serialização O(1) Verdadeira:** Em [js/app.js](file:///d:/dev/calculadora-paz-coffee-shop/js/app.js), a extração `collectEmployeesData()` agora ocorre exclusivamente quando o timer do debounce é disparado, eliminando varreduras redundantes em toda a árvore DOM a cada tecla digitada.
+- **Otimização do Acordeão de Detalhamento:** Em [js/components/employeeCard.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/employeeCard.js), as listas de detalhamento só têm seus nós destruídos e reconstruídos se o elemento `<details>` estiver aberto.
+- **Otimização de Renderização de Texto:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), `text-rendering: optimizeLegibility` restrito a títulos, evitando custo computacional global desnecessário.
+- **Scrollbars Cross-Browser no Firefox:** Em [css/styles.css](file:///d:/dev/calculadora-paz-coffee-shop/css/styles.css), implementado suporte a `scrollbar-width: thin` e `scrollbar-color` para estilização uniforme no Mozilla Firefox.
+- **SEO & Pré-Conexão:** Em [index.html](file:///d:/dev/calculadora-paz-coffee-shop/index.html), adicionada meta tag de descrição, preconnect para Google Fonts e corrigida a classe do ícone do WhatsApp para `sm:w-[18px] sm:h-[18px]`.
+- **Link Universal do WhatsApp:** Em [js/components/modal.js](file:///d:/dev/calculadora-paz-coffee-shop/js/components/modal.js), atualizado para o endpoint oficial `wa.me`.
+- **Cache-Busting de Assets:** Bump de versão dos scripts e estilos para `?v=1.9.24`.
+
+---
+
 ## [v1.9.23] - 13/10/2026
 
 ### ⚡ Snappiness Tátil nos Botões, Correção de Glitch no PC e Alinhamento Vertical (Y = 0) ao Adicionar Card

@@ -21,8 +21,8 @@ export function parseCurrency(value) {
         str = str.replace(/\./g, '').replace(',', '.');
     } else if (str.includes('.')) {
         const parts = str.split('.');
-        // Se tiver mais de um ponto (ex: 1.000.000) ou padrão milhar com 3 zeros (ex: 1.000), remove ponto
-        if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3 && parts[1] === '000')) {
+        // Se tiver mais de um ponto (ex: 1.000.000) ou exatamente 3 dígitos após o ponto (ex: 1.500, 2.250), remove pontos de milhar
+        if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
             str = str.replace(/\./g, '');
         }
     }

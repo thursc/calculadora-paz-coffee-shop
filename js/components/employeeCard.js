@@ -25,6 +25,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     const dobradinhaCheckbox = cardDetails.querySelector('.bonus-dobradinha-checkbox');
     const dobradinhaContainer = cardDetails.querySelector('[data-bonus="dobradinha"]');
     const dobradinhaIndicator = cardDetails.querySelector('.dobradinha-indicator svg');
+    const dobradinhaRing = cardDetails.querySelector('.dobradinha-indicator');
     const shiftsContainer = cardDetails.querySelector('.shifts-container');
     const eventList = cardDetails.querySelector('.event-list');
     const employeeTotalEl = cardDetails.querySelector('.employee-total');
@@ -57,14 +58,13 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     cardDetails.dataset.id = uniqueId;
 
     const contentId = `employee-content-${uniqueId}`;
-    summary.setAttribute('aria-controls', contentId);
     cardContent.id = contentId;
 
     cardDetails.classList.add('is-open');
 
     nameInput.value = data.name || '';
     if (hourlyRateInput) {
-        hourlyRateInput.value = data.hourlyRate || DEFAULT_HOURLY_RATE;
+        hourlyRateInput.value = (data.hourlyRate !== null && data.hourlyRate !== undefined && data.hourlyRate !== '') ? data.hourlyRate : DEFAULT_HOURLY_RATE;
     }
     dobradinhaCheckbox.checked = Boolean(data.bonusDobradinha);
 
@@ -75,8 +75,6 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const shiftEl = document.createElement('div');
         const shiftInputId = `shift-${uniqueId}-${shift.id}`;
         shiftEl.className = 'shift-item shift-pill flex items-center justify-between p-2.5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-800/30 select-none cursor-pointer';
-        shiftEl.setAttribute('role', 'checkbox');
-        shiftEl.setAttribute('aria-label', shift.label);
         shiftEl.innerHTML = `
             <div class="shift-toggle-btn flex items-center gap-2.5 flex-grow min-w-0 pr-2 pointer-events-none">
                 <input type="checkbox" class="shift-checkbox sr-only" data-shift="${shift.id}" id="${shiftInputId}" aria-label="${shift.label}">
@@ -119,7 +117,6 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         const setShiftState = (isChecked, isUserAction = false) => {
             hoursInput.disabled = !isChecked;
             shiftEl.classList.toggle('is-active', isChecked);
-            shiftEl.setAttribute('aria-checked', isChecked ? 'true' : 'false');
 
             const hasUserEdited = hoursInput.dataset.userEdited === 'true';
             const effectiveValue = hasUserEdited ? (hoursInput.dataset.lastValue ?? defaultHours) : defaultHours;
@@ -210,10 +207,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
     if (dobradinhaContainer) {
         dobradinhaContainer.addEventListener('click', (e) => {
             if (dobradinhaCheckbox.disabled) return;
-            if (e.target === dobradinhaCheckbox) {
-                notifyChange();
-                return;
-            }
+            e.preventDefault();
             dobradinhaCheckbox.checked = !dobradinhaCheckbox.checked;
             notifyChange();
         });
@@ -222,7 +216,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         dobradinhaCheckbox.addEventListener('blur', () => dobradinhaContainer.classList.remove('is-focused'));
 
         dobradinhaCheckbox.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !dobradinhaCheckbox.disabled) {
+            if ((e.key === ' ' || e.key === 'Enter') && !dobradinhaCheckbox.disabled) {
                 e.preventDefault();
                 dobradinhaCheckbox.checked = !dobradinhaCheckbox.checked;
                 notifyChange();
@@ -447,7 +441,7 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         return {
             id: cardDetails.dataset.id,
             name: nameInput.value,
-            hourlyRate: hourlyRateInput ? hourlyRateInput.value : (data.hourlyRate || DEFAULT_HOURLY_RATE),
+            hourlyRate: hourlyRateInput ? hourlyRateInput.value : ((data.hourlyRate !== null && data.hourlyRate !== undefined && data.hourlyRate !== '') ? data.hourlyRate : DEFAULT_HOURLY_RATE),
             shifts,
             bonusDobradinha: dobradinhaCheckbox.checked,
             events,
@@ -467,16 +461,20 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
         }
 
         if (dobradinhaContainer) {
-            dobradinhaContainer.setAttribute('role', 'checkbox');
-            dobradinhaContainer.setAttribute('aria-checked', calculation.bonusDobradinhaChecked ? 'true' : 'false');
-            dobradinhaContainer.setAttribute('aria-disabled', !calculation.isDobradinhaApplicable ? 'true' : 'false');
             dobradinhaContainer.classList.toggle('is-active', calculation.bonusDobradinhaChecked);
             dobradinhaContainer.classList.toggle('opacity-50', !calculation.isDobradinhaApplicable);
             dobradinhaContainer.classList.toggle('cursor-not-allowed', !calculation.isDobradinhaApplicable);
+            dobradinhaContainer.setAttribute('aria-disabled', String(!calculation.isDobradinhaApplicable));
+            dobradinhaContainer.setAttribute('aria-checked', String(calculation.bonusDobradinhaChecked));
         }
 
         if (dobradinhaIndicator) {
             dobradinhaIndicator.classList.toggle('hidden', !calculation.bonusDobradinhaChecked);
+        }
+
+        if (dobradinhaRing) {
+            dobradinhaRing.classList.toggle('border-amber-500', calculation.bonusDobradinhaChecked);
+            dobradinhaRing.classList.toggle('bg-amber-500/20', calculation.bonusDobradinhaChecked);
         }
 
         // Atualizar valores parciais dos eventos na UI a partir do resultado oficial de calculator.js (SSOT)
@@ -488,34 +486,35 @@ export function createEmployeeCard(data = {}, callbacks = {}) {
             }
         });
 
-        // Atualizar lista de detalhamento dos turnos
-        if (shiftsListEl) {
-            shiftsListEl.innerHTML = '';
-            calculation.shiftsBreakdown.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.formattedText;
-                shiftsListEl.appendChild(li);
-            });
-        }
+        // Atualizar lista de detalhamento apenas quando o acordeão estiver aberto
+        const isDetailsOpen = calcDetails && calcDetails.open;
+        if (isDetailsOpen) {
+            if (shiftsListEl) {
+                shiftsListEl.innerHTML = '';
+                calculation.shiftsBreakdown.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.formattedText;
+                    shiftsListEl.appendChild(li);
+                });
+            }
 
-        // Atualizar lista de detalhamento dos eventos
-        if (eventsListEl) {
-            eventsListEl.innerHTML = '';
-            calculation.eventsBreakdown.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.formattedText;
-                eventsListEl.appendChild(li);
-            });
-        }
+            if (eventsListEl) {
+                eventsListEl.innerHTML = '';
+                calculation.eventsBreakdown.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.formattedText;
+                    eventsListEl.appendChild(li);
+                });
+            }
 
-        // Atualizar lista de detalhamento dos bônus
-        if (bonusListEl) {
-            bonusListEl.innerHTML = '';
-            calculation.bonusBreakdown.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.formattedText;
-                bonusListEl.appendChild(li);
-            });
+            if (bonusListEl) {
+                bonusListEl.innerHTML = '';
+                calculation.bonusBreakdown.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.formattedText;
+                    bonusListEl.appendChild(li);
+                });
+            }
         }
 
         // Esconder seções vazias ou exibir mensagem amigável quando nada estiver marcado

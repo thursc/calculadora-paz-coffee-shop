@@ -214,8 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (searchInput) {
+        const debouncedFilter = debounce((query) => {
+            filterEmployees(query);
+        }, 80);
+
         searchInput.addEventListener('input', (e) => {
-            filterEmployees(e.target.value);
+            debouncedFilter(e.target.value);
         });
 
         // Atalho global rápido (Alt+N para novo colaborador, Ctrl+K ou barra '/' para focar a busca)
@@ -295,10 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 3. Recálculo Individual e Persistência (com Debounce para I/O)
     // ==========================================
-    const debouncedSave = debounce((data) => {
-        saveStoredEmployees(data);
-    }, 250);
-
     function collectEmployeesData() {
         const employeesData = [];
         const cards = employeeContainer.querySelectorAll('.employee-card-details');
@@ -309,6 +309,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         return employeesData;
     }
+
+    const debouncedSave = debounce(() => {
+        const employeesData = collectEmployeesData();
+        saveStoredEmployees(employeesData);
+    }, 250);
 
     function recalculateAndSave(options = false) {
         let immediate = false;
@@ -334,14 +339,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        const employeesData = collectEmployeesData();
-
         // Persistência controlada: imediata em ações estruturais, com debounce em digitação contínua
         if (immediate) {
             debouncedSave.cancel();
-            saveStoredEmployees(employeesData);
+            saveStoredEmployees(collectEmployeesData());
         } else {
-            debouncedSave(employeesData);
+            debouncedSave();
         }
     }
 

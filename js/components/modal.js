@@ -93,7 +93,7 @@ export class ModalManager {
                 const text = this.holeriteTextarea?.value || '';
                 if (!text) return;
                 const encodedText = encodeURIComponent(text);
-                window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank', 'noopener,noreferrer');
+                window.open(`https://wa.me/?text=${encodedText}`, '_blank', 'noopener,noreferrer');
             });
         }
 
@@ -230,7 +230,14 @@ export class ModalManager {
     openDeleteConfirm(employeeName, onConfirm) {
         if (this.deleteConfirmText) {
             const name = (employeeName || '').trim() || 'este colaborador';
-            this.deleteConfirmText.innerHTML = `Tem certeza que deseja excluir <strong class="font-bold text-stone-900 dark:text-stone-50 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20">${name}</strong>? Todos os turnos e adicionais desta escala serão removidos.`;
+            this.deleteConfirmText.textContent = 'Tem certeza que deseja excluir ';
+
+            const strong = document.createElement('strong');
+            strong.className = 'font-bold text-stone-900 dark:text-stone-50 bg-amber-500/10 dark:bg-amber-500/15 text-amber-700 dark:text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20';
+            strong.textContent = name;
+
+            this.deleteConfirmText.appendChild(strong);
+            this.deleteConfirmText.append('? Todos os turnos e adicionais desta escala serão removidos.');
         }
         this.onConfirmDeleteCallback = onConfirm;
         const cancelBtn = this.deleteConfirmModal?.querySelector('.modal-close-btn');

@@ -16,7 +16,17 @@ export function calculateEmployee(employee) {
         : parseCurrency(employee.hourlyRate);
     const hourlyRate = Math.max(0, rawHourlyRate || 0);
 
-    const roundCurrency = (val) => Math.round((Number(val || 0) + Number.EPSILON) * 100) / 100;
+    const roundCurrency = (val) => {
+        const num = Number(val || 0);
+        return Number(Math.round(Number(`${num}e2`)) + 'e-2');
+    };
+
+    const parseHours = (val) => {
+        if (val === null || val === undefined) return 0;
+        const normalized = String(val).trim().replace(',', '.');
+        const num = parseFloat(normalized);
+        return (!Number.isNaN(num) && num > 0) ? num : 0;
+    };
 
     let salaryFromShifts = 0;
     let workedSundayMorning = false;
@@ -30,8 +40,8 @@ export function calculateEmployee(employee) {
 
         const shiftDef = SHIFTS.find(s => s.id === shiftItem.id) || {};
         const label = shiftItem.label || shiftDef.label || shiftItem.id;
-        const rawHours = parseFloat(shiftItem.hours);
-        const hours = (!Number.isNaN(rawHours) && rawHours > 0) ? rawHours : 0;
+        const rawHours = shiftItem.hours !== undefined ? shiftItem.hours : shiftDef.hours;
+        const hours = parseHours(rawHours);
         const shiftValue = Math.max(0, roundCurrency(hours * hourlyRate));
 
         salaryFromShifts += shiftValue;
@@ -67,8 +77,7 @@ export function calculateEmployee(employee) {
     const events = Array.isArray(employee.events) ? employee.events : [];
 
     const calculatedEvents = events.map(eventItem => {
-        const rawEventHours = parseFloat(eventItem.hours);
-        const eventHours = (!Number.isNaN(rawEventHours) && rawEventHours > 0) ? rawEventHours : 0;
+        const eventHours = parseHours(eventItem.hours);
         let eventValue = 0;
         let specificRate = 0;
 
